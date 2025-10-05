@@ -7,13 +7,18 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/app/(auth)/actions";
-import { Loader, Loader2Icon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { SubmissionResponse } from "@/utils/types";
 import SignUpButton from "@/components/buttons/SignUpButton";
 
-type LoginModalProps = { open: boolean; setOpen: (b: boolean) => void; openSignUp: (b: boolean) => void };
+type LoginModalProps = {
+    open: boolean;
+    setOpen: (b: boolean) => void;
+    openSignUp: (b: boolean) => void;
+    externalError?: string | null;
+};
 
-const LoginModal = ({ open, setOpen, openSignUp }: LoginModalProps) => {
+const LoginModal = ({ open, setOpen, openSignUp, externalError }: LoginModalProps) => {
     const [state, submitForm, isPending] = React.useActionState<SubmissionResponse | null, FormData>(login, null);
 
     return (
@@ -40,13 +45,16 @@ const LoginModal = ({ open, setOpen, openSignUp }: LoginModalProps) => {
                     <DialogFooter className="flex sm:flex-col items-center justify-between gap-4">
                         <Button type="submit" className="w-full" name="action" value="login" disabled={isPending}>
                             {isPending && <Loader2Icon className="animate-spin" />}
-                            {!isPending ? "Log In" : "Please wait"}n
+                            {!isPending ? "Log In" : "Please wait"}
                         </Button>
                         <div className="h-0 border-2 w-full border-slate-300" />
 
                         <Label className="text-sm text-muted-foreground">Haven't made an account?</Label>
                         <SignUpButton setSignUp={openSignUp} setLogin={setOpen} />
-                        {state && <Label className={`text-sm text-muted-foreground${state.isError ? " text-red-600" : " text-green-700"}`}>{state.msg}</Label>}
+                        {state && (
+                            <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>
+                        )}
+                        {!state && externalError && <Label className="text-sm text-red-600" role="alert">{externalError}</Label>}
                     </DialogFooter>
                 </Form>
             </DialogContent>

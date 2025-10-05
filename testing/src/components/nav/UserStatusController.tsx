@@ -1,47 +1,75 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import LoginModal from "@/components/nav/LoginModal";
-import { AuthError, Session } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
-import SignUpModal from "@/components/nav/SignUpModal"; // TODO: change the import to @ from src import
+import SignUpModal from "@/components/nav/SignUpModal";
 
 export default function UserStatusController() {
-    const [session, setSession] = useState(null);
-    const [error, setError] = useState(null);
+    const supabase = useMemo(() => createClient(), []);
+    const [session, setSession] = useState<Session | null>(null);
+    const [authError, setAuthError] = useState<string | null>(null);
+    const [loginIsOpen, setLoginIsOpen] = useState(false);
+    const [signUpIsOpen, setSignUpIsOpen] = useState(false);
+    const [isSigningOut, setIsSigningOut] = useState(false);
 
     useEffect(() => {
-        const getSession = async () => {
-            const supabase = await createClient();
-            const {
-                data: { session },
-                error,
-            } = (await supabase.auth.getSession()) as { data: { session: Session } | { session: null }; error: AuthError };
-        };
-        setSession(session);
-        setError(error);
-    }, []);
+        let isMounted = true;
 
-    console.log("session:", session);
-    console.log("error: ", error);
+        const fetchSession = async () => {
+            const { data, error } = await supabase.auth.getSession();
+            if (!isMounted) return;
+            setSession(data.session ?? null);
+            setAuthError(error?.message ?? null);
+        };
+
+        fetchSession();
+
+        const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+            setSession(nextSession ?? null);
+            setAuthError(null);
+        });
+
+        return () => {
+            isMounted = false;
+            authListener?.subscription.unsubscribe();
+        };
+    }, [supabase]);
+
+    const handleSignOut = useCallback(async () => {
+        setIsSigningOut(true);
+        const { error } = await supabase.auth.signOut();
+        setIsSigningOut(false);
+        if (error) {
+            setAuthError(error.message);
+            return;
+        }
+        setSession(null);
+    }, [supabase]);
 
     if (session) {
         return (
-            <>
-                <p>Welcome back, {session?.user.email}!</p>
-                {/* TODO: add sign out functionality */}
-                <Button>Sign out</Button>
-            </>
+            <div className="flex items-center gap-3">
+                <p className="text-sm text-muted-foreground">Welcome back, {session.user.email}!</p>
+                <Button variant="outline" size="sm" onClick={handleSignOut} disabled={isSigningOut}>
+                    {isSigningOut ? "Signing out..." : "Sign out"}
+                </Button>
+                {authError && <p className="text-xs text-red-600" role="alert">{authError}</p>}
+            </div>
         );
     }
-    const [loginIsOpen, setLoginIsOpen] = React.useState(false);
-    const [signUpIsOpen, setSignUpIsOpen] = React.useState(false);
-    if (error || !session) {
-        return (
-            <>
-                <LoginModal open={loginIsOpen} setOpen={setLoginIsOpen} openSignUp={setSignUpIsOpen} />
-                <SignUpModal open={signUpIsOpen} setOpen={setSignUpIsOpen} openLogin={setLoginIsOpen} />
-            </>
-        );
-    }
+
+    return (
+        <>
+            <LoginModal
+                open={loginIsOpen}
+                setOpen={setLoginIsOpen}
+                openSignUp={setSignUpIsOpen}
+                externalError={authError}
+            />
+            <SignUpModal open={signUpIsOpen} setOpen={setSignUpIsOpen} openLogin={setLoginIsOpen} externalError={authError} />
+        </>
+    );
 }

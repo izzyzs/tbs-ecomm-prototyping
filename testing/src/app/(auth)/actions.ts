@@ -41,16 +41,16 @@ export const getErrorMessage = async (err: unknown): Promise<string> => {
     return "An error occurred. Please try again.";
 };
 
-const handleAuth = async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
+export const handleAuth = async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
     console.log("✅ handleAuth called");
     const action = formData.get("action")?.toString();
     console.log(`action: ${action}`);
 
     try {
         if (action == "login") {
-            return await login(formData);
+            return await login(null, formData);
         } else if (action == "signup") {
-            return await signup(formData);
+            return await signup(null, formData);
         } else {
             throw new Error("You need to log in or sign up!");
         }

@@ -1,8 +1,7 @@
 "use client";
 import React from "react";
 
-import { createClient } from "@/lib/supabase/client";
-import { Credentials, SubmissionResponse } from "@/utils/types";
+import { SubmissionResponse } from "@/utils/types";
 import Form from "next/form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -12,10 +11,15 @@ import { Loader2Icon, Eye, EyeOff } from "lucide-react";
 import LoginButton from "@/components/buttons/LoginButton";
 import { signup } from "@/app/(auth)/actions";
 
-type SignUpModalProps = { open: boolean; setOpen: (b: boolean) => void; openLogin: (b: boolean) => void };
+type SignUpModalProps = {
+    open: boolean;
+    setOpen: (b: boolean) => void;
+    openLogin: (b: boolean) => void;
+    externalError?: string | null;
+};
 
-const SignUpModal = ({ open, setOpen, openLogin }: SignUpModalProps) => {
-    const [state, submitForm, isPending] = React.useActionState(signup, null);
+const SignUpModal = ({ open, setOpen, openLogin, externalError }: SignUpModalProps) => {
+    const [state, submitForm, isPending] = React.useActionState<SubmissionResponse | null, FormData>(signup, null);
 
     const [password, setPassword] = React.useState<string>("");
     const [passwordCheck, setPasswordCheck] = React.useState<string>("");
@@ -79,7 +83,10 @@ const SignUpModal = ({ open, setOpen, openLogin }: SignUpModalProps) => {
                         <div className="h-0 border-2 w-full border-slate-300" />
                         <Label className="text-sm text-muted-foreground">Already made an account?</Label>
                         <LoginButton setLogin={openLogin} setSignUp={setOpen} />
-                        {state && <Label className={`text-sm text-muted-foreground${state.isError ? " text-red-600" : " text-green-700"}`}>{state.msg}</Label>}
+                        {state && (
+                            <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>
+                        )}
+                        {!state && externalError && <Label className="text-sm text-red-600" role="alert">{externalError}</Label>}
                     </DialogFooter>
                 </Form>
             </DialogContent>
