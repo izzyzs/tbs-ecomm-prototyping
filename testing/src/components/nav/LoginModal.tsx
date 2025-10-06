@@ -21,6 +21,12 @@ type LoginModalProps = {
 const LoginModal = ({ open, setOpen, openSignUp, externalError }: LoginModalProps) => {
     const [state, submitForm, isPending] = React.useActionState<SubmissionResponse | null, FormData>(login, null);
 
+    React.useEffect(() => {
+        if (!state || state.isError) return;
+        const timeout = setTimeout(() => setOpen(false), 800);
+        return () => clearTimeout(timeout);
+    }, [state, setOpen]);
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
