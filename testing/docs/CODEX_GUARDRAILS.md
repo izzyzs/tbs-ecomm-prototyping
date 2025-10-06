@@ -1,0 +1,7 @@
+-   Only edit files required by the ticket.
+-   Preserve architecture, naming, and styling conventions.
+-   Do not refactor unrelated code.
+-   Do not change env var names/values or commit secrets.
+-   Add/adjust tests for the ticket only.
+-   If ambiguous, propose options in the PR description; do not guess silently.
+-   Output: one concise PR with changed-files list, rationale, and test notes.

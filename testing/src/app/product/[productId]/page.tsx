@@ -5,10 +5,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Star } from "lucide-react";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/nav/NavBar";
 import { createClient } from "@/lib/supabase/client";
 
-import { Product } from "@/types";
+import { Product } from "@/utils/types";
 
 export default function Page({ params }: { params: Promise<{ productId: string }> }) {
     const { productId } = use(params);
@@ -18,9 +18,10 @@ export default function Page({ params }: { params: Promise<{ productId: string }
     React.useEffect(() => {
         const supabase = createClient();
         (async () => {
-            const { data, error } = (await supabase.from("Product").select("*").eq("id", productId).limit(1).single()) as { data: Product | null; error: any };
-            if (error) console.error(error);
-            else setProduct(data);
+            const { data, error } = (await supabase.from("products").select("*").eq("id", productId).limit(1).single()) as { data: Product | null; error: any };
+            // if (error) console.error(error);
+            console.log({ data, error });
+            setProduct(data);
         })();
     }, []);
 

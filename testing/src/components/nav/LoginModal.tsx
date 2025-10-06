@@ -6,19 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { handleAuth } from "./actions";
-import { Loader, Loader2Icon } from "lucide-react";
+import { login } from "@/app/(auth)/actions";
+import { Loader2Icon } from "lucide-react";
+import { SubmissionResponse } from "@/utils/types";
+import SignUpButton from "@/components/buttons/SignUpButton";
 
-const LoginModal = () => {
-    const [open, setOpen] = React.useState(false);
+type LoginModalProps = {
+    open: boolean;
+    setOpen: (b: boolean) => void;
+    openSignUp: (b: boolean) => void;
+    externalError?: string | null;
+};
 
-    const [state, submitForm, isPending] = React.useActionState(handleAuth, null);
+const LoginModal = ({ open, setOpen, openSignUp, externalError }: LoginModalProps) => {
+    const [state, submitForm, isPending] = React.useActionState<SubmissionResponse | null, FormData>(login, null);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
-                    Log In
+                    Log in
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -36,17 +43,18 @@ const LoginModal = () => {
                         <Input name="password" type="password" placeholder="••••••••" />
                     </div>
                     <DialogFooter className="flex sm:flex-col items-center justify-between gap-4">
-                        <Button type="submit" className="w-full" name="action" value="login">
-                            Log In
+                        <Button type="submit" className="w-full" name="action" value="login" disabled={isPending}>
+                            {isPending && <Loader2Icon className="animate-spin" />}
+                            {!isPending ? "Log In" : "Please wait"}
                         </Button>
-                        <div className="h-0 border-2 w-full border-slate-300"></div>
+                        <div className="h-0 border-2 w-full border-slate-300" />
 
                         <Label className="text-sm text-muted-foreground">Haven't made an account?</Label>
-                        <Button type="submit" variant="secondary" className="w-full mt-1" name="action" value="signup" disabled={isPending}>
-                            {isPending && <Loader2Icon className="animate-spin" />}
-                            {!isPending ? "Sign Up" : "Please wait"}
-                        </Button>
-                        {state && <Label className={`text-sm text-muted-foreground${state.isError ? " text-red-600" : " text-green-700"}`}>{state.msg}</Label>}
+                        <SignUpButton setSignUp={openSignUp} setLogin={setOpen} />
+                        {state && (
+                            <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>
+                        )}
+                        {!state && externalError && <Label className="text-sm text-red-600" role="alert">{externalError}</Label>}
                     </DialogFooter>
                 </Form>
             </DialogContent>
@@ -55,3 +63,5 @@ const LoginModal = () => {
 };
 
 export default LoginModal;
+
+// <Button variant="secondary" className="w-full mt-1" name="action" value="signup">

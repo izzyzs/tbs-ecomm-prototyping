@@ -2,30 +2,12 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Briefcase, Users, Star } from "lucide-react";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/nav/NavBar";
 import { createClient } from "@/lib/supabase/server";
-import HomePageProduct from "@/components/HomePageProduct";
+import ProductCard from "@/components/product/ProductCard";
+import { Product } from "@/utils/types";
+import ShopNowButton from "@/components/home/ShopNowButton";
 
-interface Product {
-    id: number;
-    description: string;
-    barcode: string;
-    category: string;
-    price: number;
-    inventory: number;
-    created_at: string; // ISO string from TIMESTAMPTZ
-    updated_at: string;
-}
-
-/**
- * A React component that renders the home page of a beauty supply store.
- *
- * It demonstrates how to combine Shadcn UI components with Tailwind CSS to create
- * a responsive layout. The page features a navigation bar with a login button
- * that triggers a modal, a hero section, a professional benefits section, and a
- * sample product grid. Each section is mobile‑first and scales gracefully on
- * larger screens.
- */
 const HomePage = async () => {
     const supabase = await createClient();
 
@@ -35,15 +17,13 @@ const HomePage = async () => {
 
     return (
         <>
-            <NavBar />
-
             {/* Hero section highlighting the store's mission */}
             <section className="relative bg-gradient-to-r from-pink-100 via-rose-50 to-orange-50 py-20 px-6 text-center">
                 <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Discover Your Beauty Essentials</h1>
                 <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 mb-6">
                     Explore our curated selection of professional‑grade hair and skin products tailored for salons and beauty enthusiasts.
                 </p>
-                <Button size="lg">Shop Now</Button>
+                <ShopNowButton />
             </section>
 
             {/* Professional benefits section */}
@@ -73,7 +53,7 @@ const HomePage = async () => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Featured Products</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                     {products?.map((product: Product, idx: number) => (
-                        <HomePageProduct product={product} key={idx} />
+                        <ProductCard id={product.id} name={product.name} price={product.price} key={idx} />
                     ))}
                 </div>
             </section>

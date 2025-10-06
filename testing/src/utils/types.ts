@@ -2,16 +2,29 @@ export type Fulfillment = "NDD" | "SDD" | "PU";
 export type Status = "CANCELLED" | "PLACED" | "READY_FOR_PICKUP" | "ON_ROUTE" | "COMPLETE";
 export type Role = "ADMIN" | "DRIVER" | "FLOOR";
 
+export type Credentials = {
+    email: string;
+    password: string;
+};
+
+export type SubmissionResponse = {
+    msg: string;
+    isError: boolean;
+};
+
 export interface Product {
     id: number;
+    name: string;
     description: string;
     barcode: string;
     category: string;
     price: number;
     inventory: number;
     created_at: string; // ISO string from TIMESTAMPTZ
-    updated_at?: string | undefined;
+    updated_at: string;
 }
+
+export type ProductSubset = Pick<Product, "id" | "name" | "price">;
 
 export interface Order {
     id: number;

@@ -1,46 +1,37 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { Credentials, SubmissionResponse } from "@/utils/types";
 
-type Credentials = {
-    email: string;
-    password: string;
-};
-
-export type SubmissionResponse = {
-    msg: string;
-    isError: boolean;
-};
-
-export const login = async (formData: FormData): Promise<SubmissionResponse> => {
+export const login = async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
     const supabase = await createClient();
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
 
     if (!email || !password) {
-        throw new Error("Email and password are both required.");
+        return { msg: "Email and password are both required.", isError: true };
     }
 
     const credentials: Credentials = { email, password };
     const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
-    if (error) throw new Error("Login failed: " + error.message);
+    if (error) return { msg: "Login failed: " + error.message, isError: true };
     return { msg: `Welcome back ${data.user.email}`, isError: false };
 };
 
-export const signup = async (formData: FormData): Promise<SubmissionResponse> => {
+export const signup = async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
     const supabase = await createClient();
     const email = formData.get("email")?.toString();
     const password = formData.get("password")?.toString();
 
     if (!email || !password) {
-        throw new Error("Email and password are both required.");
+        return { msg: "Email and password are both required.", isError: true };
     }
 
     const credentials: Credentials = { email, password };
     const { data, error } = await supabase.auth.signUp(credentials);
 
-    if (error) throw new Error("Signup failed: " + error.message);
+    if (error) return { msg: "Signup failed: " + error.message, isError: true };
     return { msg: `Success!, ${data.user?.id} with email ${data.user?.email} is signed up!`, isError: false };
 };
 
@@ -57,9 +48,9 @@ export const handleAuth = async (_: SubmissionResponse | null, formData: FormDat
 
     try {
         if (action == "login") {
-            return await login(formData);
+            return await login(null, formData);
         } else if (action == "signup") {
-            return await signup(formData);
+            return await signup(null, formData);
         } else {
             throw new Error("You need to log in or sign up!");
         }

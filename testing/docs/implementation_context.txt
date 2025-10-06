@@ -1,0 +1,72 @@
+Project Overview
+Purpose of the project
+The codebase prototypes an e-commerce experience for a beauty supply retailer, presenting curated products, category browsing, and account access in a modern storefront layout.
+
+Target users/audience
+Primary targets are enthusiastic retail shoppers who need convenient online access to hair and beauty inventory, salon owners, and beauty professionals.
+
+Current status (MVP, partial implementation, experimental, etc.)
+The app is a partial implementation focused on visual exploration; many flows (auth, cart, search) are still in exploratory or placeholder stages and rely on live Supabase data to function.
+
+Tech Stack
+Languages/frameworks/libraries
+Next.js 15 (App Router) with React 19, TypeScript, Tailwind CSS 4, Shadcn UI components (Radix primitives), and lucide-react icons form the UI layer.
+
+Databases or APIs used
+Supabase Postgres powers product and category data (`products`, `unique_categories_inventory`, category grouping views) and provides authentication via Supabase Auth; Supabase Storage hosts category imagery; a Postgres RPC `get_random_products` drives the homepage feature grid; Prisma schema files and SQL snapshots document desired relational structure; Lightspeed POS OAuth endpoints are noted for future integration but not yet wired.
+
+Hosting/deployment setup (if any)
+No deployment automation is present; the default Next/Vercel workflow is implied, and image loading is configured for a Supabase storage domain via `next.config.ts`.
+
+File/Folder Structure (high-level)
+- src/app: App Router routes including the landing page, shop listing, category detail views, product detail prototypes, auth server actions, and experimental test/login folders.
+- src/components: Reusable UI pieces grouped by domain (nav, category browsing, product cards, home CTA buttons, auth modals) plus Shadcn-derived primitives under `ui`.
+- src/lib: Supabase client/server helpers and shared utilities (`cn`) enabling data access in server and client contexts.
+- src/utils: Domain helpers such as category grouping heuristics, capitalization and list sanitizing utilities, and shared TypeScript models.
+- public: Placeholder SVG assets from the Next.js starter.
+- schema.prisma & init.sql: Canonical data model definitions for products, orders, carts, and related entities, mirroring Supabase/Postgres expectations.
+- postgres-database-shape.txt: Snapshot of existing Supabase relations, sequences, and views sourced from the connected database.
+- components.json, tailwind/postcss/ts configs, eslint.config.mjs: Tooling configuration for styling and linting.
+- old-testing: Legacy experimentation folder retained alongside the active `testing` app.
+
+Core Features Implemented
+What’s already working
+- Landing page hero, value proposition, and featured product grid rendered with Shadcn components and Supabase RPC-backed data.
+- Global navigation with sticky positioning, branded styling, and access to category flyout and auth modals.
+- Category aggregation via Supabase view, grouped into human-friendly super-categories by heuristic utility rules.
+- Category detail route that queries Supabase `products` by category and renders cards linking to product detail pages.
+- Product detail templates showing a consistent layout, modal CTA, and call-to-action buttons.
+
+How it works at a high level
+Server components call `createClient` from `@/lib/supabase/server` to fetch data during render, while client components rely on the browser Supabase client for dynamic features (storage image URLs, future interactivity). UI building blocks lean on Radix primitives styled with Tailwind and Shadcn conventions.
+
+Partially Implemented / Work-in-Progress Features
+What exists but isn’t finished
+- Authentication: Login and signup modals invoke Supabase server actions but session detection, error handling, and sign-out are incomplete.
+- User session controller: Intended to show logged-in state but the effect never sets session data, so authenticated UI never appears.
+- Product search bar: UI shell exists without query handling or keyboard submission logic.
+- Product detail pages: One route uses hard-coded mock data, the dynamic route fetches from Supabase but lacks loading/error states and image content.
+- Category imagery: Category cards request Supabase Storage assets but do not guard against missing files or fallbacks.
+- Lightspeed POS integration: Commented OAuth flow in `auth/page.tsx` indicates planned inventory syncing but no executable code yet.
+
+What’s planned next in the current code
+TODO comments call for adding Supabase sign-out, wiring keyboard submission on search, adjusting SignUp imports, and implementing the Lightspeed authorization handshake.
+
+Known Issues / Limitations
+Bugs or errors currently in the code
+- `UserStatusController` defines `getSession` but never invokes it, so `session` state is never populated and `setSession/setError` run with stale closures.
+- `LoginModal` and `SignUpModal` rely on server actions whose helper `handleAuth` passes the wrong arguments to `login`/`signup`, leading to runtime errors if used.
+- Category links convert names to lowercase while the Supabase query matches exact `category`, causing 404-style empty lists for case-sensitive data.
+- Dynamic product page destructures `params` with React’s experimental `use`, which is unsupported in production and omits dependency tracking.
+- `CategoryLink` fetches Supabase image URLs on the client without loading states or error handling, so missing assets throw layout warnings.
+- The login button text renders an extra trailing "n" due to a typo, hinting at unfinished polish.
+
+Design or architectural constraints
+The UI assumes Supabase environment variables and storage buckets exist at runtime; without them, core pages fail to load data. No state management handles cart or session persistence yet, and there is no testing or linting coverage beyond defaults.
+
+Future To-Do / Feature Wishlist
+Features that haven’t been started but are intended
+- Implement full authentication lifecycle (signup confirmation, login, session refresh, and sign-out) tied to Supabase and update navigation state accordingly.
+- Add product search and filtering backed by Supabase queries or RPCs, including debounced input and results pages.
+- Build cart, checkout, and order history flows leveraging the existing Prisma schema models.
+- Replace placeholder product imagery with Supabase Storage assets and add responsive fallbacks.
