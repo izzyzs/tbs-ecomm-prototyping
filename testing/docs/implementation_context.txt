@@ -1,9 +1,9 @@
 Project Overview
 Purpose of the project
-The codebase prototypes an e-commerce experience for a beauty supply retailer, presenting curated products, category browsing, and account access in a modern storefront layout.
+The codebase prototypes an online beauty supply storefront that serves everyday consumers while extending special perks for licensed professionals, combining curated merchandising, category exploration, and account access in a modern layout.
 
 Target users/audience
-Primary targets are enthusiastic retail shoppers who need convenient online access to hair and beauty inventory, salon owners, and beauty professionals.
+Primary targets are everyday beauty shoppers looking for reliable products online, with secondary focus on salon owners and professionals who receive enhanced benefits.
 
 Current status (MVP, partial implementation, experimental, etc.)
 The app is a partial implementation focused on visual exploration; many flows (auth, cart, search) are still in exploratory or placeholder stages and rely on live Supabase data to function.
@@ -34,8 +34,8 @@ What’s already working
 - Landing page hero, value proposition, and featured product grid rendered with Shadcn components and Supabase RPC-backed data.
 - Global navigation with sticky positioning, branded styling, and access to category flyout and auth modals.
 - Category aggregation via Supabase view, grouped into human-friendly super-categories by heuristic utility rules.
-- Category detail route that queries Supabase `products` by category and renders cards linking to product detail pages.
-- Product detail templates showing a consistent layout, modal CTA, and call-to-action buttons.
+- Category detail route that performs case-insensitive matching against Supabase `inventory`, displays graceful empty states, and links into product detail pages.
+- Product detail flow now delegates to a reusable `ProductView` client component, surfaces not-found handling, and renders loading skeletons and error boundaries for resilient UX.
 
 How it works at a high level
 Server components call `createClient` from `@/lib/supabase/server` to fetch data during render, while client components rely on the browser Supabase client for dynamic features (storage image URLs, future interactivity). UI building blocks lean on Radix primitives styled with Tailwind and Shadcn conventions.
@@ -45,7 +45,7 @@ What exists but isn’t finished
 - Authentication: Login and signup modals invoke Supabase server actions but session detection, error handling, and sign-out are incomplete.
 - User session controller: Intended to show logged-in state but the effect never sets session data, so authenticated UI never appears.
 - Product search bar: UI shell exists without query handling or keyboard submission logic.
-- Product detail pages: One route uses hard-coded mock data, the dynamic route fetches from Supabase but lacks loading/error states and image content.
+- Product detail pages: Inventory data surfaces but relies on placeholder imagery and needs richer content (gallery, specifications, related items).
 - Category imagery: Category cards request Supabase Storage assets but do not guard against missing files or fallbacks.
 - Lightspeed POS integration: Commented OAuth flow in `auth/page.tsx` indicates planned inventory syncing but no executable code yet.
 
@@ -56,7 +56,7 @@ Known Issues / Limitations
 Bugs or errors currently in the code
 - `UserStatusController` defines `getSession` but never invokes it, so `session` state is never populated and `setSession/setError` run with stale closures.
 - `LoginModal` and `SignUpModal` rely on server actions whose helper `handleAuth` passes the wrong arguments to `login`/`signup`, leading to runtime errors if used.
-- Category links convert names to lowercase while the Supabase query matches exact `category`, causing 404-style empty lists for case-sensitive data.
+- `CategoryLink` still lowercases link paths, which can drift from the ILIKE-based fetch and yield empty results for certain edge cases.
 - Dynamic product page destructures `params` with React’s experimental `use`, which is unsupported in production and omits dependency tracking.
 - `CategoryLink` fetches Supabase image URLs on the client without loading states or error handling, so missing assets throw layout warnings.
 - The login button text renders an extra trailing "n" due to a typo, hinting at unfinished polish.

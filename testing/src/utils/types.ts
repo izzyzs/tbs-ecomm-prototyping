@@ -14,7 +14,7 @@ export type SubmissionResponse = {
 
 export interface Product {
     id: number;
-    name: string;
+    item: string;
     description: string;
     barcode: string;
     category: string;
@@ -24,7 +24,9 @@ export interface Product {
     updated_at: string;
 }
 
-export type ProductSubset = Pick<Product, "id" | "name" | "price">;
+export interface InventorySKU {}
+
+export type ProductSubset = Pick<Product, "id" | "item" | "price">;
 
 export interface Order {
     id: number;

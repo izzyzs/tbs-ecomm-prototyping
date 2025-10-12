@@ -30,7 +30,9 @@ export default function ProductCategories() {
     return (
         <div className="relative hidden sm:block">
             <div className="group inline-block">
-                <button className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">Shop</button>
+                <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
+                    Shop
+                </Link>
                 <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 hidden group-hover:block bg-white shadow-lg border rounded-md mt-0 p-4 min-w-[640px] max-w-[90vw]">
                     <div className="grid grid-cols-2 gap-6">
                         {CATEGORY_GROUP_RULES.map((rule) => {

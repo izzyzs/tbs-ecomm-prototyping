@@ -21,7 +21,7 @@ const HomePage = async () => {
             <section className="relative bg-gradient-to-r from-pink-100 via-rose-50 to-orange-50 py-20 px-6 text-center">
                 <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Discover Your Beauty Essentials</h1>
                 <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 mb-6">
-                    Explore our curated selection of professional‑grade hair and skin products tailored for salons and beauty enthusiasts.
+                    Explore our curated selection of professional-grade hair and skin products tailored for salons and beauty enthusiasts.
                 </p>
                 <ShopNowButton />
             </section>
@@ -53,7 +53,7 @@ const HomePage = async () => {
                 <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Featured Products</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                     {products?.map((product: Product, idx: number) => (
-                        <ProductCard id={product.id} name={product.name} price={product.price} key={idx} />
+                        <ProductCard id={product.id} item={product.item} price={product.price} key={idx} />
                     ))}
                 </div>
             </section>

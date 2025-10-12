@@ -30,10 +30,10 @@ export default function CategoryLink({ categoryName }: CategoryLinkProps) {
         // <div className={"text-center sm:py-10 hover:sm:py-20 hover:transition-all relative hover:decoration-solid"} onClick={toggleCollapsible}>
         <Link className={"text-center sm:py-10 hover:sm:py-20 hover:transition-all relative hover:decoration-solid"} href={`/shop/${categoryName.toLowerCase()}`}>
             <div className="py-10 hover:py-20 hover:h-[50vh]" />
-            <Image style={{ zIndex: 0 }} fill src={backgroundUrl} alt={`image of ${categoryName}`} className="object-cover object-center border-2xl" />
+            <Image style={{ zIndex: 0 }} fill src={backgroundUrl} alt="" className="object-cover object-center md:border-2xl" />
             <div className="absolute inset-0 bg-black/50 sm:bg-none sm:hover:bg-pink-900/50 hover:transition-all" />
 
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white  text-center drop-shadow-lg font-vbold text-2xl sm:text-3xl pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white  text-center drop-shadow-lg font-vbold text-xl sm:text-3xl pointer-events-none">
                 {`${categoryName}`}
             </div>
             {/* </div> */}
