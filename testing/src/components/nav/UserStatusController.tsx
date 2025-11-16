@@ -1,16 +1,41 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import LoginModal from "@/components/nav/LoginModal";
 import { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import SignUpModal from "@/components/nav/SignUpModal";
+import { Loader } from "lucide-react";
+
+// TODO: 🔒 AUTH REFACTOR — Move session retrieval to the SERVER
+// -------------------------------------------------------------
+// 1️⃣  Fetch the Supabase session on the server side (e.g., in NavBar.tsx):
+//     const supabase = await createClient();
+//     const { data: { session } } = await supabase.auth.getSession();
+//
+// 2️⃣  Pass that session down to the UserStatusController as a prop:
+//     <UserStatusController initialSession={session} />
+//
+// 3️⃣  Update UserStatusController to accept { initialSession }:
+//     export default function UserStatusController({ initialSession }: { initialSession: Session | null }) {
+//         const [session, setSession] = useState<Session | null>(initialSession);
+//         ...
+//     }
+//
+// 4️⃣  Keep client-side sync using supabase.auth.onAuthStateChange() — this will
+//     update the state after sign-in / sign-out events.
+//
+// 5️⃣  Result: No flicker, consistent server/client auth state, cleaner UX.
 
 export default function UserStatusController() {
     const supabase = useMemo(() => createClient(), []);
+    const router = useRouter();
+
     const [session, setSession] = useState<Session | null>(null);
     const [authError, setAuthError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
     const [loginIsOpen, setLoginIsOpen] = useState(false);
     const [signUpIsOpen, setSignUpIsOpen] = useState(false);
     const [isSigningOut, setIsSigningOut] = useState(false);
@@ -19,10 +44,15 @@ export default function UserStatusController() {
         let isMounted = true;
 
         const fetchSession = async () => {
-            const { data, error } = await supabase.auth.getSession();
-            if (!isMounted) return;
-            setSession(data.session ?? null);
-            setAuthError(error?.message ?? null);
+            setLoading(true);
+            try {
+                const { data, error } = await supabase.auth.getSession();
+                if (!isMounted) return;
+                setSession(data.session ?? null);
+                setAuthError(error ? error.message : null);
+            } finally {
+                if (isMounted) setLoading(false);
+            }
         };
 
         fetchSession();
@@ -30,24 +60,34 @@ export default function UserStatusController() {
         const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
             setSession(nextSession ?? null);
             setAuthError(null);
+            router.refresh();
         });
 
         return () => {
             isMounted = false;
             authListener?.subscription.unsubscribe();
         };
-    }, [supabase]);
+    }, [supabase, router]);
 
     const handleSignOut = useCallback(async () => {
         setIsSigningOut(true);
-        const { error } = await supabase.auth.signOut();
-        setIsSigningOut(false);
-        if (error) {
-            setAuthError(error.message);
-            return;
+        try {
+            const { error } = await supabase.auth.signOut();
+            setIsSigningOut(false);
+            if (error) {
+                setAuthError(error.message);
+                return;
+            }
+            setSession(null);
+            router.refresh();
+        } finally {
+            setIsSigningOut(false);
         }
-        setSession(null);
-    }, [supabase]);
+    }, [supabase, router]);
+
+    if (loading) {
+        return <Loader className="animate-spin" />;
+    }
 
     if (session) {
         return (
@@ -56,7 +96,11 @@ export default function UserStatusController() {
                 <Button variant="outline" size="sm" onClick={handleSignOut} disabled={isSigningOut}>
                     {isSigningOut ? "Signing out..." : "Sign out"}
                 </Button>
-                {authError && <p className="text-xs text-red-600" role="alert">{authError}</p>}
+                {authError && (
+                    <p className="text-xs text-red-600" role="alert">
+                        {authError}
+                    </p>
+                )}
             </div>
         );
     }
@@ -65,11 +109,22 @@ export default function UserStatusController() {
         <>
             <LoginModal
                 open={loginIsOpen}
-                setOpen={setLoginIsOpen}
+                setOpen={(b) => {
+                    if (!b) setAuthError(null);
+                    setLoginIsOpen(b);
+                }}
                 openSignUp={setSignUpIsOpen}
                 externalError={authError}
             />
-            <SignUpModal open={signUpIsOpen} setOpen={setSignUpIsOpen} openLogin={setLoginIsOpen} externalError={authError} />
+            <SignUpModal
+                open={signUpIsOpen}
+                setOpen={(b) => {
+                    if (!b) setAuthError(null);
+                    setSignUpIsOpen(b);
+                }}
+                openLogin={setLoginIsOpen}
+                externalError={authError}
+            />
         </>
     );
 }

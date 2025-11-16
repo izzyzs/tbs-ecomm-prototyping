@@ -1,8 +1,5 @@
-// "use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { Briefcase, Users, Star } from "lucide-react";
-import NavBar from "@/components/nav/NavBar";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/product/ProductCard";
 import { Product } from "@/utils/types";
@@ -19,31 +16,31 @@ const HomePage = async () => {
         <>
             {/* Hero section highlighting the store's mission */}
             <section className="relative bg-gradient-to-r from-pink-100 via-rose-50 to-orange-50 py-20 px-6 text-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Discover Your Beauty Essentials</h1>
+                <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Beauty Favorites, Delivered When You Need Them</h1>
                 <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 mb-6">
-                    Explore our curated selection of professional-grade hair and skin products tailored for salons and beauty enthusiasts.
+                    Stock up on hair, skin, and wellness staples for every routine—with same-day and next-day delivery that keeps your glow on schedule.
                 </p>
                 <ShopNowButton />
             </section>
 
             {/* Professional benefits section */}
             <section className="py-16 px-6 bg-white">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Benefits for Professionals</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Why Shop With TBS Beauty Supply</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
                     <div className="flex flex-col items-center p-6 border rounded-lg">
                         <Briefcase className="h-10 w-10 text-pink-500 mb-3" />
-                        <h3 className="font-semibold mb-1">Wholesale Pricing</h3>
-                        <p className="text-sm text-center text-gray-600">Access exclusive bulk pricing on top brands.</p>
+                        <h3 className="font-semibold mb-1">Fast Local Delivery</h3>
+                        <p className="text-sm text-center text-gray-600">Same-day and next-day options keep your shelves stocked without the wait.</p>
                     </div>
                     <div className="flex flex-col items-center p-6 border rounded-lg">
                         <Users className="h-10 w-10 text-pink-500 mb-3" />
-                        <h3 className="font-semibold mb-1">Dedicated Support</h3>
-                        <p className="text-sm text-center text-gray-600">Personalized service for salon owners and stylists.</p>
+                        <h3 className="font-semibold mb-1">Trusted Brands</h3>
+                        <p className="text-sm text-center text-gray-600">Find everyday essentials and pro-grade heroes in one convenient destination.</p>
                     </div>
                     <div className="flex flex-col items-center p-6 border rounded-lg">
                         <Star className="h-10 w-10 text-pink-500 mb-3" />
-                        <h3 className="font-semibold mb-1">Rewards Program</h3>
-                        <p className="text-sm text-center text-gray-600">Earn points on every purchase for future discounts.</p>
+                        <h3 className="font-semibold mb-1">Perks for Pros</h3>
+                        <p className="text-sm text-center text-gray-600">Unlock wholesale pricing and exclusive rewards when your salon partners with us.</p>
                     </div>
                 </div>
             </section>

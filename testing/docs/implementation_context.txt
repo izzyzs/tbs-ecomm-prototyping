@@ -1,9 +1,9 @@
 Project Overview
 Purpose of the project
-The codebase prototypes an online beauty supply storefront that serves everyday consumers while extending special perks for licensed professionals, combining curated merchandising, category exploration, and account access in a modern layout.
+The codebase prototypes an online beauty supply storefront that prioritizes fast same-day and next-day delivery of everyday essentials while extending special perks for licensed professionals, combining curated merchandising, category exploration, and account access in a modern layout.
 
 Target users/audience
-Primary targets are everyday beauty shoppers looking for reliable products online, with secondary focus on salon owners and professionals who receive enhanced benefits.
+Primary targets are everyday beauty shoppers looking for reliable products with rapid delivery, with secondary focus on salon owners and professionals who receive enhanced benefits.
 
 Current status (MVP, partial implementation, experimental, etc.)
 The app is a partial implementation focused on visual exploration; many flows (auth, cart, search) are still in exploratory or placeholder stages and rely on live Supabase data to function.

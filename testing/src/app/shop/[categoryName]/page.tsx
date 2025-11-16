@@ -10,8 +10,8 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
     const supabase = await createClient();
     const { categoryName } = await params;
     const decodedName = decodeURIComponent(categoryName);
-    console.log("\nCategory name:", decodedName, "\n");
-    const { data: products, error } = (await supabase.from("inventory").select("id, item, price").ilike("category", decodedName)) as { data: ProductSubset[] | null; error: any };
+    // console.log("\nCategory name:", decodedName, "\n");
+    const { data: products, error } = (await supabase.from("deez").select("id, item, price").ilike("category", decodedName)) as { data: ProductSubset[] | null; error: any };
     if (!products || products.length < 1)
         return (
             <div className="min-h-[50vh] flex flex-col items-center justify-center text-center p-8">

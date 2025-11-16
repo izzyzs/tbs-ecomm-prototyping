@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { login } from "@/app/(auth)/actions";
 import { Loader2Icon } from "lucide-react";
 import { SubmissionResponse } from "@/utils/types";
-import SignUpButton from "@/components/buttons/SignUpButton";
+import SignUpButton from "@/components/nav/buttons/SignUpButton";
 
 type LoginModalProps = {
     open: boolean;
@@ -57,10 +57,12 @@ const LoginModal = ({ open, setOpen, openSignUp, externalError }: LoginModalProp
 
                         <Label className="text-sm text-muted-foreground">Haven't made an account?</Label>
                         <SignUpButton setSignUp={openSignUp} setLogin={setOpen} />
-                        {state && (
-                            <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>
+                        {state && <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>}
+                        {!state && externalError && (
+                            <Label className="text-sm text-red-600" role="alert">
+                                {externalError}
+                            </Label>
                         )}
-                        {!state && externalError && <Label className="text-sm text-red-600" role="alert">{externalError}</Label>}
                     </DialogFooter>
                 </Form>
             </DialogContent>

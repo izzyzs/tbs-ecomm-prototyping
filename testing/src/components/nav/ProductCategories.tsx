@@ -9,31 +9,35 @@ type CategoryRow = { category: string; subcategories?: any };
 
 export default function ProductCategories() {
     const [groups, setGroups] = React.useState<ReturnType<typeof groupCategories> | null>(null);
-
+    const [categories, setCategories] = React.useState([]);
     React.useEffect(() => {
         async function fetchCategories() {
-            const supabase = await createClient();
-            const { data, error } = (await supabase.from("categories_with_grouped_subcategories_from_inventory2").select("category, subcategories")) as {
-                data: CategoryRow[] | null;
-                error: any;
-            };
+            const supabase = createClient();
+            const { data: categories, error } = await supabase.rpc("distinct_categories");
+            // const { data, error } = (await supabase.from("categories_with_grouped_subcategories_from_inventory2").select("category, subcategories")) as {
+            // data: CategoryRow[] | null;
+            // error: any;
+            // };
             if (error) console.error(error);
-            const names = (data ?? []).map((r) => r.category).filter(Boolean);
-            setGroups(groupCategories(names));
+            // const names = (data ?? []).map((r) => r.category).filter(Boolean);
+            // setGroups(groupCategories(names));
+            setCategories(categories);
         }
         fetchCategories();
     }, []);
 
-    if (!groups) return null;
+    if (!categories) return null;
 
     // Render a single "Shop" trigger with a mega-menu showing grouped categories
     return (
         <div className="relative hidden sm:block">
             <div className="group inline-block">
-                <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
-                    Shop
-                </Link>
-                <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 hidden group-hover:block bg-white shadow-lg border rounded-md mt-0 p-4 min-w-[640px] max-w-[90vw]">
+                {categories.map((category, idx) => (
+                    <Link href={`/shop/${category}`} className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
+                        {category}
+                    </Link>
+                ))}
+                {/* <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 hidden group-hover:block bg-white shadow-lg border rounded-md mt-0 p-4 min-w-[640px] max-w-[90vw]">
                     <div className="grid grid-cols-2 gap-6">
                         {CATEGORY_GROUP_RULES.map((rule) => {
                             const items = groups[rule.key as keyof typeof groups];
@@ -54,7 +58,7 @@ export default function ProductCategories() {
                             );
                         })}
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

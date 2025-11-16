@@ -23,7 +23,7 @@ export default function Page({ productData }: ProductPageProps) {
 
     const product: Product = {
         id: 1,
-        name: "hey",
+        item: "hey",
         description: "Model Product",
         barcode: "000000001",
         category: "Category",

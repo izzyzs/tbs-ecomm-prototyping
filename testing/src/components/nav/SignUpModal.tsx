@@ -8,7 +8,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2Icon, Eye, EyeOff } from "lucide-react";
-import LoginButton from "@/components/buttons/LoginButton";
+import LoginButton from "@/components/nav/buttons/LoginButton";
 import { signup } from "@/app/(auth)/actions";
 
 type SignUpModalProps = {
@@ -83,10 +83,12 @@ const SignUpModal = ({ open, setOpen, openLogin, externalError }: SignUpModalPro
                         <div className="h-0 border-2 w-full border-slate-300" />
                         <Label className="text-sm text-muted-foreground">Already made an account?</Label>
                         <LoginButton setLogin={openLogin} setSignUp={setOpen} />
-                        {state && (
-                            <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>
+                        {state && <Label className={`text-sm ${state.isError ? "text-red-600" : "text-green-700"}`}>{state.msg}</Label>}
+                        {!state && externalError && (
+                            <Label className="text-sm text-red-600" role="alert">
+                                {externalError}
+                            </Label>
                         )}
-                        {!state && externalError && <Label className="text-sm text-red-600" role="alert">{externalError}</Label>}
                     </DialogFooter>
                 </Form>
             </DialogContent>
