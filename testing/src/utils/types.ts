@@ -154,7 +154,7 @@ export interface Cart {
 // database is solely CartContext.add()'s job
 export interface CartItem {
     id: number;
-    product_id: number;
+    productId: number;
     name: string;
     brand: string;
     price: number;

@@ -36,7 +36,11 @@ export interface CartContextType {
     orderTotal: () => number;
 
     // db reading selectors
-    retrieveCartItems: (cartId: number) => CartItem[];
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // retrieveCartItems: (cartId: number) => CartItem[]; UNCOMMENT THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -50,7 +54,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     async function ensureCart(userId: string): Promise<number> {
         if (cartIdRef.current) return cartIdRef.current;
 
-        const { data: cartId, error: ensureCartError } = await supabase.rpc("ensure_carts", { user_id: userId });
+        const { data: cartId, error: ensureCartError } = await supabase.rpc("ensure_cart", { user_id: userId });
 
         if (ensureCartError) {
             console.error("Ensure cart error");
@@ -66,7 +70,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         if (error) throw error;
 
         return {
-            product_id: data.id,
+            productId: data.id,
             name: data.item,
             brand: data.brand,
             price: data.price,
@@ -109,10 +113,13 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         
         Step 0) create cart storage in localStorage
         Then steps 1 and 2 mentioned above
+
+        DONE!
         */
         const cartItem = await getCartItem(productId);
         cartItem.quantity++;
-        setCartItems((prev) => ({ ...prev, [cartItem.id]: cartItem }));
+        const newCartItems = { ...cartItems, [cartItem.id]: cartItem };
+        setCartItems(newCartItems);
 
         if (userId) {
             if (!cartIdRef.current) cartIdRef.current = await ensureCart(userId);
@@ -123,55 +130,76 @@ export default function CartProvider({ children }: { children: React.ReactNode }
            added_at TIMESTAMP DEFAULT now()
            */
 
-            const { data, error } = await supabase
-                .from("test_cart_items")
-                .insert([{ cart_id: cartIdRef.current, product_id: cartItem.product_id, quantity: cartItem.quantity }])
-                .select();
+            const { data, error } = await supabase.rpc("add_cart_item", { p_cart_id: cartIdRef.current, p_product_id: cartItem.productId, p_quantity: cartItem.quantity });
             if (error) console.error(error);
             if (data) console.log(data); // TODO: remove debugging logging
             return;
         }
 
-        // TODO: (11/16/2025) handle user side persistence
+        // TODO: (on 11/16/2025) handle user side persistence
+
+        /** (Today's Date: 11/16/2025)
+         *
+         * This should be pretty simple tbh
+         *
+         * 1) figure how to access localStorage through Next, there's most
+         * likely going to be some api
+         * 2) and instead of doing the insert to supabase/postgres like
+         * above into an object, json structure, so that it's easy to interact with like the
+         * CartItemObj created above.
+         *
+         * things to look out for
+         * a. check for key pre-existence
+         * b. wrap json.parse in a try catch block, although rare, invalid json
+         * will cause that function to return null
+         *
+         * TODO/NOTE: this is only necessary for retrieving, as it should write valid json if no error
+         * has occurred up till this point, namely, the writing to localStorage.
+         *
+         * done!
+         */
+
+        const cartItemsAsString = JSON.stringify(newCartItems);
+        localStorage.setItem("cart", cartItemsAsString);
     }
 
-    function remove(id: number) {
-        // const i = this.cartItemObjects[id];
+    function remove(productId: number) {
+        // const i = this.cartItemObjects[productId];
         setCartItems((prev) => {
-            const { [id]: _, ...rest } = prev;
+            const { [productId]: _, ...rest } = prev;
             return rest;
         });
     }
 
-    function decrement(id: number) {
+    function decrement(productId: number) {
         setCartItems((prev) => {
-            const item = prev[id];
+            const item = prev[productId];
             if (!item) return prev;
 
             const updatedItem = { ...item, quantity: item.quantity - 1 };
 
             if (updatedItem.quantity <= 0) {
-                const { [id]: _, ...rest } = prev;
+                const { [productId]: _, ...rest } = prev;
                 return rest;
             }
 
-            return { ...prev, [id]: updatedItem };
+            return { ...prev, [productId]: updatedItem };
         });
     }
 
-    function increment(id: number) {
+    function increment(productId: number) {
         setCartItems((prev) => {
-            const item = prev[id];
+            const item = prev[productId];
             if (!item) {
                 return prev;
             }
 
             const updatedItem = { ...item, quantity: item.quantity + 1 };
-            return { ...prev, [id]: updatedItem };
+            return { ...prev, [productId]: updatedItem };
         });
     }
 
-    const getById = (id: number) => cartItems[id];
+    const getById = (productId: number) => cartItems[productId];
 
     const list = () => Object.values(cartItems);
 
