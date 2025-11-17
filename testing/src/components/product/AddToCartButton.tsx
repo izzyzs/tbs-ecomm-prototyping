@@ -5,13 +5,12 @@ import { useCart } from "@/context/CartContext";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
-const AddToCartButton = ({ id }: { id: number }) => {
-    const { user, userId: uId } = useAuth();
+const AddToCartButton = ({ productId }: { productId: number }) => {
+    const { userId } = useAuth();
     const cart = useCart();
 
     const handleClick = async () => {
-        if (!user) return;
-        await cart.add(id, uId);
+        await cart.add(productId, userId);
     };
 
     return <Button onClick={handleClick}>Add to Cart</Button>;

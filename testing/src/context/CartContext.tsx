@@ -19,9 +19,8 @@ export interface CartContextType {
     // Mutative functions
 
     add: (productId: number, userId: string | undefined) => Promise<void>;
-    remove: (productId: number) => void;
-    decrement: (productId: number) => void;
-    increment: (productId: number) => void;
+    remove: (productId: number, userId: string | undefined) => void;
+    decrement: (productId: number, userId: string | undefined) => void;
 
     // Read only selectors
 
@@ -36,11 +35,7 @@ export interface CartContextType {
     orderTotal: () => number;
 
     // db reading selectors
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // retrieveCartItems: (cartId: number) => CartItem[]; UNCOMMENT THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    retrieveCartItems: (cartId: number) => CartItem[];
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -57,7 +52,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         const { data: cartId, error: ensureCartError } = await supabase.rpc("ensure_cart", { user_id: userId });
 
         if (ensureCartError) {
-            console.error("Ensure cart error");
+            console.error("CartContext.ensureCart error");
             throw ensureCartError;
         }
 
@@ -66,14 +61,20 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     }
 
     const createCartItemFromDb = async (productId: number) => {
+        // TODO: REMOVE DEBUGGING LOGS BELOW
         const { data, error } = await supabase.from("inventory_11102025").select("id, item, brand, price, tax").eq("id", productId).limit(1).single();
-        if (error) throw error;
+        if (error) {
+            console.log("CartContext.createCartItemFromDb select cart item from inventory error");
+            throw error;
+        }
+
+        if (data) console.log("DATA RETURNED FOR createCartItemFromDb QUERY", data);
 
         return {
             productId: data.id,
             name: data.item,
             brand: data.brand,
-            price: data.price,
+            price: +data.price.replace("$", ""),
             quantity: 0,
         } as CartItem;
     };
@@ -83,121 +84,90 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     };
 
     const getCartItem = async (productId: number) => {
+        // TODO: REMOVE DEBUGGING LOGS BELOW
         if (productId in cartItems) {
             return cartItems[productId];
         }
+        console.log("getCartItem debugging");
+
         return await createCartItemFromDb(productId);
     };
 
     async function add(productId: number, userId: string | undefined) {
-        console.log("**************\nsrc/context/CartContext.tsx\n**************");
-
-        /*
-        came up with step -1
-        STEP -1) => cartItem is made first or retrieved from the state. then do the check for whether or not to add to db (for auth user) or to localStorage (for anon user)
-        
-        _Option 1:_ the user is logged in, but their cart's existence in db hasn't been verified: userId && !cartIdRef.current ==> ensure cart and set cartIdRef
-        
-        _Option 2_: the user is logged in, and cart definitely exists (cartIdRef is defined)
-        
-        From this point option 1 & 2 have the same path.
-        
-        Step 1)
-        a: add item to cartItemsState then increase qty in state
-        
-        Step 2)
-        update the db's cart quantity value to the local qty; NOT THE DELTA!
-        TODO: inventory might have to set a limit for purchase for product... 
-        
-        _Option 3_: the user isn't logged in.
-        
-        Step 0) create cart storage in localStorage
-        Then steps 1 and 2 mentioned above
-
-        DONE!
-        */
+        // TODO: REMOVE DEBUGGING LOGS BELOW
         const cartItem = await getCartItem(productId);
         cartItem.quantity++;
-        const newCartItems = { ...cartItems, [cartItem.id]: cartItem };
+        const newCartItems = { ...cartItems, [cartItem.productId]: cartItem };
         setCartItems(newCartItems);
 
         if (userId) {
             if (!cartIdRef.current) cartIdRef.current = await ensureCart(userId);
-            /*
-           cart_id BIGINT REFERENCES test_carts (id),
-           product_id BIGINT REFERENCES inventory_11102025 (id),
-           quantity INTEGER,
-           added_at TIMESTAMP DEFAULT now()
-           */
 
             const { data, error } = await supabase.rpc("add_cart_item", { p_cart_id: cartIdRef.current, p_product_id: cartItem.productId, p_quantity: cartItem.quantity });
-            if (error) console.error(error);
-            if (data) console.log(data); // TODO: remove debugging logging
+            if (error) {
+                console.error("CartContext.add error");
+                throw error;
+            }
+            // TODO: remove debugging logging
+            if (data) console.log("data added to postgres", data);
             return;
         }
-
-        // TODO: (on 11/16/2025) handle user side persistence
-
-        /** (Today's Date: 11/16/2025)
-         *
-         * This should be pretty simple tbh
-         *
-         * 1) figure how to access localStorage through Next, there's most
-         * likely going to be some api
-         * 2) and instead of doing the insert to supabase/postgres like
-         * above into an object, json structure, so that it's easy to interact with like the
-         * CartItemObj created above.
-         *
-         * things to look out for
-         * a. check for key pre-existence
-         * b. wrap json.parse in a try catch block, although rare, invalid json
-         * will cause that function to return null
-         *
-         * TODO/NOTE: this is only necessary for retrieving, as it should write valid json if no error
-         * has occurred up till this point, namely, the writing to localStorage.
-         *
-         * done!
-         */
-
         const cartItemsAsString = JSON.stringify(newCartItems);
         localStorage.setItem("cart", cartItemsAsString);
     }
 
-    function remove(productId: number) {
-        // const i = this.cartItemObjects[productId];
-        setCartItems((prev) => {
+    async function remove(productId: number, userId: string | undefined) {
+        // TODO: REMOVE DEBUGGING LOGS BELOW
+        const prev = cartItems;
+        const { [productId]: item, ...rest } = prev;
+        setCartItems(rest);
+        console.log("product removed from cartItems Object");
+        console.log(item);
+
+        if (userId) {
+            const { data, error } = await supabase.from("test_cart_items").delete().eq("cart_id", cartIdRef.current).eq("product_id", productId).select();
+            if (error) {
+                console.error("ERROR: CartContext.remove() supabase delete error");
+                console.error(error);
+                throw error;
+            }
+            console.log(`user removed this product:\nProduct id:\t${productId}\n${data}`);
+            return;
+        }
+
+        const newCartString = JSON.stringify(rest);
+        localStorage.setItem("cart", newCartString);
+    }
+
+    async function decrement(productId: number, userId: string | undefined) {
+        let updatedCart: CartItemObj;
+        const prev = cartItems;
+        const item = prev[productId];
+        if (!item) updatedCart = prev;
+
+        const updatedItem = { ...item, quantity: item.quantity - 1 };
+
+        if (updatedItem.quantity <= 0) {
             const { [productId]: _, ...rest } = prev;
             return rest;
-        });
+        }
+
+        updatedCart = { ...prev, [productId]: updatedItem };
+        setCartItems(updatedCart);
     }
 
-    function decrement(productId: number) {
-        setCartItems((prev) => {
-            const item = prev[productId];
-            if (!item) return prev;
+    // the CartProvider.add() handles this functionality, thus, it is no longer needed
+    // function increment(productId: number) {
+    //     setCartItems((prev) => {
+    //         const item = prev[productId];
+    //         if (!item) {
+    //             return prev;
+    //         }
 
-            const updatedItem = { ...item, quantity: item.quantity - 1 };
-
-            if (updatedItem.quantity <= 0) {
-                const { [productId]: _, ...rest } = prev;
-                return rest;
-            }
-
-            return { ...prev, [productId]: updatedItem };
-        });
-    }
-
-    function increment(productId: number) {
-        setCartItems((prev) => {
-            const item = prev[productId];
-            if (!item) {
-                return prev;
-            }
-
-            const updatedItem = { ...item, quantity: item.quantity + 1 };
-            return { ...prev, [productId]: updatedItem };
-        });
-    }
+    //         const updatedItem = { ...item, quantity: item.quantity + 1 };
+    //         return { ...prev, [productId]: updatedItem };
+    //     });
+    // }
 
     const getById = (productId: number) => cartItems[productId];
 
@@ -240,7 +210,6 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         add,
         remove,
         decrement,
-        increment,
         getById,
         list,
         count,

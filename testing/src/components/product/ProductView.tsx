@@ -25,7 +25,7 @@ export default function ProductView({ product }: ProductViewProps) {
                         </div>
                         <p className="text-gray-700">This product is loved by professionals for its quality and results. It fits perfectly into your daily beauty routine.</p>
                         <p className="text-xl font-semibold">{`${product.price}`}</p>
-                        <AddToCartButton id={product.id} />
+                        <AddToCartButton productId={product.id} />
                     </div>
                 </div>
             </section>

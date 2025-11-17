@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { Package, Truck, Trash2, Plus, Minus } from "lucide-react";
 import { formatCurrency } from "@/utils/helper-functions";
+import { useAuth } from "@/context/AuthContext";
 
 const CartSummary = () => {
-    const { list, increment, decrement, remove } = useCart();
+    const { list, add, decrement, remove } = useCart();
+    const { userId } = useAuth();
 
     return (
         <div className="bg-white border border-rose-100 rounded-xl shadow-sm">
@@ -51,7 +53,7 @@ const CartSummary = () => {
                                     <span>Qty {item.quantity}</span>
                                     <span>
                                         <Button
-                                            onClick={() => increment(item.id)}
+                                            onClick={() => add(item.id, userId)}
                                             variant="ghost"
                                             className="text-pink-400 hover:text-pink-400 border-[1px] border-transparent hover:border-pink-400 hover:bg-transparent"
                                         >
