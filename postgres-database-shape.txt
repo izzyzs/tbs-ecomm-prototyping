@@ -1,0 +1,34 @@
+                                                      List of relations
+   Schema   |           Name            |   Type   |     Owner      | Persistence | Access method |    Size    | Description 
+------------+---------------------------+----------+----------------+-------------+---------------+------------+-------------
+ extensions | pg_stat_statements        | view     | supabase_admin | permanent   |               | 0 bytes    | 
+ extensions | pg_stat_statements_info   | view     | supabase_admin | permanent   |               | 0 bytes    | 
+ public     | Address_id_seq            | sequence | prisma         | permanent   |               | 8192 bytes | 
+ public     | CartItem_id_seq           | sequence | prisma         | permanent   |               | 8192 bytes | 
+ public     | Employee_id_seq           | sequence | prisma         | permanent   |               | 8192 bytes | 
+ public     | Order_id_seq              | sequence | prisma         | permanent   |               | 8192 bytes | 
+ public     | _prisma_migrations        | table    | prisma         | permanent   | heap          | 16 kB      | 
+ public     | addresses                 | table    | prisma         | permanent   | heap          | 16 kB      | 
+ public     | buyer                     | table    | postgres       | permanent   | heap          | 16 kB      | 
+ public     | cart_items                | table    | prisma         | permanent   | heap          | 8192 bytes | 
+ public     | carts                     | table    | postgres       | permanent   | heap          | 0 bytes    | 
+ public     | categories                | table    | postgres       | permanent   | heap          | 64 kB      | 
+ public     | categories_id_seq         | sequence | postgres       | permanent   |               | 8192 bytes | 
+ public     | employees                 | table    | prisma         | permanent   | heap          | 16 kB      | 
+ public     | inventory_11102025        | table    | postgres       | permanent   | heap          | 17 MB      | 
+ public     | inventory_11102025_id_seq | sequence | postgres       | permanent   |               | 8192 bytes | 
+ public     | inventory_id_sequence     | sequence | postgres       | permanent   |               | 8192 bytes | 
+ public     | old_inventory_backup      | table    | postgres       | permanent   | heap          | 8744 kB    | 
+ public     | order_products            | table    | prisma         | permanent   | heap          | 8192 bytes | 
+ public     | orders                    | table    | prisma         | permanent   | heap          | 8192 bytes | 
+ public     | profiles                  | table    | postgres       | permanent   | heap          | 16 kB      | 
+ public     | raw_category_data_seq     | sequence | postgres       | permanent   |               | 8192 bytes | 
+ public     | sku_data                  | table    | postgres       | permanent   | heap          | 16 kB      | 
+ public     | staging_inventory         | table    | postgres       | permanent   | heap          | 8200 kB    | 
+ public     | staging_products          | table    | postgres       | permanent   | heap          | 8192 bytes | 
+ public     | test_cart_items           | table    | postgres       | permanent   | heap          | 40 kB      | 
+ public     | test_cart_items_id_seq    | sequence | postgres       | permanent   |               | 8192 bytes | 
+ public     | test_carts                | table    | postgres       | permanent   | heap          | 40 kB      | 
+ public     | test_carts_id_seq         | sequence | postgres       | permanent   |               | 8192 bytes | 
+(29 rows)
+
