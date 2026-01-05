@@ -1,11 +1,13 @@
 "use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import { useCart } from "@/context/CartContext";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
-const AddToCartButton = ({ productId }: { productId: number }) => {
+type AddToCartButtonProps = { productId: number } & React.ComponentProps<typeof Button>;
+
+const AddToCartButton = ({ productId, ...props }: AddToCartButtonProps) => {
     const { userId } = useAuth();
     const cart = useCart();
 
@@ -13,7 +15,11 @@ const AddToCartButton = ({ productId }: { productId: number }) => {
         await cart.add(productId, userId);
     };
 
-    return <Button onClick={handleClick}>Add to Cart</Button>;
+    return (
+        <Button {...props} onClick={handleClick}>
+            Add to Cart
+        </Button>
+    );
 };
 
 export default AddToCartButton;

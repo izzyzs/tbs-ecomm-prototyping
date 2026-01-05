@@ -2,7 +2,7 @@
 import React from "react";
 
 import Form from "next/form";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

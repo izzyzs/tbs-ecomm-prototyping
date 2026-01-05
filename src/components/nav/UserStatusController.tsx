@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import LoginModal from "@/components/nav/LoginModal";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import SignUpModal from "@/components/nav/SignUpModal";
 import { Loader } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";

@@ -1,25 +1,25 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { Deez, SearchResponse } from "@/utils/types";
+import { InventorySKU, SearchResponse } from "@/utils/types";
 
 export const searchProducts = async (query: string | null): Promise<SearchResponse> => {
     const supabase = await createClient();
 
     if (query === "") {
-        return { deez: [], msg: "Oops! You're Search Is Empty, Try Again!", isError: true };
+        return { inventory: [], msg: "Oops! You're Search Is Empty, Try Again!", isError: true };
     }
 
-    const { data, error } = await supabase.rpc("search_products_deez", { query });
+    const { data, error } = await supabase.rpc("search_products", { query });
 
     if (error) {
-        return { deez: [], msg: "Error: " + error.message, isError: true };
+        return { inventory: [], msg: "Error: " + error.message, isError: true };
     }
     if (data.length == 0) {
-        return { deez: [], msg: "No Results. Check Your Spelling? Or We Might Not Carry What Your Looking For, Check Back Again Soon!", isError: true };
+        return { inventory: [], msg: "No Results. Check Your Spelling? Or We Might Not Carry What Your Looking For, Check Back Again Soon!", isError: true };
     }
 
-    return { deez: data, msg: "Successful Search!", isError: false };
+    return { inventory: data, msg: "Successful Search!", isError: false };
 };
 
 /* IF DECIDING ON NEXTJS/REACT HANDLING OF SEARCH HANDLING:

@@ -2,7 +2,7 @@
 import React from "react";
 import { useCart } from "@/context/CartContext";
 import { formatCurrency } from "@/utils/helper-functions";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import { Truck } from "lucide-react";
 
 const OrderOverview = () => {

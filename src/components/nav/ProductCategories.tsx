@@ -4,16 +4,20 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { capitalize } from "@/utils/capitalize";
 import { CATEGORY_GROUP_RULES, groupCategories } from "@/utils/category-groups";
+import { PostgrestError } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
-type CategoryRow = { category: string; subcategories?: any };
+type CategoryRow = { id: number; name: string; parent_id: number; depth: number; slug: string; path: string; children: CategoryRow[] };
 
 export default function ProductCategories() {
     // const [groups, setGroups] = React.useState<ReturnType<typeof groupCategories> | null>(null);
-    const [categories, setCategories] = React.useState([]);
+    const [categories, setCategories] = React.useState<CategoryRow[]>([]);
     React.useEffect(() => {
         async function fetchCategories() {
             const supabase = createClient();
-            const { data: categories, error } = await supabase.rpc("distinct_categories");
+            // const { data, error } = (await supabase.rpc("distinct_categories")) as unknown as { data: { name: string; path: string }[]; error: PostgrestError };
+            const { data, error } = (await supabase.rpc("get_category_tree")) as unknown as { data: CategoryRow[]; error: PostgrestError };
+
             // const { data, error } = (await supabase.from("categories_with_grouped_subcategories_from_inventory2").select("category, subcategories")) as {
             // data: CategoryRow[] | null;
             // error: any;
@@ -21,7 +25,7 @@ export default function ProductCategories() {
             if (error) console.error(error);
             // const names = (data ?? []).map((r) => r.category).filter(Boolean);
             // setGroups(groupCategories(names));
-            setCategories(categories);
+            setCategories(data);
         }
         fetchCategories();
     }, []);
@@ -33,8 +37,8 @@ export default function ProductCategories() {
         <div className="relative hidden sm:block">
             <div className="group inline-block">
                 {categories.map((category, idx) => (
-                    <Link key={idx} href={`/shop/${category}`} className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
-                        {category}
+                    <Link key={idx} href={`/shop/${category.path}`} className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
+                        {category.name.replace(/-/g, " ")}
                     </Link>
                 ))}
                 {/* <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 hidden group-hover:block bg-white shadow-lg border rounded-md mt-0 p-4 min-w-[640px] max-w-[90vw]">

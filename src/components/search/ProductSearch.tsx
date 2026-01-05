@@ -2,7 +2,7 @@
 import React, { useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import Form from "next/form";
@@ -11,7 +11,6 @@ import { SearchResponse } from "@/utils/types";
 
 // { searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 export default function ProductSearch({ search, setSearch }: { search?: boolean; setSearch?: React.Dispatch<React.SetStateAction<boolean>> }) {
-    // const [state, submitForm, isPending] = useActionState<SearchResponse | null, FormData>(searchProducts, null);
     if (!setSearch) {
         return (
             <div className="flex w-full py-6 px-5 sm:max-w-md items-center gap-2 sticky top-0 bg-white sm:mx-auto">
@@ -74,12 +73,12 @@ export default function ProductSearch({ search, setSearch }: { search?: boolean;
                             setSearch((prev) => !prev);
                         }}
                     >
-                        {search ? "Show Categories" : query === "" || state.deez.length == 0 ? "" : "Show Results"}
+                        {search ? "Show Categories" : query === "" || state.inventory.length == 0 ? "" : "Show Results"}
                     </Button>
                 ) : (
                     <></>
                 )}
-                {state ? <p className="text-nowrap">{state.deez.length.toString() + " " + (state.deez.length != 1 ? `Results` : `Result`)}</p> : <></>}
+                {state ? <p className="text-nowrap">{state.inventory.length.toString() + " " + (state.inventory.length != 1 ? `Results` : `Result`)}</p> : <></>}
             </div>
             <div className="flex flex-col p-8 sm:px-24">
                 {state
@@ -90,12 +89,12 @@ export default function ProductSearch({ search, setSearch }: { search?: boolean;
                               return <p className="text-red-600">{msg}</p>;
                           })(state.msg)
                         : showResults &&
-                          state.deez.map((item, idx) => {
+                          state.inventory.map((sku, idx) => {
                               return (
                                   <div className="mx-auto w-[100%] border-b-2 border-pink-300 flex">
                                       {/* <div className="bg-amber-200 w-[20px] h-[20px]"> </div> */}
-                                      <Link href={`/product/${item.id}`} className="my-2 py-4 w-[100%] hover:text-pink-300">
-                                          <p>{item.item}</p>
+                                      <Link href={`/product/${sku.id}`} className="my-2 py-4 w-[100%] hover:text-pink-300">
+                                          {sku.brand ? <p>brand{`${sku.brand} ${sku.item}`}</p> : <p>{sku.item}</p>}
                                       </Link>
                                   </div>
                               );
