@@ -6,10 +6,11 @@ import { User } from "@supabase/supabase-js";
 import { Session } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Credentials, SubmissionResponse } from "@/utils/types";
+import { UserId } from "@/domain/identity";
 
 export interface AuthContextType {
     user: User | undefined;
-    userId: string | undefined;
+    userId: UserId | undefined;
     authLoading: boolean;
     isSigningOut: boolean;
     authError: string | null;
@@ -59,7 +60,16 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
             setSession(nextSession ?? null);
-            console.log("event: ", _event, "\nnextSession in AUTH PROVIDER: ", nextSession);
+            if (nextSession) {
+                const {
+                    access_token,
+                    user: { email },
+                    ...rest
+                } = nextSession;
+                console.log("DEBUG::event: ", _event, `\n User of nextSession in AuthContext.tsx: ${email}`);
+            } else {
+                console.log("DEBUG::event: ", _event, "\nnextSession in AUTH PROVIDER: ", nextSession);
+            }
             setUser(nextSession?.user);
             setAuthError(null);
             router.refresh();
@@ -151,7 +161,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         () => ({
             session,
             user,
-            userId: user?.id,
+            userId: user && new UserId(user.id),
             authLoading: loading,
             authError,
             isSigningOut,

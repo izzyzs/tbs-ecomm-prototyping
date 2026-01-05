@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 
 type LoginButtonProps = { setLogin: (b: boolean) => void; setSignUp: (b: boolean) => void };
 

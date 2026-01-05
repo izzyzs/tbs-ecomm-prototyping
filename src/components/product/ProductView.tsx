@@ -1,6 +1,6 @@
 import { Product } from "@/utils/types";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

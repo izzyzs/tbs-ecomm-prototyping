@@ -1,8 +1,16 @@
 "use client";
 import { createContext, useRef, useContext, useState, useEffect } from "react";
-import { Cart, CartItem } from "@/utils/types";
+import { Cart as OldCart, CartItemState, SubmissionResponse } from "@/utils/types";
+import { Cart } from "@/domain/cart/cart";
+import { CartItem, CartItemDraft } from "@/domain/cart/cart-item.domain";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+
+import { CartId, CartOwner, ProductId, UserId } from "@/domain/identity";
+import GetCartItem from "@/usecases/cart/GetCartItem";
+import { SupabaseCartRepository } from "@/infrastructure/SupabaseCartRepository";
+import { LocalStorageCartRepository } from "@/infrastructure/LocalStorageCartRepository";
+import CartMapper from "@/interface-adapters/mappers/cart-item.mapper";
 
 // number represents the item's productId for retrieval by productId
 type CartItemObj = Record<number, CartItem>;
@@ -19,7 +27,8 @@ export interface CartContextType {
     // Read only selectors
 
     getById: (productId: number) => CartItem | undefined;
-    list: () => CartItem[]; // TODO: reflect on whether or not this is needed; most likely yes.
+    // list: () => CartItem[]; // TODO: reflect on whether or not this is needed; most likely yes.
+    list: CartItem[]; // TODO: reflect on whether or not this is needed; most likely yes.
     count: () => number;
     subtotal: () => number;
     qualifiesForFreeShipping: () => boolean;
@@ -33,9 +42,14 @@ const CartContext = createContext<CartContextType | null>(null);
 
 export default function CartProvider({ children }: { children: React.ReactNode }) {
     // The cart's information is stored in the following object
-    const [cartItems, setCartItems] = useState<CartItemObj>({});
+    const [cartItems, setCartItems] = useState<CartItemState[]>([]);
     const { userId, authLoading } = useAuth();
     const previousUserIdRef = useRef(userId);
+    const cartIdRef = useRef<CartId | null>(null);
+    const supabase = createClient();
+
+    const supabaseCartRepository = new SupabaseCartRepository(supabase);
+    const localStorageCartRepository = new LocalStorageCartRepository();
 
     let num = 0;
     useEffect(() => {
@@ -49,11 +63,12 @@ export default function CartProvider({ children }: { children: React.ReactNode }
                     previousUserIdRef.current = userId;
                 }
 
-                const dbCart = await retrieveCartItems(userId);
-                setCartItems(dbCart);
+                const dbCart = await supabaseCartRepository.retrieveCartItems(userId);
+                const dbState = dbCart.map((item) => CartMapper.toStateFromDomain(item));
+                setCartItems(dbState);
             } else {
                 if (previousUserIdRef.current) {
-                    setCartItems({});
+                    setCartItems([]);
                     previousUserIdRef.current = userId;
                 }
             }
@@ -61,47 +76,20 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         initCartAfterLogin();
     }, [userId]);
 
-    const retrieveCartItems = async (userId: string): Promise<CartItemObj> => {
-        console.log("retrieveCartItems");
-        const { data, error } = await supabase.rpc("retrieve_cart_items_to_front", { p_user_id: userId });
-        if (error) {
-            console.error("retrieveCartItems error");
-            console.error(error);
-        }
-        if (!data) {
-            return {} as CartItemObj;
-        }
-        console.log("RETRIEVE CART ITEMS DATA", data);
-        return data;
-    };
-
-    const syncLocalCartWithDB = async (userId: string) => {
-        const cartId = await ensureCart(userId);
+    const syncLocalCartWithDB = async (userId: UserId) => {
+        const cartId = await retrieveCartId(userId);
         const localCart = localStorage.getItem("cart");
         if (!localCart) return;
 
         const localCartArrayString = JSON.stringify(Object.values(JSON.parse(localCart)));
-        const { data, error } = await supabase.rpc("sync_local_cart_to_db", { p_cart_id: cartId, p_local_cart: localCartArrayString });
-        if (error) {
-            console.error("CartProvider.syncLocalCartWithDB() error");
-            console.error(error);
-        }
+        supabaseCartRepository.syncLocalCartWithDB(cartId, localCartArrayString);
         localStorage.setItem("cart", "");
     };
 
-    const cartIdRef = useRef<number | null>(null);
-
-    const supabase = createClient();
-
-    async function ensureCart(userId: string): Promise<number> {
+    async function retrieveCartId(userId: UserId): Promise<CartId> {
         if (cartIdRef.current) return cartIdRef.current;
 
-        const { data: cartId, error: ensureCartError } = await supabase.rpc("ensure_cart", { user_id: userId });
-
-        if (ensureCartError) {
-            console.error("CartContext.ensureCart error");
-            throw ensureCartError;
-        }
+        const cartId = await supabaseCartRepository.ensureCart(userId);
 
         cartIdRef.current = cartId;
         return cartId;
@@ -109,7 +97,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
     const createCartItemFromDb = async (productId: number) => {
         // TODO: REMOVE DEBUGGING LOGS BELOW
-        const { data, error } = await supabase.from("inventory_11102025").select("id, item, brand, price, tax").eq("id", productId).limit(1).single();
+        const { data, error } = await supabase.from("inventory").select("id, item, brand, price, tax").eq("id", productId).limit(1).single();
         if (error) {
             console.log("CartContext.createCartItemFromDb select cart item from inventory error");
             throw error;
@@ -123,7 +111,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             brand: data.brand,
             price: +data.price.replace("$", ""),
             quantity: 0,
-        } as CartItem;
+        } as CartItemState;
     };
 
     const getCartItem = async (productId: number) => {
@@ -133,28 +121,42 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         }
         console.log("getCartItem debugging");
 
-        return await createCartItemFromDb(productId);
+        const item = await supabaseCartRepository.createCartItemDraft(new ProductId(productId));
+        return item;
     };
 
-    async function add(productId: number, userId: string | undefined) {
+    async function add(productId: ProductId, userIdString?: string): SubmissionResponse {
         // TODO: REMOVE DEBUGGING LOGS BELOW
-        const cartItem = await getCartItem(productId);
-        const newCartItem = { ...cartItem, quantity: cartItem.quantity + 1 };
-        const newCartItems = { ...cartItems, [newCartItem.productId]: newCartItem };
-        setCartItems(newCartItems);
-
-        if (userId) {
-            if (!cartIdRef.current) cartIdRef.current = await ensureCart(userId);
-
-            const { data, error } = await supabase.rpc("add_cart_item", { p_cart_id: cartIdRef.current, p_product_id: newCartItem.productId, p_quantity: newCartItem.quantity });
-            if (error) {
-                console.error("CartContext.add error");
-                throw error;
-            }
-            // TODO: remove debugging logging
-            if (data) console.log("data added to postgres", data);
-            return;
+        const getCartItem = new GetCartItem(supabaseCartRepository);
+        let cartItemDraft: CartItemDraft;
+        try {
+            cartItemDraft = await getCartItem.execute(productId);
+        } catch (e) {
+            console.error("Couldn't create cart item:", e);
+            return { msg: `Couldn't create cart item: ${e}.`, isError: true };
         }
+
+        if (!cartItemDraft) {
+            return { msg: `Cart creation error`, isError: true };
+        }
+
+        let newCartItem: CartItemState;
+        let newCartItems: CartItemState[];
+        let owner: CartOwner;
+
+        if (userIdString) {
+            const userId = new UserId(userIdString);
+            const cartId = await retrieveCartId(userId);
+            owner = { kind: "Authenticated", userId, cartId };
+        } else {
+            owner = { kind: "Guest" };
+        }
+        const itemAdded = await supabaseCartRepository.addCartItem(cartId, cartItemDraft);
+        newCartItem = CartMapper.toStateFromDomain(itemAdded);
+        newCartItems = [...cartItems, newCartItem];
+        setCartItems(newCartItems);
+        return { msg: `Item successfully added`, isError: false };
+
         const cartItemsAsString = JSON.stringify(newCartItems);
         localStorage.setItem("cart", cartItemsAsString);
     }
@@ -170,7 +172,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         if (userId) {
             if (!cartIdRef.current) cartIdRef.current = await ensureCart(userId);
 
-            const { data, error } = await supabase.from("test_cart_items").delete().eq("cart_id", cartIdRef.current).eq("product_id", productId).select();
+            const { data, error } = await supabase.from("cart_items").delete().eq("cart_id", cartIdRef.current).eq("product_id", productId).select();
             if (error) {
                 console.error("ERROR: CartContext.remove() supabase delete error");
                 console.error(error);
@@ -202,7 +204,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         setCartItems(newCartItems);
 
         if (userId) {
-            const { data, error } = await supabase.from("test_cart_items").update({ quantity: updatedItem.quantity }).eq("cart_id", cartIdRef.current).eq("product_id", productId).select();
+            const { data, error } = await supabase.from("cart_items").update({ quantity: updatedItem.quantity }).eq("cart_id", cartIdRef.current).eq("product_id", productId).select();
 
             if (error) {
                 console.error("ERROR: CartContext.decrement() supabase update error");
@@ -232,7 +234,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
     const getById = (productId: number) => cartItems[productId];
 
-    const list = () => Object.values(cartItems);
+    const list = Object.values(cartItems);
 
     const count = () => {
         let count = 0;

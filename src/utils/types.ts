@@ -1,6 +1,8 @@
 // TODO: LET SUPABASE HANDLE TYPES AND CREATE mapToMyOwnType
 //  functions for conversions to th types and interfaces below
 
+import { Database } from "@/lib/supabase/database.types";
+
 export type Fulfillment = "NDD" | "SDD" | "PU";
 export type Status = "CANCELLED" | "PLACED" | "READY_FOR_PICKUP" | "ON_ROUTE" | "COMPLETE";
 export type Role = "ADMIN" | "DRIVER" | "FLOOR";
@@ -28,75 +30,43 @@ export interface Product {
     created_at: string; // ISO string from TIMESTAMPTZ
     updated_at: string;
 }
-export interface Deez {
-    system_id: string;
-    upc: string;
-    ean: string;
-    custom_sku: string;
-    manufact_sku: string;
-    item: string;
-    vendor_id: string;
-    qty: number;
-    price: string;
-    tax: boolean;
-    brand: string;
-    publish_to_ecom: boolean;
-    season: string;
-    department: string;
-    msrp: string;
-    tax_class: string;
-    default_cost: string;
-    vendor: string;
-    category: string;
-    subcategory: string;
-    subcategory_2: string;
-    subcategory_3: string;
-    subcategory_4: string;
-    subcategory_5: string;
-    subcategory_6: string;
-    subcategory_7: string;
-    subcategory_8: string;
-    subcategory_9: string;
-    id: number;
-    price_num: number;
-    item_vector: string;
-}
 
+type InventorySKU = Database["public"]["Tables"]["inventory"]["Row"]
 export interface SearchResponse extends SubmissionResponse {
-    deez: Deez[];
+    inventory: InventorySKU[];
 }
-export interface InventorySKU {
-    id: number;
-    system_id: number;
-    upc: number;
-    ean: number;
-    custom_sku: string;
-    manufact_sku: string;
-    item: string;
-    vendor_id: string;
-    qty: number;
-    price: number;
-    tax: boolean;
-    brand: string;
-    publish_to_ecom: boolean;
-    season: string;
-    department: string;
-    msrp: number;
-    tax_class: string;
-    default_cost: number;
-    vendor: string;
-    category: string;
-    subcategory: string;
-    subcategory_2: string;
-    subcategory_3: string;
-    subcategory_4: string;
-    subcategory_5: string;
-    subcategory_6: string;
-    subcategory_7: string;
-    subcategory_8: string;
-    subcategory_9: string;
-    supercategory: string;
-}
+// export interface InventorySKU {
+//     id: number;
+//     system_id: string;
+//     upc: string;
+//     ean: string;
+//     custom_sku: string;
+//     manufact_sku: string;
+//     item: string;
+//     vendor_id: string;
+//     qty: number;
+//     price: string;
+//     tax: boolean;
+//     brand: string;
+//     publish_to_ecom: boolean;
+//     season: string;
+//     department: string;
+//     msrp: string;
+//     tax_class: string;
+//     default_cost: string;
+//     vendor: string;
+//     category: string;
+//     subcategory: string;
+//     subcategory_2: string;
+//     subcategory_3: string;
+//     subcategory_4: string;
+//     subcategory_5: string;
+//     subcategory_6: string;
+//     subcategory_7: string;
+//     subcategory_8: string;
+//     subcategory_9: string;
+//     supercategory: string;
+// }
 
 export type ProductSubset = Pick<InventorySKU, "id" | "item" | "price">;
 
@@ -152,7 +122,7 @@ export interface Cart {
 // TODO: gonna have to come back here and figure out whether or not
 // I want to have a secondary, "pre db insert" CartItem so insert to
 // database is solely CartContext.add()'s job
-export interface CartItem {
+export interface CartItemState {
     id: number;
     productId: number;
     name: string;

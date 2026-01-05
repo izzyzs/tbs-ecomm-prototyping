@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/my-button";
 import { Package, ShieldCheck, ShoppingBag, Trash2, Truck } from "lucide-react";
 import { formatCurrency } from "@/utils/helper-functions";
 import CartSummary from "@/components/cart/CartSummary";
