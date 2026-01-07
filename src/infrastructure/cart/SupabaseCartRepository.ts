@@ -1,4 +1,4 @@
-import { CartItem, CartItemDraft } from "@/domain/cart/cart-item.domain";
+import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";
 import { Cart } from "@/domain/cart/cart"
 import { CartId, ProductId, UserId, CartItemId } from "@/domain/identity";
 import { Money } from "@/domain/money";
