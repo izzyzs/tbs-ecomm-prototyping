@@ -1,21 +1,18 @@
 // user.ts
 
-import { Cart } from "../cart/cart"
-import { UserId } from "../identity"
+import Email from "@/domain/user/Email";
+import { UserId } from "@/domain/identity"
 
 export class User {  
     constructor(
         public id: UserId,
-        public email: string,
-        public username: string,
-        private isAdminBoolean: boolean,
+        public email: Email,
+        // private isAdminBoolean: boolean,
     ) {
     
     }
 
-    get isAdmin() {
-        return this.isAdminBoolean;
-    }
-
-    
+    // get isAdmin() {
+    //     return this.isAdminBoolean;
+    // }
 }

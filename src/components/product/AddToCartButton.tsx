@@ -12,7 +12,7 @@ const AddToCartButton = ({ productId, ...props }: AddToCartButtonProps) => {
     const cart = useCart();
 
     const handleClick = async () => {
-        await cart.add(productId, userId);
+        await cart.add(productId, userId?.value);
     };
 
     return (
