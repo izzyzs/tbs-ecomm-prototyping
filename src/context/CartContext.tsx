@@ -166,9 +166,6 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         const newCartItems = [...cartItems, newCartItem];
         setCartItems(newCartItems);
         return { msg: `Item successfully added`, isError: false };
-
-        const cartItemsAsString = JSON.stringify(newCartItems);
-        localStorage.setItem("cart", cartItemsAsString);
     }
 
     async function remove(productId: number, userId: string | undefined) {

@@ -60,7 +60,7 @@ const CartSummary = () => {
                                     <span>Qty {item.quantity}</span>
                                     <span>
                                         <Button
-                                            onClick={() => add(item.productId, userId)}
+                                            onClick={() => add(item.productId)}
                                             variant="ghost"
                                             className="text-pink-400 hover:text-pink-400 border-[1px] border-transparent hover:border-pink-400 hover:bg-transparent"
                                         >

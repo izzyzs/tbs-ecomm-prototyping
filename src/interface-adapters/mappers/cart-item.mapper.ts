@@ -35,7 +35,7 @@ class CartItemMapper {
         return item;
     }
 
-    static toLocalDTOFromDraft(itemDraft: CartItemDraft, qty: Quantity): LocalCartStorageDTO {
+    static toLocalDTOFromDraft(itemDraft: CartItemDraft): LocalCartStorageDTO {
         const priceInPennies = itemDraft.price.valueInPennies
 
         const item: LocalCartStorageDTO = {
@@ -43,7 +43,7 @@ class CartItemMapper {
             name: itemDraft.name,
             brand: itemDraft.brand,
             price: priceInPennies,
-            quantity: qty.amount,
+            quantity: itemDraft.quantity.amount,
         }
 
         return item;
@@ -60,6 +60,18 @@ class CartItemMapper {
         )
 
         return item;
+    }
+
+    static toDraftFromDomain(item: CartItem): CartItemDraft {
+        const draft: CartItemDraft = {
+            productId: item.productId,
+            name: item.name,
+            brand: item.brand,
+            price: item.price,
+            quantity: new Quantity(item.quantityAmount)
+        }
+
+        return draft;
     }
 
 }

@@ -1,6 +1,7 @@
 import { CartItemDraft } from "@/domain/cart/cart-item";
 import { ProductId } from "@/domain/identity";
 import { Money } from "@/domain/money";
+import { Quantity } from "@/domain/quantity";
 import InventoryRepository from "@/domain/repositories/inventory/InventoryRepository";
 
 export class CreateCartItemDraft {
@@ -16,7 +17,8 @@ export class CreateCartItemDraft {
             productId: new ProductId(cartItemDetails.id),
             name: cartItemDetails.name,
             brand: cartItemDetails.brand,
-            price: new Money(+cartItemDetails.price.replace(/\$|\./g, ""))
+            price: new Money(+cartItemDetails.price.replace(/\$|\./g, "")),
+            quantity: new Quantity(0)
         };
         return itemDraft;
     }
