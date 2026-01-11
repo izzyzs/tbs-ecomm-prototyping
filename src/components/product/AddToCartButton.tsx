@@ -8,11 +8,10 @@ import { useAuth } from "@/context/AuthContext";
 type AddToCartButtonProps = { productId: number } & React.ComponentProps<typeof Button>;
 
 const AddToCartButton = ({ productId, ...props }: AddToCartButtonProps) => {
-    const { userId } = useAuth();
     const cart = useCart();
 
     const handleClick = async () => {
-        await cart.add(productId, userId?.value);
+        await cart.add(productId);
     };
 
     return (

@@ -2,7 +2,8 @@ import { Quantity } from "../quantity";
 import { ProductId, CartItemId } from "../identity";
 import { Money } from "../money";
 
-
+// TODO: move this to InventoryProduct or better yet,
+// make an error export page
 export class ProductUnavailableError extends Error{
     constructor(message: string) {
         super(message)
@@ -22,10 +23,6 @@ export class CartItem {
         public readonly price: Money,
         private quantity: Quantity,
     ) {}
-
-    incrementQuantity() {
-        this.quantity = this.quantity.increase()
-    };
 
     get quantityAmount(): number {
         return this.quantity.amount

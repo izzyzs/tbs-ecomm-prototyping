@@ -4,8 +4,9 @@ import Password from "@/domain/user/Password"
 
 export interface UserRepository {
     createAccount(email: Email, password: Password): Promise<User>
-    getUserDetails(email: Email, password: Password): Promise<User>
-    signOut(signingOut: boolean, setSigningOut:  React.Dispatch<React.SetStateAction<boolean>>): Promise<void>
+    getUserFromLogin(email: Email, password: Password): Promise<User>
+    getUserFromSession(): Promise<User>
+    signOut(setSigningOut:  React.Dispatch<React.SetStateAction<boolean>>): Promise<void>
 }
 
 

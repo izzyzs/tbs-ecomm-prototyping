@@ -1,17 +1,27 @@
-import InventoryRepository from "@/domain/repositories/InventoryRepository";
-import { GetCartItem } from "./GetCartItem";
+// import InventoryRepository from "@/domain/repositories/InventoryRepository";
+import GetCartItem from "./GetCartItem";
+import { CartOwner, ProductId, UserId } from "@/domain/identity";
+import { AuthenticatedCartRepository, CartItemCreationError } from "@/domain/repositories/cart/AuthenticatedCartRepository";
+import { CartItem } from "@/domain/cart/cart-item";
+// import { LocalCartRepository } from "@/domain/repositories/cart/LocalCartRepository";
+import { CartGateway, DefaultCartGateway } from "@/infrastructure/cart/CartGateway";
 
 export class AddItemToCart {
     constructor(
         private getCartItem: GetCartItem,
-        private inventoryRepository: InventoryRepository
+        // private authenticatedCartRepository: AuthenticatedCartRepository,
+        // private localCartRepository: LocalCartRepository,
+        private cartGateway: CartGateway
     ) {}
 
-    execute(): {} {
-        try {
-            this.getCartItem.execute()
-        } catch (e) {
+    async execute(productId: ProductId, owner: CartOwner): Promise<CartItem> {
+        let cartItemDraft = await this.getCartItem.execute(productId);
 
+        if (!cartItemDraft) {
+            throw new CartItemCreationError("Cart item not couldn't be created.");
         }
+
+        const item = this.cartGateway.addCartItem(cartItemDraft, owner);
+        return item;
     }
 }

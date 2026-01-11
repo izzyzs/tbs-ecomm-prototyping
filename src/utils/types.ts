@@ -131,6 +131,14 @@ export interface CartItemState {
     quantity: number;
 }
 
+import { RoleValue } from "@/domain/user/user";
+export interface UserState {
+    id: string;
+    email: string;
+    isAuthenticated: boolean;
+    role: RoleValue;
+}
+
 export interface OrderWithRelations extends Order {
     user: User;
     employee?: Employee;
