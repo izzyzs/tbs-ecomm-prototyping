@@ -1,5 +1,5 @@
 // import InventoryRepository from "@/domain/repositories/InventoryRepository";
-import GetCartItem from "./GetCartItem";
+import GetCartItem from "./GetCartItemDraft";
 import { CartOwner, ProductId, UserId } from "@/domain/identity";
 import { AuthenticatedCartRepository, CartItemCreationError } from "@/domain/repositories/cart/AuthenticatedCartRepository";
 import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";

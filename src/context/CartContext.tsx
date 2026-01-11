@@ -6,8 +6,7 @@ import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
-import { CartId, CartOwner, ProductId, UserId } from "@/domain/identity";
-import GetCartItem from "@/usecases/cart/GetCartItem";
+import { CartId, CartItemId, CartOwner, ProductId, UserId } from "@/domain/identity";
 import { SupabaseCartRepository } from "@/infrastructure/cart/SupabaseCartRepository";
 import { LocalStorageCartRepository } from "@/infrastructure/cart/LocalStorageCartRepository";
 import CartMapper from "@/interface-adapters/mappers/cart-item.mapper";
@@ -18,6 +17,8 @@ import { AddItemToCart } from "@/usecases/cart/AddItemToCart";
 import { ProductIdMapper } from "@/interface-adapters/mappers/identity.mapper";
 import { CreateCartItemDraft } from "@/usecases/cart/CreateCartItemDraft";
 import { SupabaseInventoryRepository } from "@/infrastructure/inventory/SupabaseInventoryRepository";
+import GetCartItemDraft from "@/usecases/cart/GetCartItemDraft";
+import { DecrementItemInCart } from "@/usecases/cart/DecrementItemInCart";
 
 // number represents the item's productId for retrieval by productId
 // type CartItemObj = Record<number, CartItem>; <== decided on use of an array due to
@@ -57,6 +58,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     const supabaseInventoryRepository = new SupabaseInventoryRepository(supabase);
     const supabaseCartRepository = new SupabaseCartRepository(supabase);
     const localStorageCartRepository = new LocalStorageCartRepository();
+    const cartGateway = new DefaultCartGateway(localStorageCartRepository, supabaseCartRepository);
 
     const userId = React.useMemo(() => user?.id, [user]);
 
@@ -136,9 +138,8 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         // TODO: REMOVE DEBUGGING LOGS BELOW
         // TODO: transfer this into add item to cart use case
         const createCartItemDraft = new CreateCartItemDraft(supabaseInventoryRepository);
-        const getCartItem = new GetCartItem(supabaseCartRepository, createCartItemDraft);
-        const cartGateway = new DefaultCartGateway(localStorageCartRepository, supabaseCartRepository);
-        const addItemToCart = new AddItemToCart(getCartItem, cartGateway);
+        const getCartItemDraft = new GetCartItemDraft(supabaseCartRepository, createCartItemDraft);
+        const addItemToCart = new AddItemToCart(getCartItemDraft, cartGateway);
         const productId = ProductIdMapper.toDomainFromState(productIdNumber);
 
         let owner: CartOwner;
@@ -157,74 +158,86 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         } catch (e) {
             if (e instanceof Error) {
                 // console.error("Couldn't create cart item:", e.message);
-                return { msg: `Couldn't create cart item: ${e.message}.`, isError: true };
+                return { msg: `Couldn't add cart item: ${e.message}.`, isError: true };
             }
-            return { msg: `Couldn't create cart item: ${e}.`, isError: true };
+            return { msg: `Couldn't add cart item: ${e}.`, isError: true };
         }
 
         const newCartItem = CartMapper.toStateFromDomain(itemAdded);
-        const newCartItems = [...cartItems, newCartItem];
-        setCartItems(newCartItems);
+        setCartItems((prev) => {
+            let found = false;
+
+            const next = prev.map((i) => {
+                if (i.productId !== newCartItem.productId) return i;
+                found = true;
+                return newCartItem;
+            });
+
+            return found ? next : [...prev, newCartItem];
+        });
         return { msg: `Item successfully added`, isError: false };
     }
 
-    async function remove(productId: number, userId: string | undefined) {
+    async function remove(productId: number): Promise<SubmissionResponse> {
         // TODO: REMOVE DEBUGGING LOGS BELOW
-        const prev = cartItems;
-        const { [productId]: item, ...rest } = prev;
-        setCartItems(rest);
-        console.log("product removed from cartItems Object");
-        console.log(item);
+        setCartItems((prev) => prev.filter((i) => i.id !== productId));
 
-        if (user) {
-            if (!cartIdRef.current) cartIdRef.current = await supabaseCartRepository.ensureCart(UserMapper.toDomainFromState(user).id);
-
-            const { data, error } = await supabase.from("cart_items").delete().eq("cart_id", cartIdRef.current.number).eq("product_id", productId).select();
-            if (error) {
-                console.error("ERROR: CartContext.remove() supabase delete error");
-                console.error(error);
-                throw error;
-            }
-            console.log(`user removed this product:\nProduct id:\t${productId}\n${data}`);
-            return;
+        let owner: CartOwner;
+        if (userId) {
+            const uId = new UserId(userId);
+            const cartId = await retrieveCartId(uId);
+            owner = { kind: "Authenticated", userId: uId, cartId };
+        } else {
+            owner = { kind: "Guest" };
         }
 
-        const newCartString = JSON.stringify(rest);
-        localStorage.setItem("cart", newCartString);
+        try {
+            await cartGateway.removeCartItem(new ProductId(productId), owner);
+        } catch (e) {
+            if (e instanceof Error) {
+                // console.error("Couldn't create cart item:", e.message);
+                return { msg: `Couldn't remove cart item: ${e.message}.`, isError: true };
+            }
+            return { msg: `Couldn't remove cart item: ${e}.`, isError: true };
+        }
+        return { msg: `Item successfully removed`, isError: false };
     }
 
-    async function decrement(productId: number, userId: string | undefined) {
-        console.log("starting decrement debug");
-        const prev = cartItems;
-        console.log("prev", prev);
-        console.log("productId", productId);
-        const item = prev[productId];
-
-        if (item.quantity == 1) {
-            console.log("item.quantity", item.quantity);
-            remove(productId, userId);
-            return;
+    async function decrement(cartItemId: number, userId: string | undefined): Promise<SubmissionResponse> {
+        let owner: CartOwner;
+        if (userId) {
+            const uId = new UserId(userId);
+            const cartId = await retrieveCartId(uId);
+            owner = { kind: "Authenticated", userId: uId, cartId };
+        } else {
+            owner = { kind: "Guest" };
         }
 
-        const updatedItem = { ...item, quantity: item.quantity - 1 };
-        const newCartItems = { ...prev, [updatedItem.productId]: updatedItem };
-        setCartItems(newCartItems);
-
-        if (user) {
-            if (!cartIdRef.current) cartIdRef.current = await supabaseCartRepository.ensureCart(UserMapper.toDomainFromState(user).id);
-            const { data, error } = await supabase.from("cart_items").update({ quantity: updatedItem.quantity }).eq("cart_id", cartIdRef.current?.number).eq("product_id", productId).select();
-
-            if (error) {
-                console.error("ERROR: CartContext.decrement() supabase update error");
-                console.error(error);
-                throw error;
+        const decrementItemInCart = new DecrementItemInCart(cartGateway);
+        let decremented;
+        try {
+            decremented = await decrementItemInCart.execute(new CartItemId(cartItemId), owner);
+        } catch (e) {
+            if (e instanceof Error) {
+                // console.error("Couldn't create cart item:", e.message);
+                return { msg: `Couldn't decrement cart item: ${e.message}.`, isError: true };
             }
-            console.log(`user updated this product:\nProduct id:\t${productId}\n${data}`);
-            return;
+            return { msg: `Couldn't decrement cart item: ${e}.`, isError: true };
         }
+        setCartItems((prev) => {
+            if (decremented.quantityAmount === 0) return prev.filter((i) => i.id === decremented.id.number);
+            let found = false;
+            const next = prev.map((i) => {
+                if (i.id !== decremented.id.number) return i;
+                found = true;
+                return CartMapper.toStateFromDomain(decremented);
+            });
+            return next;
+        });
 
-        const newCartString = JSON.stringify(newCartItems);
-        localStorage.setItem("cart", newCartString);
+        // TODO: remove this log at some point
+        console.log(`user updated this product:\nProduct id:\t${decremented.productId}\n${decremented}`);
+        return { msg: "CartItem successful decremented", isError: false };
     }
 
     const count = () => {

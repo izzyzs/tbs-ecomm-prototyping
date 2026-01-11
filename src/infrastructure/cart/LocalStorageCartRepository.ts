@@ -13,6 +13,14 @@ export class LocalStorageCartRepository implements LocalCartRepository {
 
     }
 
+    async retrieveSingleCartItem(cartItemId: CartItemId): Promise<CartItem> {
+        const cartString = localStorage.getItem("cart");
+        const cartItemsDTO: LocalCartStorageDTO[] = JSON.parse(requiredField(cartString, LocalStorageError, "cart"))
+        const cartItemDTO = cartItemsDTO[cartItemId.number];
+        const cartItem = CartItemMapper.toDomainFromLocalDTO(cartItemId, cartItemDTO)
+        return cartItem;
+    }
+
     async retrieveCartItems(): Promise<CartItem[]> {
         const cartString = localStorage.getItem("cart");
         const cartItemsDTO: LocalCartStorageDTO[] = JSON.parse(requiredField(cartString, LocalStorageError, "cart"))
@@ -26,11 +34,35 @@ export class LocalStorageCartRepository implements LocalCartRepository {
 
     async addCartItem(cartItemDraft: CartItemDraft): Promise<CartItem> {
         const oldCartString = localStorage.getItem("cart");
-        const oldCart = JSON.parse(oldCartString ?? "[]");
-        const newItem = CartItemMapper.toLocalDTOFromDraft(cartItemDraft);
-        const newCart = [...oldCart, newItem]
+        let oldCart: LocalCartStorageDTO[] = JSON.parse(requiredField(oldCartString, LocalStorageError, "oldCartString"));
+        // const oldCart: LocalCartStorageDTO[] = JSON.parse(oldCartString ?? "[]");
+        const newItem: LocalCartStorageDTO = CartItemMapper.toLocalDTOFromDraft(cartItemDraft);
+        const newCart: LocalCartStorageDTO[] = [...oldCart, newItem]
         localStorage.setItem("cart", JSON.stringify(newCart))
         const id = new CartItemId(oldCart.length)
         return CartItemMapper.toDomainFromLocalDTO(id, newItem);
     };
+
+    async decrementCartItem(cartItemDraft: CartItemDraft): Promise<CartItem> {
+        const oldCartString = localStorage.getItem("cart");
+        let oldCart: LocalCartStorageDTO[] = JSON.parse(requiredField(oldCartString, LocalStorageError, "oldCartString"));
+        const newCart = oldCart.map(i => {
+            if (cartItemDraft.productId.number === i.productId) return CartItemMapper.toLocalDTOFromDraft(cartItemDraft);
+            return i;
+        })
+        localStorage.setItem("cart", JSON.stringify(newCart));
+
+        const decrementedDTO = requiredField(newCart.find(i => i.productId === cartItemDraft.productId.number), LocalStorageError, "matching cart item by id")
+        const idx = new CartItemId(requiredField(newCart.findIndex(i => i.productId === cartItemDraft.productId.number), LocalStorageError, "matching cart item id for CartItemId"))
+        const decremented: CartItem = CartItemMapper.toDomainFromLocalDTO(idx, decrementedDTO) 
+        return decremented;
+    }
+
+    async removeCartItem(productId: ProductId): Promise<void> {
+        const oldCartString = localStorage.getItem("cart");
+        let oldCart: LocalCartStorageDTO[] = JSON.parse(requiredField(oldCartString, LocalStorageError, "oldCartString"));
+        const item = oldCart.filter((i) => i.productId === productId.number)[0];
+        const rest = oldCart.filter((i) => i.productId !== productId.number);
+        localStorage.setItem("cart", JSON.stringify(rest))
+    }
 }

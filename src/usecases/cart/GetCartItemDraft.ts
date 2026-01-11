@@ -5,7 +5,7 @@ import { AuthenticatedCartRepository } from "@/domain/repositories/cart/Authenti
 import { CreateCartItemDraft } from "./CreateCartItemDraft";
 import CartItemMapper from "@/interface-adapters/mappers/cart-item.mapper";
 
-class GetCartItem {
+class GetCartItemDraft {
     constructor(
         private authenticatedCartRepository: AuthenticatedCartRepository,
         private createCartItemDraft: CreateCartItemDraft
@@ -28,4 +28,4 @@ class GetCartItem {
     }
 }
 
-export default GetCartItem;
+export default GetCartItemDraft;
