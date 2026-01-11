@@ -5,15 +5,18 @@ import { Button } from "@/components/my-button";
 import { useCart } from "@/context/CartContext";
 import { Package, Truck, Trash2, Plus, Minus } from "lucide-react";
 import { formatCurrency } from "@/utils/helper-functions";
-import { useAuth } from "@/context/AuthContext";
+import createToast from "./createToast";
 
 const CartSummary = () => {
     const { cartItems, add, decrement, remove } = useCart();
-    const { userId } = useAuth();
+
+    const handleAdd = (productId: number) => createToast(add(productId));
+    const handleDecrement = (cartItemId: number) => createToast(decrement(cartItemId));
+    const handleRemove = (productId: number) => createToast(remove(productId));
 
     const handleDeleteAll = () => {
         for (var i = 0; i < cartItems.length - 1; i++) {
-            remove(cartItems[i].id, userId);
+            remove(cartItems[i].productId);
         }
     };
 
@@ -30,7 +33,7 @@ const CartSummary = () => {
 
             <div className="space-y-6 px-6 py-6">
                 {cartItems.map((item, idx) => (
-                    <div key={item.id} className="space-y-4 border-b border-gray-100 pb-6 last:border-none last:pb-0">
+                    <div key={idx} className="space-y-4 border-b border-gray-100 pb-6 last:border-none last:pb-0">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                             <div className="relative h-32 w-full rounded-lg bg-gradient-to-tr from-pink-50 to-orange-100 sm:h-32 sm:w-32 flex items-center justify-center">
                                 <Package className="h-10 w-10 text-pink-500" />
@@ -38,7 +41,7 @@ const CartSummary = () => {
                             <div className="flex-1">
                                 <div className="flex items-start justify-between gap-3">
                                     <div>
-                                        {item.id}
+                                        {item.productId}
                                         <h3 className="text-lg font-semibold text-gray-900">{item.brand}</h3>
                                         <p className="text-sm text-gray-600">{item.name}</p>
                                     </div>
@@ -50,7 +53,7 @@ const CartSummary = () => {
                                     {/* <span className="rounded-full bg-pink-50 px-3 py-1 text-pink-600">{item.size}</span> */}
                                     <span>
                                         <Button
-                                            onClick={() => decrement(item.productId, userId)}
+                                            onClick={() => handleDecrement(item.id)}
                                             variant="ghost"
                                             className="text-pink-400 hover:text-pink-400 border-[1px] border-transparent hover:border-pink-400 hover:bg-transparent"
                                         >
@@ -60,7 +63,7 @@ const CartSummary = () => {
                                     <span>Qty {item.quantity}</span>
                                     <span>
                                         <Button
-                                            onClick={() => add(item.productId)}
+                                            onClick={() => handleAdd(item.productId)}
                                             variant="ghost"
                                             className="text-pink-400 hover:text-pink-400 border-[1px] border-transparent hover:border-pink-400 hover:bg-transparent"
                                         >
@@ -76,7 +79,7 @@ const CartSummary = () => {
                                 <Truck className="h-4 w-4 text-pink-500" />
                                 Ships in 1-2 business days
                             </div>
-                            <Button onClick={() => remove(item.productId, userId)} variant="ghost" size="sm" className="text-gray-600 hover:text-rose-600">
+                            <Button onClick={() => handleRemove(item.productId)} variant="ghost" size="sm" className="text-gray-600 hover:text-rose-600">
                                 <Trash2 className="h-4 w-4" />
                                 Remove
                             </Button>

@@ -29,8 +29,8 @@ export interface CartContextType {
     // Mutative functions
 
     add: (productIdNumber: number) => Promise<SubmissionResponse>;
-    remove: (productId: number, userId: string | undefined) => void;
-    decrement: (productId: number, userId: string | undefined) => void;
+    remove: (productIdNumber: number) => Promise<SubmissionResponse>;
+    decrement: (cartItemIdNumber: number) => Promise<SubmissionResponse>;
 
     // Read only selectors
 
@@ -178,11 +178,13 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         return { msg: `Item successfully added`, isError: false };
     }
 
-    async function remove(productId: number): Promise<SubmissionResponse> {
+    async function remove(productIdNumber: number): Promise<SubmissionResponse> {
         // TODO: REMOVE DEBUGGING LOGS BELOW
-        setCartItems((prev) => prev.filter((i) => i.id !== productId));
+        setCartItems((prev) => prev.filter((i) => i.id !== productIdNumber));
 
         let owner: CartOwner;
+        const productId = new ProductId(productIdNumber);
+
         if (userId) {
             const uId = new UserId(userId);
             const cartId = await retrieveCartId(uId);
@@ -192,7 +194,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         }
 
         try {
-            await cartGateway.removeCartItem(new ProductId(productId), owner);
+            await cartGateway.removeCartItem(productId, owner);
         } catch (e) {
             if (e instanceof Error) {
                 // console.error("Couldn't create cart item:", e.message);
@@ -203,8 +205,10 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         return { msg: `Item successfully removed`, isError: false };
     }
 
-    async function decrement(cartItemId: number, userId: string | undefined): Promise<SubmissionResponse> {
+    async function decrement(cartItemIdNumber: number): Promise<SubmissionResponse> {
         let owner: CartOwner;
+        const cartItemId = new CartItemId(cartItemIdNumber);
+
         if (userId) {
             const uId = new UserId(userId);
             const cartId = await retrieveCartId(uId);
@@ -216,7 +220,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         const decrementItemInCart = new DecrementItemInCart(cartGateway);
         let decremented;
         try {
-            decremented = await decrementItemInCart.execute(new CartItemId(cartItemId), owner);
+            decremented = await decrementItemInCart.execute(cartItemId, owner);
         } catch (e) {
             if (e instanceof Error) {
                 // console.error("Couldn't create cart item:", e.message);
