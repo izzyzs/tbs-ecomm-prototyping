@@ -3,6 +3,7 @@ import { AuthenticatedCartRepository } from "@/domain/repositories/cart/Authenti
 import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";
 import { CartOwner } from "@/domain/identity";
 import { CartItemDetails } from "@/domain/repositories/inventory/InventoryRepository";
+import { Quantity } from "@/domain/quantity";
 
 export interface CartGateway {
     addCartItem(cartItemDraft: CartItemDraft, owner: CartOwner): Promise<CartItem>

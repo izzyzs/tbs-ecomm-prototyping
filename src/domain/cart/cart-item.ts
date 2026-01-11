@@ -11,7 +11,14 @@ export class ProductUnavailableError extends Error{
     }
 }
 
-export type CartItemDraft = Omit<CartItem, "id" | "incrementQuantity" | "quantity" | "quantityAmount"> & Pick<Partial<CartItem>, "id">
+export type CartItemDraft = {
+        productId: ProductId,
+        name: string,
+        brand: string,
+        price: Money,
+        quantity: Quantity
+}
+//  Omit<CartItem, "id" | "incrementQuantity" | "quantity" | "quantityAmount"> & Pick<Partial<CartItem>, "id">
 
 export class CartItem {
     

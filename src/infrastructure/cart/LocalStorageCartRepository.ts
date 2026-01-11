@@ -24,11 +24,10 @@ export class LocalStorageCartRepository implements LocalCartRepository {
     }
 
 
-    async addCartItem(cartItemDraft: CartItemDraft, qty: number = 1): Promise<CartItem> {
+    async addCartItem(cartItemDraft: CartItemDraft): Promise<CartItem> {
         const oldCartString = localStorage.getItem("cart");
-        const quantity = new Quantity(qty);
         const oldCart = JSON.parse(oldCartString ?? "[]");
-        const newItem = CartItemMapper.toLocalDTOFromDraft(cartItemDraft, quantity);
+        const newItem = CartItemMapper.toLocalDTOFromDraft(cartItemDraft);
         const newCart = [...oldCart, newItem]
         localStorage.setItem("cart", JSON.stringify(newCart))
         const id = new CartItemId(oldCart.length)

@@ -52,9 +52,8 @@ export class SupabaseCartRepository implements AuthenticatedCartRepository {
         return items;
     }
 
-    async addCartItem(cartId: CartId, cartItemDraft: CartItemDraft, qty: number = 1): Promise<CartItem> {
-        const quantity = new Quantity(qty)
-        const { data, error } = await this.supabase.rpc("add_cart_item", { p_cart_id: cartId.number, p_product_id: cartItemDraft.productId.number, p_quantity: quantity.amount });
+    async addCartItem(cartId: CartId, cartItemDraft: CartItemDraft): Promise<CartItem> {
+        const { data, error } = await this.supabase.rpc("add_cart_item", { p_cart_id: cartId.number, p_product_id: cartItemDraft.productId.number, p_quantity: cartItemDraft.quantity.amount });
         if (error) {
             console.error(error);
             throw new CartItemCreationError(`Ran into issue adding cart item: ${error}`);

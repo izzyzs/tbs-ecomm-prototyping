@@ -2,11 +2,12 @@ import { Cart } from "@/domain/cart/cart"
 import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";
 import { ProductId } from "@/domain/identity";
 import { Money } from "@/domain/money";
+import { Quantity } from "@/domain/quantity";
 
 export interface LocalCartRepository {
     saveCart(cart: Cart): Promise<void>;
     retrieveCartItems(): Promise<CartItem[]>;
-    addCartItem(cartItemDraft: CartItemDraft, qty?: number): Promise<CartItem>;
+    addCartItem(cartItemDraft: CartItemDraft): Promise<CartItem>;
 }
 
 export type LocalCartStorageDTO = {
