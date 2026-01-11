@@ -138,7 +138,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         // TODO: REMOVE DEBUGGING LOGS BELOW
         // TODO: transfer this into add item to cart use case
         const createCartItemDraft = new CreateCartItemDraft(supabaseInventoryRepository);
-        const getCartItemDraft = new GetCartItemDraft(supabaseCartRepository, createCartItemDraft);
+        const getCartItemDraft = new GetCartItemDraft(cartGateway, createCartItemDraft);
         const addItemToCart = new AddItemToCart(getCartItemDraft, cartGateway);
         const productId = ProductIdMapper.toDomainFromState(productIdNumber);
 
@@ -164,6 +164,9 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         }
 
         const newCartItem = CartMapper.toStateFromDomain(itemAdded);
+        console.log(`item added\n${JSON.stringify(itemAdded, null, 2)}\n`);
+        console.log(`old cartItems:${JSON.stringify(cartItems, null, 2)}`);
+        console.log(`new cart item\n${JSON.stringify(newCartItem, null, 2)}`);
         setCartItems((prev) => {
             let found = false;
 
@@ -175,6 +178,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
             return found ? next : [...prev, newCartItem];
         });
+        console.log(`new cartItems:${JSON.stringify(cartItems, null, 2)}`);
         return { msg: `Item successfully added`, isError: false };
     }
 

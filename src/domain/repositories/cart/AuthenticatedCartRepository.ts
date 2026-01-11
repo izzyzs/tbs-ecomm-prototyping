@@ -6,7 +6,7 @@ import { Quantity } from "@/domain/quantity";
 export interface AuthenticatedCartRepository {
     // saveCart(cartId: CartId, cart: Cart): Promise<void>;
     ensureCart(userId: UserId): Promise<CartId>;
-    retrieveSingleCartItem(cartId: CartId, cartItemId: CartItemId): Promise<CartItem>;
+    retrieveSingleCartItem(cartId: CartId, productId: ProductId): Promise<CartItem>;
     retrieveCartItems(cartId: CartId): Promise<CartItem[]>;
     addCartItem(cartId: CartId, cartItemDraft: CartItemDraft): Promise<CartItem>;
     decrementCartItem(cartId: CartId, cartItemDraft: CartItemDraft): Promise<CartItem>;

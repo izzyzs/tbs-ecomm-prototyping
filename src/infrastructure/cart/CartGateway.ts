@@ -9,7 +9,7 @@ export interface CartGateway {
     addCartItem(cartItemDraft: CartItemDraft, owner: CartOwner): Promise<CartItem>;
     decrementCartItem(cartItemDraft: CartItemDraft, owner: CartOwner): Promise<CartItem>;
     removeCartItem(productId: ProductId, owner: CartOwner): Promise<void>;
-    retrieveSingleCartItem(cartItemId: CartItemId, owner: CartOwner): Promise<CartItem>;
+    retrieveSingleCartItem(productId: ProductId, owner: CartOwner): Promise<CartItem>;
 }
 
 export class DefaultCartGateway implements CartGateway {
@@ -39,10 +39,10 @@ export class DefaultCartGateway implements CartGateway {
         return await this.localCartRepository.removeCartItem(productId);
     }
 
-    async retrieveSingleCartItem(cartItemId: CartItemId, owner: CartOwner): Promise<CartItem> {
+    async retrieveSingleCartItem(productId: ProductId, owner: CartOwner): Promise<CartItem> {
         if (owner.kind === "Authenticated") {
-            return await this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, cartItemId);
+            return await this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId);
         }
-        return await this.localCartRepository.retrieveSingleCartItem(cartItemId);
+        return await this.localCartRepository.retrieveSingleCartItem(productId);
     }
 }

@@ -1,4 +1,4 @@
-import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";
+import { CartItem, CartItemDraft, CartItemNotFoundError, ProductUnavailableError } from "@/domain/cart/cart-item";
 import { Cart } from "@/domain/cart/cart"
 import { CartId, ProductId, UserId, CartItemId } from "@/domain/identity";
 import { Money } from "@/domain/money";
@@ -28,14 +28,16 @@ export class SupabaseCartRepository implements AuthenticatedCartRepository {
         return new CartId(cartId)
     }
 
-    async retrieveSingleCartItem(cartId: CartId, cartItemId: CartItemId): Promise<CartItem> {
-        const { data: cartItemData, error: cartItemError } = await this.supabase.from("cart_items").select("*").eq("id", cartItemId.number).single()
+    async retrieveSingleCartItem(cartId: CartId, productId: ProductId): Promise<CartItem> {
+        // const { data: cartItemData, error: cartItemError } = await this.supabase.from("cart_items").select("*").eq("id", cartItemId.number).single()
 
-        if (!cartItemData) throw new SupabaseError(`Cart item #${cartItemId.number} doesn't exist`);
+        const { data: cartItemData, error: cartItemError } = await this.supabase.from("cart_items").select("*").eq("cart_id", cartId.number).eq("product_id", productId.number).single()
+
+        if (!cartItemData) throw new CartItemNotFoundError(`Cart item doesn't exist`);
         if (cartItemError) throw cartItemError;
 
         const { data: skuData } = await this.supabase.from("inventory").select("price, item, brand").eq("id", requiredField(cartItemData.product_id, SupabaseError, "cartItemData.product_id")).single();
-        if (!skuData || !skuData.price) throw new SupabaseError("Item doesn't exist");
+        if (!skuData || !skuData.price) throw new CartItemNotFoundError("Item doesn't exist");
         const price = new Money(+(skuData.price.replace(/\$|./g, "")))
         const cartItem: CartItem = new CartItem(
             new CartItemId(cartItemData.id),

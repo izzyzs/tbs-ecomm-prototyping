@@ -10,11 +10,9 @@ import createToast from "../cart/createToast";
 type AddToCartButtonProps = { productId: number } & React.ComponentProps<typeof Button>;
 
 const AddToCartButton = ({ productId, ...props }: AddToCartButtonProps) => {
-    const cart = useCart();
+    const { add } = useCart();
 
-    const handleClick = () => {
-        createToast(cart.add(productId));
-    };
+    const handleClick = () => createToast(add(productId));
 
     return (
         <Button {...props} onClick={handleClick}>
