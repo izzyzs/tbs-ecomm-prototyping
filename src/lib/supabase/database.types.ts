@@ -902,10 +902,17 @@ export type Database = {
       pgroonga_wal_truncate:
         | { Args: never; Returns: number }
         | { Args: { indexname: unknown }; Returns: number }
-      retrieve_cart_items:
-        | { Args: { active_cart_id: number }; Returns: Json }
-        | { Args: { p_cart_id: number }; Returns: Json }
-        | { Args: { p_user_id: string }; Returns: Json }
+      retrieve_cart_items: {
+        Args: { p_cart_id: number }
+        Returns: {
+          brand: string
+          id: number
+          name: string
+          price: number
+          productId: number
+          quantity: number
+        }[]
+      }
       retrieve_cart_items_to_front: {
         Args: { p_user_id: string }
         Returns: Json

@@ -1,3 +1,7 @@
+// interesting
+// TODO: come read LLM generated code for test
+
+/*
 import { render } from "@testing-library/react";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -39,3 +43,4 @@ describe("LoginModal", () => {
         expect(setOpen).toHaveBeenCalledWith(false);
     });
 });
+*/

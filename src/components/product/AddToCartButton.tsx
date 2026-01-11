@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/my-button";
 import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
@@ -11,7 +12,12 @@ const AddToCartButton = ({ productId, ...props }: AddToCartButtonProps) => {
     const cart = useCart();
 
     const handleClick = async () => {
-        await cart.add(productId);
+        const response = await cart.add(productId);
+        if (response.isError) {
+            toast.warning(`Error: ${response.msg}`);
+        } else {
+            toast.success(`Success: ${response.msg}`);
+        }
     };
 
     return (
