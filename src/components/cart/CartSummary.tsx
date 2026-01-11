@@ -8,12 +8,12 @@ import { formatCurrency } from "@/utils/helper-functions";
 import { useAuth } from "@/context/AuthContext";
 
 const CartSummary = () => {
-    const { list, add, decrement, remove } = useCart();
+    const { cartItems, add, decrement, remove } = useCart();
     const { userId } = useAuth();
 
     const handleDeleteAll = () => {
-        for (var i = 0; i < list.length - 1; i++) {
-            remove(list[i].id, userId);
+        for (var i = 0; i < cartItems.length - 1; i++) {
+            remove(cartItems[i].id, userId);
         }
     };
 
@@ -25,11 +25,11 @@ const CartSummary = () => {
                     <p className="text-sm text-gray-500">Curated for pro-level results in every service.</p>
                 </div>
                 <Button variant="outline"></Button>
-                <span className="text-sm text-gray-500">{list.length} items</span>
+                <span className="text-sm text-gray-500">{cartItems.length} items</span>
             </div>
 
             <div className="space-y-6 px-6 py-6">
-                {list.map((item, idx) => (
+                {cartItems.map((item, idx) => (
                     <div key={item.id} className="space-y-4 border-b border-gray-100 pb-6 last:border-none last:pb-0">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                             <div className="relative h-32 w-full rounded-lg bg-gradient-to-tr from-pink-50 to-orange-100 sm:h-32 sm:w-32 flex items-center justify-center">

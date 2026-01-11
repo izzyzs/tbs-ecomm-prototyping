@@ -16,6 +16,8 @@ import UserMapper from "@/interface-adapters/mappers/user.mapper";
 import { DefaultCartGateway } from "@/infrastructure/cart/CartGateway";
 import { AddItemToCart } from "@/usecases/cart/AddItemToCart";
 import { ProductIdMapper } from "@/interface-adapters/mappers/identity.mapper";
+import { CreateCartItemDraft } from "@/usecases/cart/CreateCartItemDraft";
+import { SupabaseInventoryRepository } from "@/infrastructure/inventory/SupabaseInventoryRepository";
 
 // number represents the item's productId for retrieval by productId
 // type CartItemObj = Record<number, CartItem>; <== decided on use of an array due to
@@ -52,6 +54,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     const previousUserRef = useRef(user);
     const cartIdRef = useRef<CartId | null>(null);
     const supabase = createClient();
+    const supabaseInventoryRepository = new SupabaseInventoryRepository(supabase);
     const supabaseCartRepository = new SupabaseCartRepository(supabase);
     const localStorageCartRepository = new LocalStorageCartRepository();
 
@@ -132,7 +135,8 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     async function add(productIdNumber: number): Promise<SubmissionResponse> {
         // TODO: REMOVE DEBUGGING LOGS BELOW
         // TODO: transfer this into add item to cart use case
-        const getCartItem = new GetCartItem(supabaseCartRepository);
+        const createCartItemDraft = new CreateCartItemDraft(supabaseInventoryRepository);
+        const getCartItem = new GetCartItem(supabaseCartRepository, createCartItemDraft);
         const cartGateway = new DefaultCartGateway(localStorageCartRepository, supabaseCartRepository);
         const addItemToCart = new AddItemToCart(getCartItem, cartGateway);
         const productId = ProductIdMapper.toDomainFromState(productIdNumber);

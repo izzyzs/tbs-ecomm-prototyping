@@ -40,7 +40,15 @@ export class SupabaseCartRepository implements AuthenticatedCartRepository {
             return [];
         }
         console.log("RETRIEVE CART ITEMS DATA", data);
-        const items: CartItem[] = JSON.parse(data.toString())
+        const items: CartItem[] = data.map((item) => {
+            return new CartItem(
+                new CartItemId(item.id),
+                new ProductId(item.productId),
+                item.name,
+                item.brand,
+                new Money(item.price * 100),
+                new Quantity(item.quantity
+                ))})
         return items;
     }
 
@@ -48,7 +56,7 @@ export class SupabaseCartRepository implements AuthenticatedCartRepository {
         const quantity = new Quantity(qty)
         const { data, error } = await this.supabase.rpc("add_cart_item", { p_cart_id: cartId.number, p_product_id: cartItemDraft.productId.number, p_quantity: quantity.amount });
         if (error) {
-            console.error("SupabaseCartRepository.addCartItem error");
+            console.error(error);
             throw new CartItemCreationError(`Ran into issue adding cart item: ${error}`);
         }
         

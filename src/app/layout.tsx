@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import CartProvider, { CartContextType } from "@/context/CartContext";
+import { Toaster } from "sonner";
 import NavBar from "@/components/nav/NavBar";
 import "./globals.css";
 import AuthProvider from "@/context/AuthContext";
@@ -32,6 +33,7 @@ export default function RootLayout({
                     <CartProvider>
                         <NavBar />
                         <main className="pb-[100px] sm:pb-0">{children}</main>
+                        <Toaster />
                     </CartProvider>
                 </AuthProvider>
             </body>

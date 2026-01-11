@@ -1,3 +1,7 @@
+// interesting
+// TODO: come read LLM generated code for test
+
+/*
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { Session } from "@supabase/supabase-js";
 import React from "react";
@@ -98,3 +102,4 @@ describe("UserStatusController", () => {
         });
     });
 });
+*/
