@@ -1,24 +1,25 @@
 "use client";
 
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState, useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
-import { User } from "@supabase/supabase-js";
+// import { User } from "@supabase/supabase-js";
+import { User } from "@/domain/user/user";
 import { Session } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
-import { Credentials, SubmissionResponse } from "@/utils/types";
+import { Credentials, SubmissionResponse, UserState } from "@/utils/types";
 import { UserId } from "@/domain/identity";
 import { SupabaseUserRepository } from "@/infrastructure/user/SupabaseUserRepository";
 import Email from "@/domain/user/Email";
 import Password from "@/domain/user/Password";
+import UserMapper from "@/interface-adapters/mappers/user.mapper";
 
 export interface AuthContextType {
-    user: User | undefined;
-    userId: UserId | undefined;
+    user: UserState | undefined;
+    // userId: UserId | undefined;
     authLoading: boolean;
     isSigningOut: boolean;
     authError: string | null;
     setAuthError: React.Dispatch<React.SetStateAction<string | null>>;
-    session: Session | null;
 
     handleSignOut: () => Promise<void>;
     login: (_: SubmissionResponse | null, formData: FormData) => Promise<SubmissionResponse>;
@@ -28,7 +29,7 @@ export interface AuthContextType {
 const AuthContext = React.createContext<AuthContextType | null>(null);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState<UserState>();
     const [authError, setAuthError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [isSigningOut, setIsSigningOut] = useState(false);
@@ -47,14 +48,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         const fetchSession = async () => {
             setLoading(true);
             try {
-                const {
-                    data: { session },
-                    error,
-                } = await supabase.auth.getSession();
+                const user = await supabaseUserRepository.getUserFromSession();
                 if (!isMounted) return;
-                setSession(session ?? null);
-                setUser(session?.user);
-                setAuthError(error ? error.message : null);
+                // setSession(session ?? null);
+                const userState = UserMapper.toStateFromDomain(user);
+                setUser(userState);
+            } catch (error) {
+                if (error instanceof Error) setAuthError(error.message);
+                else setAuthError(JSON.stringify(error));
             } finally {
                 if (isMounted) setLoading(false);
             }
@@ -62,51 +63,33 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         fetchSession();
 
-        const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-            setSession(nextSession ?? null);
-            if (nextSession) {
-                const {
-                    access_token,
-                    user: { email },
-                    ...rest
-                } = nextSession;
-                console.log("DEBUG::event: ", _event, `\n User of nextSession in AuthContext.tsx: ${email}`);
-            } else {
-                console.log("DEBUG::event: ", _event, "\nnextSession in AUTH PROVIDER: ", nextSession);
-            }
-            setUser(nextSession?.user);
-            setAuthError(null);
-            router.refresh();
-        });
-
         return () => {
             isMounted = false;
-            authListener?.subscription.unsubscribe();
         };
     }, [supabase, router]);
 
-    const oldLogin = useCallback(
-        async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
-            const supabase = createClient();
-            const email = formData.get("email")?.toString();
-            const password = formData.get("password")?.toString();
+    // const oldLogin = useCallback(
+    //     async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
+    //         const supabase = createClient();
+    //         const email = formData.get("email")?.toString();
+    //         const password = formData.get("password")?.toString();
 
-            if (!email || !password) {
-                return { msg: "Email and password are both required.", isError: true };
-            }
+    //         if (!email || !password) {
+    //             return { msg: "Email and password are both required.", isError: true };
+    //         }
 
-            if (!validateEmail(email)) {
-                return { msg: "Please enter a valid email address.", isError: true };
-            }
+    //         if (!validateEmail(email)) {
+    //             return { msg: "Please enter a valid email address.", isError: true };
+    //         }
 
-            const credentials: Credentials = { email, password };
-            const { data, error } = await supabase.auth.signInWithPassword(credentials);
+    //         const credentials: Credentials = { email, password };
+    //         const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
-            if (error) return { msg: "Login failed: " + error.message, isError: true };
-            return { msg: `Welcome back ${data.user.email}`, isError: false };
-        },
-        [supabase, validateEmail]
-    );
+    //         if (error) return { msg: "Login failed: " + error.message, isError: true };
+    //         return { msg: `Welcome back ${data.user.email}`, isError: false };
+    //     },
+    //     [supabase, validateEmail]
+    // );
 
     const login = useCallback(
         async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
@@ -119,34 +102,36 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
             let user;
             try {
-                user = await supabaseUserRepository.getUserDetails(Email.create(email), Password.create(password));
+                user = await supabaseUserRepository.getUserFromLogin(Email.create(email), Password.create(password));
+                const userState = UserMapper.toStateFromDomain(user);
+                setUser(userState);
             } catch (error) {
                 console.error(error);
-                return { msg: "Login failed: " + error, isError: true };
+                return { msg: `Login failed: ${error}`, isError: true };
             }
             return { msg: `Welcome back ${user.email}`, isError: false };
         },
         [supabase, validateEmail]
     );
 
-    const oldSignup = useCallback(
-        async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
-            const supabase = createClient();
-            const email = formData.get("email")?.toString();
-            const password = formData.get("password")?.toString();
+    // const oldSignup = useCallback(
+    //     async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
+    //         const supabase = createClient();
+    //         const email = formData.get("email")?.toString();
+    //         const password = formData.get("password")?.toString();
 
-            if (!email || !password) {
-                return { msg: "Email and password are both required.", isError: true };
-            }
+    //         if (!email || !password) {
+    //             return { msg: "Email and password are both required.", isError: true };
+    //         }
 
-            const credentials: Credentials = { email, password };
-            const { data, error } = await supabase.auth.signUp(credentials);
+    //         const credentials: Credentials = { email, password };
+    //         const { data, error } = await supabase.auth.signUp(credentials);
 
-            if (error) return { msg: "Signup failed: " + error.message, isError: true };
-            return { msg: `Success!, ${data.user?.id} with email ${data.user?.email} is signed up!`, isError: false };
-        },
-        [supabase, validateEmail]
-    );
+    //         if (error) return { msg: "Signup failed: " + error.message, isError: true };
+    //         return { msg: `Success!, ${data.user?.id} with email ${data.user?.email} is signed up!`, isError: false };
+    //     },
+    //     [supabase, validateEmail]
+    // );
 
     const signup = useCallback(
         async (_: SubmissionResponse | null, formData: FormData): Promise<SubmissionResponse> => {
@@ -169,27 +154,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         [supabase, validateEmail]
     );
 
-    const getErrorMessage = async (err: unknown): Promise<string> => {
-        if (typeof err === "string") return err;
-        if (err instanceof Error) return err.message;
-        return "An error occurred. Please try again.";
-    };
-
-    const handleSignOut = useCallback(async () => {
-        setIsSigningOut(true);
-        try {
-            const { error } = await supabase.auth.signOut();
-            setIsSigningOut(false);
-            if (error) {
-                setAuthError(error.message);
-                return;
-            }
-            setSession(null);
-            router.refresh();
-        } finally {
-            setIsSigningOut(false);
-        }
-    }, [supabase, router]);
+    const handleSignOut = useCallback(async () => supabaseUserRepository.signOut(setIsSigningOut), [supabase, router]);
 
     // const signInAnonymously = async () => {
     //     const {
@@ -205,9 +170,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     const auth = useMemo(
         () => ({
-            session,
             user,
-            userId: user && new UserId(user.id),
             authLoading: loading,
             authError,
             isSigningOut,

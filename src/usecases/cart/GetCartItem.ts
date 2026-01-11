@@ -1,21 +1,23 @@
 import { Cart } from "@/domain/cart/cart";
-import { CartItemDraft, ProductUnavailableError } from "@/domain/cart/cart-item.domain";
+import { CartItemDraft, ProductUnavailableError } from "@/domain/cart/cart-item";
 import { UserId, ProductId } from "@/domain/identity";
-import CartRepository from "@/domain/repositories/cart/AuthenticatedCartRepository";
+import { AuthenticatedCartRepository } from "@/domain/repositories/cart/AuthenticatedCartRepository";
 
 class GetCartItem {
     constructor(
-        private cartRepository: CartRepository
+        private authenticatedCartRepository: AuthenticatedCartRepository
     ) {}
 
     async execute(productId: ProductId, userId?: UserId): Promise<CartItemDraft> {
         if (userId) {
-            const cart = await this.cartRepository.getCart(userId)
+            const cartId = await this.authenticatedCartRepository.ensureCart(userId);
+            const cartItems = await this.authenticatedCartRepository.retrieveCartItems(cartId);
+            const cart = new Cart(cartId, userId, cartItems);
             const existing = cart.findCartItem(productId)
             if (existing) return existing;
         }
 
-        const created = await this.cartRepository.createCartItemDraft(productId)
+        const created = await this.authenticatedCartRepository.createCartItemDraft(productId)
         if (!created) {
             throw new ProductUnavailableError("the product is unavailable.")
         }

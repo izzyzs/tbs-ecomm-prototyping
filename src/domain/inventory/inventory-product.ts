@@ -2,6 +2,7 @@ import { Quantity } from "../quantity";
 import { Money } from "../money";
 import { User } from "../user/user";
 import { Category } from "../category/category";
+import { ProductId } from "../identity";
 
 export class InventoryProductError extends Error {
     constructor(message: string) {
@@ -11,6 +12,7 @@ export class InventoryProductError extends Error {
 }
 
 export class InventoryProduct {
+    
     private name: string;
     private description?: string;
     private brand?: string;
@@ -25,8 +27,10 @@ export class InventoryProduct {
     private readonly databaseId: string;
 
     constructor(
+        private readonly id: ProductId,
         name: string,
         quantity: Quantity,
+        category: Category,
         price: Money,
         cost: Money,
         taxable: boolean,
@@ -51,6 +55,7 @@ export class InventoryProduct {
         this.description = description;
         this.brand = brand;
         this.quantity = quantity;
+        this.category = category;
         this.price = price;
         this.cost = cost;
         this.taxable = taxable;
@@ -91,7 +96,7 @@ export class InventoryProduct {
     // or
 
     changeQuantity(newQuantity: Quantity, user: User) {
-        if (user.isAdmin) {
+        if (user.role.value.kind in ["stock-keeper",  "admin"]) {
             this.quantity = newQuantity
         }
     }

@@ -1,14 +1,13 @@
 import { UserId, CartId, ProductId } from "../../identity"
-import { CartItem, CartItemDraft } from "@/domain/cart/cart-item.domain"
+import { CartItem, CartItemDraft } from "@/domain/cart/cart-item"
 import { Cart } from "@/domain/cart/cart"
 
 export interface AuthenticatedCartRepository {
-    getCart(userId: UserId): Promise<Cart>;
+    // saveCart(cartId: CartId, cart: Cart): Promise<void>;
     ensureCart(userId: UserId): Promise<CartId>;
-    retrieveCartItems(userId: UserId): Promise<CartItem[]>;
-    createCartItemDraft(productId: ProductId): Promise<CartItemDraft | null>;
-    addCartItem(cartId: CartId, cartItemDraft: CartItemDraft): Promise<CartItem>;
-    saveCart(cartId: CartId, cart: Cart): Promise<void>;
+    retrieveCartItems(cartId: CartId): Promise<CartItem[]>;
+    addCartItem(cartId: CartId, cartItemDraft: CartItemDraft, qty?: number): Promise<CartItem>;
+    syncLocalCartWithDB(cartId: CartId, localCartArrayString: string): Promise<void>;
 }
 
 export class CartItemCreationError extends Error {
