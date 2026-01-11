@@ -10,6 +10,7 @@ import { requiredField } from "@/infrastructure/helper-functions"
 import { BrowserSupabaseClient, createClient } from "@/lib/supabase/client";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/lib/supabase/database.types";
+import { SupabaseError } from "./Errors";
 
 export class SupabaseCartRepository implements AuthenticatedCartRepository {
     constructor(
@@ -25,6 +26,26 @@ export class SupabaseCartRepository implements AuthenticatedCartRepository {
         }
 
         return new CartId(cartId)
+    }
+
+    async retrieveSingleCartItem(cartId: CartId, cartItemId: CartItemId): Promise<CartItem> {
+        const { data: cartItemData, error: cartItemError } = await this.supabase.from("cart_items").select("*").eq("id", cartItemId.number).single()
+
+        if (!cartItemData) throw new SupabaseError(`Cart item #${cartItemId.number} doesn't exist`);
+        if (cartItemError) throw cartItemError;
+
+        const { data: skuData } = await this.supabase.from("inventory").select("price, item, brand").eq("id", requiredField(cartItemData.product_id, SupabaseError, "cartItemData.product_id")).single();
+        if (!skuData || !skuData.price) throw new SupabaseError("Item doesn't exist");
+        const price = new Money(+(skuData.price.replace(/\$|./g, "")))
+        const cartItem: CartItem = new CartItem(
+            new CartItemId(cartItemData.id),
+            new ProductId(requiredField(cartItemData.product_id, SupabaseError, "cartItemData.product_id")),
+            requiredField(skuData.item, SupabaseError, "skuData.item"),
+            requiredField(skuData.brand, SupabaseError, "skuData.brand"),
+            price,
+            new Quantity(requiredField(cartItemData.quantity, SupabaseError, "cartItemData.quantity"))
+        )
+        return cartItem;
     }
 
 
@@ -70,11 +91,39 @@ export class SupabaseCartRepository implements AuthenticatedCartRepository {
         return item;
     }
 
+    async decrementCartItem(cartId: CartId, cartItemDraft: CartItemDraft): Promise<CartItem> {
+        const { data: cartItemData, error: cartItemError } = await this.supabase.from("cart_items").update({ quantity: cartItemDraft.quantity.amount }).eq("cart_id", cartId.number).eq("product_id", cartItemDraft.productId.number).select().single();
+        if (cartItemError) {
+            console.error(cartItemError);
+            throw cartItemError;
+        }
+        
+        const decremented: CartItem = new CartItem(
+            new CartItemId(cartItemData.id),
+            cartItemDraft.productId,
+            cartItemDraft.name,
+            cartItemDraft.brand,
+            cartItemDraft.price,
+            cartItemDraft.quantity
+        )
+        return decremented;
+    }
+
+    async removeCartItem(productId: ProductId, cartId: CartId): Promise<void> {
+        const { data, error } = await this.supabase.from("cart_items").delete().eq("cart_id", cartId.number).eq("product_id", productId.number).select();
+        if (error) {
+            console.error("SupabaseCartRepository.removeCartItem() error");
+            console.error(error);
+            throw error;
+        }
+    }
+
     async syncLocalCartWithDB(cartId: CartId, localCartArrayString: string): Promise<void> {
         const { data, error } = await this.supabase.rpc("sync_local_cart_to_db", { p_cart_id: cartId.number, p_local_cart: localCartArrayString });
         if (error) {
-            console.error("CartProvider.syncLocalCartWithDB() error");
+            console.error("SupabaseCartRepository.syncLocalCartWithDB() error");
             console.error(error);
+            throw error;
         }
     }
 }
