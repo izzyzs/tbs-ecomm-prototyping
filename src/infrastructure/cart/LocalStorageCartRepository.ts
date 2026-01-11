@@ -1,7 +1,7 @@
 import { LocalCartRepository, LocalCartStorageDTO } from "@/domain/repositories/cart/LocalCartRepository";
 import { Cart } from "@/domain/cart/cart";
 import { LocalStorageError } from "@/infrastructure/cart/Errors";
-import { CartItem, CartItemDraft } from "@/domain/cart/cart-item";
+import { CartItem, CartItemDraft, CartItemNotFoundError } from "@/domain/cart/cart-item";
 import { ProductId, CartItemId } from "@/domain/identity";
 import { BrowserSupabaseClient } from "@/lib/supabase/client";
 import { requiredField } from "../helper-functions";
@@ -13,11 +13,13 @@ export class LocalStorageCartRepository implements LocalCartRepository {
 
     }
 
-    async retrieveSingleCartItem(cartItemId: CartItemId): Promise<CartItem> {
+    async retrieveSingleCartItem(productId: ProductId): Promise<CartItem> {
         const cartString = localStorage.getItem("cart");
         const cartItemsDTO: LocalCartStorageDTO[] = JSON.parse(requiredField(cartString, LocalStorageError, "cart"))
-        const cartItemDTO = cartItemsDTO[cartItemId.number];
-        const cartItem = CartItemMapper.toDomainFromLocalDTO(cartItemId, cartItemDTO)
+        const cartItemId = cartItemsDTO.findIndex(i => i.productId === productId.number);
+        const cartItemDTO = cartItemsDTO.find(i => i.productId === productId.number);
+        if (!cartItemDTO || !cartItemId) throw new CartItemNotFoundError("cart item not in cart");
+        const cartItem = CartItemMapper.toDomainFromLocalDTO(new CartItemId(cartItemId), cartItemDTO)
         return cartItem;
     }
 

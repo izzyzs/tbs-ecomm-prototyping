@@ -6,8 +6,15 @@ import { Money } from "../money";
 // make an error export page
 export class ProductUnavailableError extends Error{
     constructor(message: string) {
-        super(message)
-        this.name = "ProductUnavailableError"
+        super(message);
+        this.name = "ProductUnavailableError";
+    }
+}
+
+export class CartItemNotFoundError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "CartItemNotFoundError";
     }
 }
 
