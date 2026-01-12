@@ -209,9 +209,9 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         return { msg: `Item successfully removed`, isError: false };
     }
 
-    async function decrement(cartItemIdNumber: number): Promise<SubmissionResponse> {
+    async function decrement(productIdNumber: number): Promise<SubmissionResponse> {
         let owner: CartOwner;
-        const cartItemId = new CartItemId(cartItemIdNumber);
+        const productId = new ProductId(productIdNumber);
 
         if (userId) {
             const uId = new UserId(userId);
@@ -224,7 +224,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         const decrementItemInCart = new DecrementItemInCart(cartGateway);
         let decremented;
         try {
-            decremented = await decrementItemInCart.execute(cartItemId, owner);
+            decremented = await decrementItemInCart.execute(productId, owner);
         } catch (e) {
             if (e instanceof Error) {
                 // console.error("Couldn't create cart item:", e.message);
@@ -233,7 +233,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             return { msg: `Couldn't decrement cart item: ${e}.`, isError: true };
         }
         setCartItems((prev) => {
-            if (decremented.quantityAmount === 0) return prev.filter((i) => i.id === decremented.id.number);
+            if (decremented.quantityAmount === 0) return prev.filter((i) => i.productId !== decremented.productId.number);
             let found = false;
             const next = prev.map((i) => {
                 if (i.id !== decremented.id.number) return i;

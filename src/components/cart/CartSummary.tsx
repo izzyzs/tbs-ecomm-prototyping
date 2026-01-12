@@ -11,7 +11,7 @@ const CartSummary = () => {
     const { cartItems, add, decrement, remove } = useCart();
 
     const handleAdd = (productId: number) => createToast(add(productId));
-    const handleDecrement = (cartItemId: number) => createToast(decrement(cartItemId));
+    const handleDecrement = (productId: number) => createToast(decrement(productId));
     const handleRemove = (productId: number) => createToast(remove(productId));
 
     const handleDeleteAll = () => {
@@ -53,7 +53,7 @@ const CartSummary = () => {
                                     {/* <span className="rounded-full bg-pink-50 px-3 py-1 text-pink-600">{item.size}</span> */}
                                     <span>
                                         <Button
-                                            onClick={() => handleDecrement(item.id)}
+                                            onClick={() => handleDecrement(item.productId)}
                                             variant="ghost"
                                             className="text-pink-400 hover:text-pink-400 border-[1px] border-transparent hover:border-pink-400 hover:bg-transparent"
                                         >
