@@ -1,13 +1,13 @@
-import { Quantity } from "@/core/domain/quantity";
-import { InventoryProduct } from "@/core/domain/inventory/inventory-product";
-import { ProductId } from "@/core/domain/identity";
+import { Quantity } from "@/domain/Quantity";
+import { InventoryProduct } from "@/domain/inventory/InventoryProduct";
+import { ProductId } from "@/domain/Identity";
 
 export type CartItemDetails = {
     id: number;
     name: string;
     brand: string;
     price: string;
-} | null
+} | null;
 
 interface InventoryRepository {
     // getQuantityById(id: string): Promise<Quantity | null>;

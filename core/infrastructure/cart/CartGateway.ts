@@ -1,9 +1,7 @@
-import { LocalCartRepository } from "@/core/domain/repositories/cart/LocalCartRepository";
-import { AuthenticatedCartRepository } from "@/core/domain/repositories/cart/AuthenticatedCartRepository";
-import { CartItem, CartItemDraft } from "@/core/domain/cart/cart-item";
-import { CartItemId, CartOwner, ProductId } from "@/core/domain/identity";
-import { CartItemDetails } from "@/core/domain/repositories/inventory/InventoryRepository";
-import { Quantity } from "@/core/domain/quantity";
+import { LocalCartRepository } from "@/domain/repositories/cart/LocalCartRepository";
+import { AuthenticatedCartRepository } from "@/domain/repositories/cart/AuthenticatedCartRepository";
+import { CartItem, CartItemDraft } from "@/domain/cart/CartItem";
+import { CartOwner, ProductId } from "@/domain/Identity";
 
 export interface CartGateway {
     addCartItem(cartItemDraft: CartItemDraft, owner: CartOwner): Promise<CartItem>;
@@ -15,7 +13,7 @@ export interface CartGateway {
 export class DefaultCartGateway implements CartGateway {
     constructor(
         private localCartRepository: LocalCartRepository,
-        private authenticatedCartRepository: AuthenticatedCartRepository 
+        private authenticatedCartRepository: AuthenticatedCartRepository
     ) {}
 
     async addCartItem(cartItemDraft: CartItemDraft, owner: CartOwner): Promise<CartItem> {

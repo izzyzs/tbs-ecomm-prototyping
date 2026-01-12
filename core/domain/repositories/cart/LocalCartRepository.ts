@@ -1,9 +1,8 @@
-import { Cart } from "@/core/domain/cart/cart"
-import { CartItem, CartItemDraft } from "@/core/domain/cart/cart-item";
-import { CartItemId, ProductId } from "@/core/domain/identity";
-import { Money } from "@/core/domain/money";
-import { Quantity } from "@/core/domain/quantity";
-
+import { Cart } from "@/domain/cart/Cart";
+import { CartItem, CartItemDraft } from "@/domain/cart/CartItem";
+import { CartItemId, ProductId } from "@/domain/Identity";
+import { Money } from "@/domain/Money";
+import { Quantity } from "@/domain/Quantity";
 
 export interface LocalCartRepository {
     saveCart(cart: Cart): Promise<void>;
@@ -20,4 +19,4 @@ export type LocalCartStorageDTO = {
     readonly brand: string;
     readonly price: number;
     readonly quantity: number;
-}
+};
