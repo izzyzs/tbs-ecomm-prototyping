@@ -8,8 +8,8 @@ import CartItemMapper from "@/interface-adapters/mappers/cart-item.mapper";
 export class DecrementItemInCart {
     constructor(private cartGateway: CartGateway) {}
 
-    async execute(cartItemId: CartItemId, owner: CartOwner): Promise<CartItem> {
-        const cartItem = await this.cartGateway.retrieveSingleCartItem(cartItemId, owner);
+    async execute(productId: ProductId, owner: CartOwner): Promise<CartItem> {
+        const cartItem = await this.cartGateway.retrieveSingleCartItem(productId, owner);
 
         if (cartItem.quantityAmount == 1) {
             await this.cartGateway.removeCartItem(cartItem.productId, owner);
