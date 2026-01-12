@@ -1,6 +1,3 @@
-// TODO: LET SUPABASE HANDLE TYPES AND CREATE mapToMyOwnType
-//  functions for conversions to th types and interfaces below
-
 import { Database } from "@/lib/supabase/database.types";
 
 export type Fulfillment = "NDD" | "SDD" | "PU";
@@ -146,12 +143,12 @@ export interface OrderWithRelations extends Order {
     addresses: Address[];
 }
 
-export interface CartWithItems extends Cart {
-    items: CartItem[];
-    user: User;
-}
+// export interface CartWithItems extends Cart {
+//     items: CartItem[];
+//     user: User;
+// }
 
-export interface ProductWithCartItems extends Product {
-    CartItem: CartItem[];
-    orderProducts: OrderProduct[];
-}
+// export interface ProductWithCartItems extends Product {
+//     CartItem: CartItem[];
+//     orderProducts: OrderProduct[];
+// }
