@@ -1,4 +1,4 @@
-import {CategoryId } from "../identity"
+import { CategoryId } from "../Identity";
 import { CategoryRepository } from "./CategoryRepository";
 
 export class Category {
@@ -8,8 +8,8 @@ export class Category {
         public readonly parentCategoryId?: CategoryId
     ) {}
 
-    async parent(): Promise<Category|null> {
-        const parent = await this.categoryRepository.getParentCategory(this.id)
+    async parent(): Promise<Category | null> {
+        const parent = await this.categoryRepository.getParentCategory(this.id);
         return parent;
     }
 }
