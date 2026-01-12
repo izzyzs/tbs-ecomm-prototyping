@@ -1,6 +1,6 @@
-import { UserId, CartId, ProductId, CartItemId } from "../../identity"
-import { CartItem, CartItemDraft } from "@/core/domain/cart/cart-item"
-import { Cart } from "@/core/domain/cart/cart"
+import { UserId, CartId, ProductId, CartItemId } from "../../Identity";
+import { CartItem, CartItemDraft } from "@/core/domain/cart/cart-item";
+import { Cart } from "@/core/domain/cart/cart";
 import { Quantity } from "@/core/domain/quantity";
 
 export interface AuthenticatedCartRepository {
@@ -16,7 +16,7 @@ export interface AuthenticatedCartRepository {
 
 export class CartItemCreationError extends Error {
     constructor(message: string) {
-        super(message)
-        this.name = 'CartItemCreationError';
+        super(message);
+        this.name = "CartItemCreationError";
     }
 }

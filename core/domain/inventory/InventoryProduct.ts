@@ -1,8 +1,8 @@
-import { Quantity } from "../quantity";
-import { Money } from "../money";
-import { User } from "../user/user";
-import { Category } from "../category/category";
-import { ProductId } from "../identity";
+import { Quantity } from "../Quantity";
+import { Money } from "../Money";
+import { User } from "../user/User";
+import { Category } from "../category/Category";
+import { ProductId } from "../Identity";
 
 export class InventoryProductError extends Error {
     constructor(message: string) {
@@ -12,7 +12,6 @@ export class InventoryProductError extends Error {
 }
 
 export class InventoryProduct {
-    
     private name: string;
     private description?: string;
     private brand?: string;
@@ -44,13 +43,11 @@ export class InventoryProduct {
         if (!name.trim()) {
             throw new InventoryProductError("Product name is required");
         }
-        if (!lightspeedSystemId.trim())
-            throw new InventoryProductError("Lightspeed System Id required");
-        if (!databaseId.trim())
-            throw new InventoryProductError("Database Id required");
+        if (!lightspeedSystemId.trim()) throw new InventoryProductError("Lightspeed System Id required");
+        if (!databaseId.trim()) throw new InventoryProductError("Database Id required");
         InventoryProduct.validateAmountLimit(amountLimit, active);
-        InventoryProduct.validateCost(cost)
-        InventoryProduct.validatePrice(price, cost)
+        InventoryProduct.validateCost(cost);
+        InventoryProduct.validatePrice(price, cost);
         this.name = name;
         this.description = description;
         this.brand = brand;
@@ -66,38 +63,33 @@ export class InventoryProduct {
     }
 
     static validateCost(cost: Money) {
-        if (cost.valueInPennies <= 0)
-            throw new InventoryProductError("Product cost must be greater than 0");
-            
+        if (cost.valueInPennies <= 0) throw new InventoryProductError("Product cost must be greater than 0");
     }
 
     static validatePrice(price: Money, cost: Money) {
-        if (price.valueInPennies <= cost.valueInPennies)
-            throw new InventoryProductError("Price must be greater than cost.");
+        if (price.valueInPennies <= cost.valueInPennies) throw new InventoryProductError("Price must be greater than cost.");
     }
 
     static validateAmountLimit(amountLimit: number, active: boolean): void {
-        if (amountLimit < 0)
-            throw new InventoryProductError("Can't have negative amount limit")
-        if (amountLimit == 0 && active)
-            throw new InventoryProductError("If limit is set to 0, then product should be inactive")
+        if (amountLimit < 0) throw new InventoryProductError("Can't have negative amount limit");
+        if (amountLimit == 0 && active) throw new InventoryProductError("If limit is set to 0, then product should be inactive");
     }
 
     // should I do
 
     increaseQuantity(by: number) {
-        this.quantity = this.quantity.increase(by)
+        this.quantity = this.quantity.increase(by);
     }
-    
+
     decreaseQuantity(by: number) {
-        this.quantity = this.quantity.decrease(by)
+        this.quantity = this.quantity.decrease(by);
     }
 
     // or
 
     changeQuantity(newQuantity: Quantity, user: User) {
-        if (user.role.value.kind in ["stock-keeper",  "admin"]) {
-            this.quantity = newQuantity
+        if (user.role.value.kind in ["stock-keeper", "admin"]) {
+            this.quantity = newQuantity;
         }
     }
 
@@ -105,9 +97,6 @@ export class InventoryProduct {
         InventoryProduct.validateAmountLimit(value, this.active);
         this.amountLimit = value;
     }
-
-
-
 }
 
 /*

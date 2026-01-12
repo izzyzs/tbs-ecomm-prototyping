@@ -1,5 +1,5 @@
 {
-    "name": "testing",
+    "name": "store-front",
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -62,7 +62,8 @@
         "stripe": "^20.0.0",
         "tailwind-merge": "^3.3.1",
         "vaul": "^1.1.2",
-        "zod": "^4.1.12"
+        "zod": "^4.1.12",
+        "@tbs/core": "workspace:*"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",

@@ -1,12 +1,10 @@
 // cart.ts
-import { UserId, ProductId, CartId } from "../identity"
-import { CartItem } from "./cart-item";
+import { UserId, ProductId, CartId } from "../Identity";
+import { CartItem } from "./CartItem";
 // export type CartOwner = { kind: "customer"; id: CustomerId}
 
-
 export class Cart {
-    
-    constructor (
+    constructor(
         private id: CartId,
         private readonly uId: UserId,
         private lineItems: CartItem[] = []
@@ -16,14 +14,11 @@ export class Cart {
         return this.uId;
     }
 
-
     findCartItem(productId: ProductId) {
-        return this.lineItems.find(item => item.productId.number === productId.number)
+        return this.lineItems.find((item) => item.productId.number === productId.number);
     }
 
-
     addItem(item: CartItem) {
-        this.lineItems.push(item)
-    } 
+        this.lineItems.push(item);
+    }
 }
-

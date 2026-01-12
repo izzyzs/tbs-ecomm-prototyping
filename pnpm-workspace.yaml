@@ -1,0 +1,7 @@
+packages:
+    - "core"
+    - "store-front"
+    - "internal-dashboard"
+ignoredBuiltDependencies:
+    - sharp
+    - unrs-resolver
