@@ -20,16 +20,31 @@ importers:
 
   core:
     dependencies:
+      '@supabase/ssr':
+        specifier: ^0.8.0
+        version: 0.8.0(@supabase/supabase-js@2.90.1)
+      '@supabase/supabase-js':
+        specifier: ^2.90.1
+        version: 2.90.1
       '@types/react':
         specifier: ^19.2.8
         version: 19.2.8
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       react:
         specifier: ^19.2.3
         version: 19.2.3
+      tailwind-merge:
+        specifier: ^3.4.0
+        version: 3.4.0
       vitest:
         specifier: ^4.0.16
         version: 4.0.16(@types/node@20.19.28)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)
     devDependencies:
+      '@types/node':
+        specifier: ^20.19.28
+        version: 20.19.28
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
