@@ -1,0 +1,1 @@
+{"version":3,"file":"identity.mapper.d.ts","sourceRoot":"","sources":["../../src/mappers/identity.mapper.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,WAAW,CAAC;AAEtC,qBAAa,eAAe;IACxB,MAAM,CAAC,iBAAiB,CAAC,cAAc,EAAE,MAAM;IAI/C,MAAM,CAAC,iBAAiB,CAAC,SAAS,EAAE,SAAS;CAGhD"}

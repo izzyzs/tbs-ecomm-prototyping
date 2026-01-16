@@ -1,0 +1,1 @@
+{"version":3,"file":"UserState.type.d.ts","sourceRoot":"","sources":["../../src/types/UserState.type.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,WAAW,CAAC;AAEtC,MAAM,WAAW,SAAS;IACtB,EAAE,EAAE,MAAM,CAAC;IACX,KAAK,EAAE,MAAM,CAAC;IACd,eAAe,EAAE,OAAO,CAAC;IACzB,IAAI,EAAE,SAAS,CAAC;CACnB"}

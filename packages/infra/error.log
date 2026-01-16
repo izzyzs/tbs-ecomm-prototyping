@@ -1,0 +1,175 @@
+
+> @tbs/infra@ build /Users/ismaelz/Dropbox/Ben_n_Family/Ismael_Z/Documents/Career/Programming/Business/tbs-ecommerce/applications/packages/infra
+> tsc -p tsconfig.json
+
+src/gateway/__tests__/CartGateway.fixtures.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/gateway/__tests__/CartGateway.fixtures.ts(1,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/gateway/__tests__/CartGateway.fixtures.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartId'.
+src/gateway/__tests__/CartGateway.fixtures.ts(2,18): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemId'.
+src/gateway/__tests__/CartGateway.fixtures.ts(2,30): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/gateway/__tests__/CartGateway.fixtures.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'Money'.
+src/gateway/__tests__/CartGateway.fixtures.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'Quantity'.
+src/gateway/__tests__/CartGateway.fixtures.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'AuthenticatedCartRepository'.
+src/gateway/__tests__/CartGateway.fixtures.ts(6,10): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartRepository'.
+src/gateway/__tests__/CartGateway.test.ts(2,49): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../CartGateway.js'?
+src/gateway/__tests__/CartGateway.test.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartOwner'.
+src/gateway/__tests__/CartGateway.test.ts(4,94): error TS2307: Cannot find module './CartGateway.fixtures' or its corresponding type declarations.
+src/gateway/CartGateway.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartRepository'.
+src/gateway/CartGateway.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'AuthenticatedCartRepository'.
+src/gateway/CartGateway.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/gateway/CartGateway.ts(3,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/gateway/CartGateway.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartOwner'.
+src/gateway/CartGateway.ts(4,21): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/gateway/index.ts(1,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './CartGateway.js'?
+src/index.ts(1,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/index.ts(2,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/index.ts(3,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/index.ts(4,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './Errors.js'?
+src/index.ts(5,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './helper-functions.js'?
+src/lib/index.ts(1,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './stripe.js'?
+src/lib/index.ts(2,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './utils.js'?
+src/lib/index.ts(3,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/lib/index.ts(4,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './types.js'?
+src/lib/supabase/client.ts(2,26): error TS2307: Cannot find module './database.types' or its corresponding type declarations.
+src/lib/supabase/index.ts(1,25): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './client.js'?
+src/lib/supabase/index.ts(2,15): error TS2307: Cannot find module './database.types' or its corresponding type declarations.
+src/lib/supabase/index.ts(4,25): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './server.js'?
+src/lib/supabase/server.ts(2,25): error TS2307: Cannot find module 'next/headers' or its corresponding type declarations.
+src/lib/supabase/server.ts(3,26): error TS2307: Cannot find module './database.types' or its corresponding type declarations.
+src/lib/types.ts(1,26): error TS2307: Cannot find module '@/lib/supabase/database.types' or its corresponding type declarations.
+src/lib/types.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'RoleValue'.
+src/repo/cart/index.ts(1,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './LocalStorageCartRepository.js'?
+src/repo/cart/index.ts(2,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './SupabaseCartRepository.js'?
+src/repo/cart/LocalStorageCartRepository.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartRepository'.
+src/repo/cart/LocalStorageCartRepository.ts(1,31): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartStorageDTO'.
+src/repo/cart/LocalStorageCartRepository.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'Cart'.
+src/repo/cart/LocalStorageCartRepository.ts(3,35): error TS2307: Cannot find module '@/Errors' or its corresponding type declarations.
+src/repo/cart/LocalStorageCartRepository.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/repo/cart/LocalStorageCartRepository.ts(4,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/repo/cart/LocalStorageCartRepository.ts(4,35): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemNotFoundError'.
+src/repo/cart/LocalStorageCartRepository.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/repo/cart/LocalStorageCartRepository.ts(5,21): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemId'.
+src/repo/cart/LocalStorageCartRepository.ts(6,39): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/cart/LocalStorageCartRepository.ts(7,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/cart/LocalStorageCartRepository.ts(8,10): error TS2305: Module '"@tbs/core"' has no exported member 'Quantity'.
+src/repo/cart/LocalStorageCartRepository.ts(9,10): error TS2305: Module '"@tbs/adapters"' has no exported member 'CartItemMapper'.
+src/repo/cart/SupabaseCartRepository.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/repo/cart/SupabaseCartRepository.ts(1,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/repo/cart/SupabaseCartRepository.ts(1,35): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemNotFoundError'.
+src/repo/cart/SupabaseCartRepository.ts(1,58): error TS2305: Module '"@tbs/core"' has no exported member 'ProductUnavailableError'.
+src/repo/cart/SupabaseCartRepository.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'Cart'.
+src/repo/cart/SupabaseCartRepository.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartId'.
+src/repo/cart/SupabaseCartRepository.ts(3,18): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/repo/cart/SupabaseCartRepository.ts(3,29): error TS2305: Module '"@tbs/core"' has no exported member 'UserId'.
+src/repo/cart/SupabaseCartRepository.ts(3,37): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemId'.
+src/repo/cart/SupabaseCartRepository.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'Money'.
+src/repo/cart/SupabaseCartRepository.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'Quantity'.
+src/repo/cart/SupabaseCartRepository.ts(6,10): error TS2305: Module '"@tbs/core"' has no exported member 'AuthenticatedCartRepository'.
+src/repo/cart/SupabaseCartRepository.ts(6,39): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemCreationError'.
+src/repo/cart/SupabaseCartRepository.ts(8,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(10,53): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(12,26): error TS2307: Cannot find module '@/lib/supabase/database.types' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(13,31): error TS2307: Cannot find module '@/Errors' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(68,45): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/repo/index.ts(1,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/repo/index.ts(2,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/repo/index.ts(3,15): error TS2834: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Consider adding an extension to the import path.
+src/repo/inventory/index.ts(1,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './SupabaseInventoryRepository.js'?
+src/repo/inventory/SupabaseInventoryRepository.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/repo/inventory/SupabaseInventoryRepository.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemCreationError'.
+src/repo/inventory/SupabaseInventoryRepository.ts(3,39): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/inventory/SupabaseInventoryRepository.ts(4,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/inventory/SupabaseInventoryRepository.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'InventoryRepository'.
+src/repo/inventory/SupabaseInventoryRepository.ts(5,31): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDetails'.
+src/repo/inventory/SupabaseInventoryRepository.ts(6,10): error TS2305: Module '"@tbs/core"' has no exported member 'InventoryProduct'.
+src/repo/user/index.ts(1,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './SupabaseUserRepository.js'?
+src/repo/user/SupabaseUserRepository.ts(1,26): error TS2307: Cannot find module '@/lib/supabase' or its corresponding type declarations.
+src/repo/user/SupabaseUserRepository.ts(3,9): error TS2305: Module '"@tbs/core"' has no exported member 'UserRepository'.
+src/repo/user/SupabaseUserRepository.ts(3,25): error TS2305: Module '"@tbs/core"' has no exported member 'AuthError'.
+src/repo/user/SupabaseUserRepository.ts(3,36): error TS2305: Module '"@tbs/core"' has no exported member 'Password'.
+src/repo/user/SupabaseUserRepository.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'Email'.
+src/repo/user/SupabaseUserRepository.ts(5,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/user/SupabaseUserRepository.ts(6,39): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/user/SupabaseUserRepository.ts(7,10): error TS2305: Module '"@tbs/core"' has no exported member 'Role'.
+src/repo/user/SupabaseUserRepository.ts(7,16): error TS2305: Module '"@tbs/core"' has no exported member 'User'.
+src/repo/user/SupabaseUserRepository.ts(8,10): error TS2305: Module '"@tbs/core"' has no exported member 'UserId'.
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @tbs/infra@ build: `tsc -p tsconfig.json`
+Exit status 2
+
+> @tbs/infra@ build /Users/ismaelz/Dropbox/Ben_n_Family/Ismael_Z/Documents/Career/Programming/Business/tbs-ecommerce/applications/packages/infra
+> tsc -p tsconfig.json
+
+src/gateway/__tests__/CartGateway.fixtures.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/gateway/__tests__/CartGateway.fixtures.ts(1,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/gateway/__tests__/CartGateway.fixtures.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartId'.
+src/gateway/__tests__/CartGateway.fixtures.ts(2,18): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemId'.
+src/gateway/__tests__/CartGateway.fixtures.ts(2,30): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/gateway/__tests__/CartGateway.fixtures.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'Money'.
+src/gateway/__tests__/CartGateway.fixtures.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'Quantity'.
+src/gateway/__tests__/CartGateway.fixtures.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'AuthenticatedCartRepository'.
+src/gateway/__tests__/CartGateway.fixtures.ts(6,10): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartRepository'.
+src/gateway/__tests__/CartGateway.test.ts(2,49): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../CartGateway.js'?
+src/gateway/__tests__/CartGateway.test.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartOwner'.
+src/gateway/__tests__/CartGateway.test.ts(4,94): error TS2307: Cannot find module './CartGateway.fixtures' or its corresponding type declarations.
+src/gateway/CartGateway.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartRepository'.
+src/gateway/CartGateway.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'AuthenticatedCartRepository'.
+src/gateway/CartGateway.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/gateway/CartGateway.ts(3,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/gateway/CartGateway.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartOwner'.
+src/gateway/CartGateway.ts(4,21): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/gateway/index.ts(1,15): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './CartGateway.js'?
+src/lib/supabase/client.ts(2,26): error TS2307: Cannot find module './database.types' or its corresponding type declarations.
+src/lib/supabase/server.ts(2,25): error TS2307: Cannot find module 'next/headers' or its corresponding type declarations.
+src/lib/supabase/server.ts(3,26): error TS2307: Cannot find module './database.types' or its corresponding type declarations.
+src/lib/types.ts(1,26): error TS2307: Cannot find module '@/lib/supabase/database.types' or its corresponding type declarations.
+src/lib/types.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'RoleValue'.
+src/repo/cart/LocalStorageCartRepository.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartRepository'.
+src/repo/cart/LocalStorageCartRepository.ts(1,31): error TS2305: Module '"@tbs/core"' has no exported member 'LocalCartStorageDTO'.
+src/repo/cart/LocalStorageCartRepository.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'Cart'.
+src/repo/cart/LocalStorageCartRepository.ts(3,35): error TS2307: Cannot find module '@/Errors' or its corresponding type declarations.
+src/repo/cart/LocalStorageCartRepository.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/repo/cart/LocalStorageCartRepository.ts(4,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/repo/cart/LocalStorageCartRepository.ts(4,35): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemNotFoundError'.
+src/repo/cart/LocalStorageCartRepository.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/repo/cart/LocalStorageCartRepository.ts(5,21): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemId'.
+src/repo/cart/LocalStorageCartRepository.ts(6,39): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/cart/LocalStorageCartRepository.ts(7,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/cart/LocalStorageCartRepository.ts(8,10): error TS2305: Module '"@tbs/core"' has no exported member 'Quantity'.
+src/repo/cart/LocalStorageCartRepository.ts(9,10): error TS2305: Module '"@tbs/adapters"' has no exported member 'CartItemMapper'.
+src/repo/cart/SupabaseCartRepository.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItem'.
+src/repo/cart/SupabaseCartRepository.ts(1,20): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDraft'.
+src/repo/cart/SupabaseCartRepository.ts(1,35): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemNotFoundError'.
+src/repo/cart/SupabaseCartRepository.ts(1,58): error TS2305: Module '"@tbs/core"' has no exported member 'ProductUnavailableError'.
+src/repo/cart/SupabaseCartRepository.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'Cart'.
+src/repo/cart/SupabaseCartRepository.ts(3,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartId'.
+src/repo/cart/SupabaseCartRepository.ts(3,18): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/repo/cart/SupabaseCartRepository.ts(3,29): error TS2305: Module '"@tbs/core"' has no exported member 'UserId'.
+src/repo/cart/SupabaseCartRepository.ts(3,37): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemId'.
+src/repo/cart/SupabaseCartRepository.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'Money'.
+src/repo/cart/SupabaseCartRepository.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'Quantity'.
+src/repo/cart/SupabaseCartRepository.ts(6,10): error TS2305: Module '"@tbs/core"' has no exported member 'AuthenticatedCartRepository'.
+src/repo/cart/SupabaseCartRepository.ts(6,39): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemCreationError'.
+src/repo/cart/SupabaseCartRepository.ts(8,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(10,53): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(12,26): error TS2307: Cannot find module '@/lib/supabase/database.types' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(13,31): error TS2307: Cannot find module '@/Errors' or its corresponding type declarations.
+src/repo/cart/SupabaseCartRepository.ts(68,45): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/repo/inventory/SupabaseInventoryRepository.ts(1,10): error TS2305: Module '"@tbs/core"' has no exported member 'ProductId'.
+src/repo/inventory/SupabaseInventoryRepository.ts(2,10): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemCreationError'.
+src/repo/inventory/SupabaseInventoryRepository.ts(3,39): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/inventory/SupabaseInventoryRepository.ts(4,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/inventory/SupabaseInventoryRepository.ts(5,10): error TS2305: Module '"@tbs/core"' has no exported member 'InventoryRepository'.
+src/repo/inventory/SupabaseInventoryRepository.ts(5,31): error TS2305: Module '"@tbs/core"' has no exported member 'CartItemDetails'.
+src/repo/inventory/SupabaseInventoryRepository.ts(6,10): error TS2305: Module '"@tbs/core"' has no exported member 'InventoryProduct'.
+src/repo/user/SupabaseUserRepository.ts(1,26): error TS2307: Cannot find module '@/lib/supabase' or its corresponding type declarations.
+src/repo/user/SupabaseUserRepository.ts(3,9): error TS2305: Module '"@tbs/core"' has no exported member 'UserRepository'.
+src/repo/user/SupabaseUserRepository.ts(3,25): error TS2305: Module '"@tbs/core"' has no exported member 'AuthError'.
+src/repo/user/SupabaseUserRepository.ts(3,36): error TS2305: Module '"@tbs/core"' has no exported member 'Password'.
+src/repo/user/SupabaseUserRepository.ts(4,10): error TS2305: Module '"@tbs/core"' has no exported member 'Email'.
+src/repo/user/SupabaseUserRepository.ts(5,31): error TS2307: Cannot find module '@/helper-functions' or its corresponding type declarations.
+src/repo/user/SupabaseUserRepository.ts(6,39): error TS2307: Cannot find module '@/lib/supabase/client' or its corresponding type declarations.
+src/repo/user/SupabaseUserRepository.ts(7,10): error TS2305: Module '"@tbs/core"' has no exported member 'Role'.
+src/repo/user/SupabaseUserRepository.ts(7,16): error TS2305: Module '"@tbs/core"' has no exported member 'User'.
+src/repo/user/SupabaseUserRepository.ts(8,10): error TS2305: Module '"@tbs/core"' has no exported member 'UserId'.
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @tbs/infra@ build: `tsc -p tsconfig.json`
+Exit status 2

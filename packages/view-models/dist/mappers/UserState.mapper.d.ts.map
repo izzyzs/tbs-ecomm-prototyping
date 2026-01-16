@@ -1,0 +1,1 @@
+{"version":3,"file":"UserState.mapper.d.ts","sourceRoot":"","sources":["../../src/mappers/UserState.mapper.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAQ,MAAM,WAAW,CAAC;AAGvC,OAAO,EAAE,SAAS,EAAE,MAAM,mBAAmB,CAAC;AAE9C,qBAAa,eAAe;IACxB,MAAM,CAAC,iBAAiB,CAAC,IAAI,EAAE,IAAI,GAAG,SAAS;IAW/C,MAAM,CAAC,iBAAiB,CAAC,KAAK,EAAE,SAAS,GAAG,IAAI;CAQnD"}
