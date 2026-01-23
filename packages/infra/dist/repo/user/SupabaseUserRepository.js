@@ -34,11 +34,9 @@ export class SupabaseUserRepository {
         const user = new User(id, email, isAuthenticated, role);
         return user;
     }
-    async signOut(setSigningOut) {
-        setSigningOut(true);
+    async signOut() {
         const { error } = await this.supabase.auth.signOut();
-        setSigningOut(false);
         if (error)
-            throw error;
+            throw new AuthError(`Sign out failed: ${error.message}`);
     }
 }

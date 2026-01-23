@@ -10,6 +10,9 @@ export type SubmissionResponse = {
     msg: string;
     isError: boolean;
 };
+export interface ToastResponse extends SubmissionResponse {
+    isSuccess: boolean;
+}
 export type CategoryObject = {
     category: string;
 };

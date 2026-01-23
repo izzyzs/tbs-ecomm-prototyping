@@ -35,6 +35,11 @@ export default function UserStatusController() {
     const [loginIsOpen, setLoginIsOpen] = useState(false);
     const [signUpIsOpen, setSignUpIsOpen] = useState(false);
 
+    useEffect(() => {
+        setLoginIsOpen(false);
+        setSignUpIsOpen(false);
+    }, [user])
+
     if (authLoading) {
         return <Loader className="animate-spin" />;
     }

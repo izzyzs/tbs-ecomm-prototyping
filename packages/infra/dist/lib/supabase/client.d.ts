@@ -415,8 +415,8 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
         };
         get_products: {
             Args: {
-                p_cursor: number;
-                p_limit: number;
+                p_cursor?: number;
+                p_limit?: number;
             };
             Returns: import("./database.types.js").Json;
         };

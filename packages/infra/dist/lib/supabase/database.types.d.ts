@@ -425,8 +425,8 @@ export type Database = {
             };
             get_products: {
                 Args: {
-                    p_cursor: number;
-                    p_limit: number;
+                    p_cursor?: number;
+                    p_limit?: number;
                 };
                 Returns: Json;
             };

@@ -8,6 +8,6 @@ export declare class SupabaseUserRepository implements UserRepository {
     createAccount(email: Email, password: Password): Promise<User>;
     getUserFromLogin(email: Email, password: Password): Promise<User>;
     getUserFromSession(): Promise<User | null>;
-    signOut(setSigningOut: React.Dispatch<React.SetStateAction<boolean>>): Promise<void>;
+    signOut(): Promise<void>;
 }
 //# sourceMappingURL=SupabaseUserRepository.d.ts.map

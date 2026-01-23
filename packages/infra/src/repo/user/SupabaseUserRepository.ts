@@ -44,10 +44,8 @@ export class SupabaseUserRepository implements UserRepository {
         return user;
     }
 
-    async signOut(setSigningOut: React.Dispatch<React.SetStateAction<boolean>>): Promise<void> {
-        setSigningOut(true);
+    async signOut(): Promise<void> {
         const { error } = await this.supabase.auth.signOut();
-        setSigningOut(false);
-        if (error) throw error;
+        if (error) throw new AuthError(`Sign out failed: ${error.message}`);
     }
 }
