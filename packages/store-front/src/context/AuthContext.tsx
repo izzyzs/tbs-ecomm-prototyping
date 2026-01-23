@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo, useState, useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
 // import { User } from "@supabase/supabase-js";
-import { User } from "@tbs/core";
+import {AuthError, User} from "@tbs/core";
 import { Session } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Credentials, SubmissionResponse } from "@/utils/types";
@@ -155,7 +155,21 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         [supabase, validateEmail]
     );
 
-    const handleSignOut = useCallback(async () => supabaseUserRepository.signOut(setIsSigningOut), [supabase, router]);
+    const handleSignOut = useCallback(async () => {
+        setIsSigningOut(true);
+        try {
+            await supabaseUserRepository.signOut();
+        } catch (error) {
+            if (error instanceof AuthError) {
+                setAuthError(error.message);
+                return;
+            }
+        } finally {
+            setUser(undefined);
+            setIsSigningOut(false);
+            router.refresh();
+        }
+    }, [supabase, router]);
 
     // const signInAnonymously = async () => {
     //     const {

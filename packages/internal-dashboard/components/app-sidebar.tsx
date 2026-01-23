@@ -7,42 +7,45 @@ type SectionButton = { title: string; url: string; icon: ForwardRefExoticCompone
 const items: SectionButton[] = [
     {
         title: "Inventory",
-        url: "inventory/",
+        url: "/inventory/",
         icon: CirclePile,
     },
     {
         title: "Orders",
-        url: "orders/",
+        url: "/orders/",
         icon: Container,
     },
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar>
-            <SidebarHeader />
-            <SidebarContent>
-                <SidebarGroup>
-                    <Link href={"/"}>
-                        <SidebarGroupLabel>TBS Internal Dash</SidebarGroupLabel>
-                    </Link>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <Link href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
-            </SidebarContent>
-            <SidebarFooter />
-        </Sidebar>
+
+            <Sidebar variant={`inset`}>
+                <SidebarHeader />
+                {/*className = {`w-full`}}*/}
+                <SidebarContent>
+                    <SidebarGroup>
+                        <Link href={"/"}>
+                            <SidebarGroupLabel>TBS Internal Dash</SidebarGroupLabel>
+                        </Link>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {items.map((item) => (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton asChild>
+                                            <Link href={item.url}>
+                                                <item.icon />
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+                <SidebarFooter />
+            </Sidebar>
+
     );
 }

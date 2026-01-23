@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import Form from "next/form";
 import { searchProducts } from "@/app/(cart)/actions";
-import { SearchResponse } from "@/utils/types";
+import { SearchResponse } from "@tbs/infra";
 
 // { searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 export default function ProductSearch({ search, setSearch }: { search?: boolean; setSearch?: React.Dispatch<React.SetStateAction<boolean>> }) {
@@ -28,7 +28,7 @@ export default function ProductSearch({ search, setSearch }: { search?: boolean;
 
     const searchParams = useSearchParams();
     const query = searchParams.get("query");
-    !query ? setSearch(false) : undefined;
+    // !query ? setSearch(false) : undefined;
 
     React.useEffect(() => {
         console.log("query", query);
@@ -91,7 +91,7 @@ export default function ProductSearch({ search, setSearch }: { search?: boolean;
                         : showResults &&
                           state.inventory.map((sku, idx) => {
                               return (
-                                  <div className="mx-auto w-[100%] border-b-2 border-pink-300 flex">
+                                  <div key={idx} className="mx-auto w-[100%] border-b-2 border-pink-300 flex">
                                       {/* <div className="bg-amber-200 w-[20px] h-[20px]"> </div> */}
                                       <Link href={`/product/${sku.id}`} className="my-2 py-4 w-[100%] hover:text-pink-300">
                                           {sku.brand ? <p>brand{`${sku.brand} ${sku.item}`}</p> : <p>{sku.item}</p>}

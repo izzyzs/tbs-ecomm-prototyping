@@ -419,7 +419,7 @@ export type Database = {
       ensure_cart: { Args: { user_id: string }; Returns: number }
       get_category_tree: { Args: never; Returns: Json }
       get_products: {
-        Args: { p_cursor: number; p_limit: number }
+        Args: { p_cursor?: number; p_limit?: number }
         Returns: Json
       }
       get_random_products: {
