@@ -4,9 +4,11 @@ import { useCart } from "@/context/CartContext";
 import { formatCurrency } from "@/utils/helper-functions";
 import { Button } from "@/components/my-button";
 import { Truck } from "lucide-react";
+import {useRouter} from "next/navigation";
 
 const OrderOverview = () => {
     const { qualifiesForFreeShipping, remainingForFreeShipping, shipping, tax, orderTotal, subtotal } = useCart();
+    const router = useRouter();
 
     return (
         <div className="rounded-xl border border-rose-100 bg-white p-6 shadow-sm">
@@ -30,8 +32,8 @@ const OrderOverview = () => {
                     <span>{formatCurrency(orderTotal())}</span>
                 </div>
             </div>
-            <Button className="mt-6 w-full">Proceed to Checkout</Button>
-            <Button variant="ghost" className="mt-2 w-full text-gray-600">
+            <Button className="mt-6 w-full" onClick={() => router.push("/checkout")}>Proceed to Checkout</Button>
+            <Button variant="ghost" className="mt-2 w-full text-gray-600" onClick={() => router.push('/shop')}>
                 Continue Shopping
             </Button>
             <div className="mt-4 flex items-start gap-3 rounded-lg bg-pink-50 px-4 py-3 text-sm text-gray-600">

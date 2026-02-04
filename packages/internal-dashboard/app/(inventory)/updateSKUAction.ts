@@ -23,6 +23,7 @@ export const updateSKUAction  = async (prevState: ToastResponse | null, formData
         item: getString(formData,`item`),
         price: getString(formData,`price`),
         tax: getBool(formData, `tax`),
+        brand: getString(formData, `brand`),
         default_cost: getString(formData,`default_cost`)
     }
 

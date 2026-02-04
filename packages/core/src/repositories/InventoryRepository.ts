@@ -6,6 +6,7 @@ export type CartItemDetails = {
     name: string;
     brand: string;
     price: string;
+    sku: string;
 } | null;
 
 export interface InventoryRepository {

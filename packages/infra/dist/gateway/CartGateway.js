@@ -4,9 +4,15 @@ export class DefaultCartGateway {
         this.authenticatedCartRepository = authenticatedCartRepository;
     }
     async addCartItem(cartItemDraft, owner) {
+        console.log("********************\nDefaultCartGateway.addCartItem()\n********************\n");
+        console.log("draft to be upsterted: ", cartItemDraft);
         if (owner.kind === "Authenticated") {
-            return await this.authenticatedCartRepository.upsertCartItem(owner.cartId, cartItemDraft);
+            console.log("authenticated");
+            const item = await this.authenticatedCartRepository.upsertCartItem(owner.cartId, cartItemDraft);
+            console.log("new CartItem after upstert", item);
+            return item;
         }
+        console.log("********************\nInauthenticatedItemCreation\n********************\n");
         return await this.localCartRepository.upsertCartItem(cartItemDraft);
     }
     async decrementCartItem(cartItemDraft, owner) {
@@ -22,8 +28,14 @@ export class DefaultCartGateway {
         return await this.localCartRepository.removeCartItem(productId);
     }
     async retrieveSingleCartItem(productId, owner) {
+        console.log("-------------------\ninside DefaultCartGateway.retrieveSingleCartItem()\n-------------------\n");
         if (owner.kind === "Authenticated") {
-            return await this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId);
+            console.log("user is authenticated");
+            console.log("retreiving order with this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId)");
+            const item = await this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId);
+            console.log("item retrieved: ", item);
+            console.log("-------------------\nend of DefaultCartGateway.retrieveSingleCartItem, just returning item\n-------------------\n");
+            return item;
         }
         return await this.localCartRepository.retrieveSingleCartItem(productId);
     }

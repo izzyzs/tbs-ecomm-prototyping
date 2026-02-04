@@ -5,3 +5,4 @@ export * from "./cart/AuthenticatedCartRepository.js"
 export * from "./cart/LocalCartRepository.js"
 
 export * from "./InventoryRepository.js"
+export * from "./OrderRepository.js"

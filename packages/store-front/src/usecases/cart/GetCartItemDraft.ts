@@ -20,23 +20,33 @@ class GetCartItemDraft {
     ) {}
 
     async execute(productId: ProductId, owner: CartOwner): Promise<CartItemDraft> {
-        console.log("start of GetCartItemDraft execution")
+        console.log("********************\nStart of GetCartItemDraft.execute\n********************\n");
         let retrievedItem: CartItem
         try {
+            console.log("attempting to retrieve item...");
             retrievedItem = await this.cartGateway.retrieveSingleCartItem(productId, owner);
-            if (retrievedItem) return CartItemMapper.toDraftFromDomain(retrievedItem);
+            if (retrievedItem) {
+                console.log("item successfully retrieved:", retrievedItem);
+                const draft = CartItemMapper.toDraftFromDomain(retrievedItem);
+                console.log("that item as a draft:", draft);
+                console.log("********************\nEnd of GetCartItemDraft.execute, returning retrieved draft\n********************\n");
+                return draft;
+            }
         } catch (e) {
             if (!(e instanceof CartItemNotFoundError)) {
                 throw e;
+            } else {
+                console.log(`recieved error, ${e.name}: ${e.message}`);
             }
-            console.log(`${e.name}: ${e.message}`);
         }
 
+        console.log("item not retrieved, attempting to create cart item draft with this.createCartItemDraft.execute(productId)");
         const created = await this.createCartItemDraft.execute(productId)
         if (!created) {
             throw new ProductUnavailableError("the product is unavailable.")
         }
-        console.log("end of GetCartItemDraft execution")
+        console.log("created output from\nthis.createCartItemDraft.execute(productId) in above Function ^^^^^^^", created)
+                console.log("********************\nEnd of GetCartItemDraft.execute, returning created\n********************\n");
         return created;
     }
 }

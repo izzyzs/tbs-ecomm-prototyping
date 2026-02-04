@@ -10,7 +10,8 @@ import {
     CartItemId,
     CartOwner,
     ProductId,
-    UserId } from "@tbs/core";
+    UserId, LocalCartStorageDTO
+} from "@tbs/core";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -18,9 +19,8 @@ import {
     LocalStorageCartRepository,
     SupabaseInventoryRepository,
     DefaultCartGateway } from "@tbs/infra";
-import { CartItemStateMapper } from "@tbs/view-models";
 import { Database } from "@tbs/infra";
-import { UserStateMapper } from "@tbs/view-models";
+import { UserStateMapper, CartItemStateMapper } from "@tbs/view-models";
 import { AddOrIncrementCartItem } from "@/usecases/cart/AddOrIncrementCartItem";
 import { ProductIdMapper } from "@tbs/adapters";
 import { CreateCartItemDraft } from "@/usecases/cart/CreateCartItemDraft";
@@ -102,9 +102,9 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         const localCart = localStorage.getItem("cart");
         if (!localCart) return;
 
-        const localCartArray = JSON.parse(localCart);
+        const localCartArray: LocalCartStorageDTO[] = JSON.parse(localCart);
         console.log("localCart", localCart);
-        await supabaseCartRepository.syncLocalCartWithDB(cartId, localCart);
+        await supabaseCartRepository.syncLocalCartWithDB(cartId, localCartArray);
         localStorage.setItem("cart", "");
     };
 
@@ -116,13 +116,17 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         cartIdRef.current = cartId;
         return cartId;
     }
-
+    const [addTimes, setAddTimes] = useState(1);
     async function add(productIdNumber: number): Promise<SubmissionResponse> {
+        console.log(`********************\nadding product id ${productIdNumber}\n********************\n`);
+        console.log("-------------------\nSTART OF ADD\n-------------------\n");
+        console.log("add times", addTimes);
+        setAddTimes(prev => ++prev)
         // TODO: REMOVE DEBUGGING LOGS BELOW
         // TODO: transfer this into add item to cart use case
         const createCartItemDraft = new CreateCartItemDraft(supabaseInventoryRepository);
         const getCartItemDraft = new GetCartItemDraft(cartGateway, createCartItemDraft);
-        const addItemToCart = new AddOrIncrementCartItem(getCartItemDraft, cartGateway);
+        const addOrIncrementItemToCart = new AddOrIncrementCartItem(getCartItemDraft, cartGateway);
         const productId = ProductIdMapper.toDomainFromState(productIdNumber);
 
         let owner: CartOwner;
@@ -136,9 +140,12 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             owner = { kind: "Guest" };
         }
 
-
-        itemAdded = await addItemToCart.execute(productId, owner);
+        console.log("calling addOrIncrementItemToCart: AddOrIncrementCartItem's execute method")
+        itemAdded = await addOrIncrementItemToCart.execute(productId, owner);
+        console.log('itemAdded = await addOrIncrementItemToCart.execute(productId, owner);');
+        console.log("itemAdded", itemAdded);
         const newCartItem = CartItemStateMapper.toStateFromDomain(itemAdded);
+        console.log("newCartItem", newCartItem);
         setCartItems((prev) => {
             let found = false;
 
@@ -150,9 +157,12 @@ export default function CartProvider({ children }: { children: React.ReactNode }
                 return newCartItem;
             });
 
-            return found ? next : [...prev, newCartItem];
+            const newItems = found ? next : [...prev, newCartItem];
+            console.log("new items", newItems);
+            return newItems;
         });
-        console.log(`new cartItems:${JSON.stringify(cartItems, null, 2)}`);
+        // console.log(`new cartItems`);
+        console.log("-------------------\nEND OF ADD\n-------------------\n");
         return { msg: `Item successfully added`, isError: false };
     }
 

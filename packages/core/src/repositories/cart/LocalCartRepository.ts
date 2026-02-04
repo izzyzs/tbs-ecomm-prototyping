@@ -15,6 +15,7 @@ export type LocalCartStorageDTO = {
     readonly productId: number;
     readonly name: string;
     readonly brand: string;
+    readonly sku: string;
     readonly price: number;
     readonly quantity: number;
 };

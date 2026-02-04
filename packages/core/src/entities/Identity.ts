@@ -8,6 +8,26 @@ export class UserId {
     }
 }
 
+export class OrderId {
+    constructor(
+       private readonly id: number
+    ) {}
+
+    get number() {
+        return this.id;
+    }
+}
+
+export class OrderItemId {
+    constructor(
+       private readonly id: number
+    ) {}
+
+    get number() {
+        return this.id;
+    }
+}
+
 export class CartItemId {
     constructor(
         private readonly id: number

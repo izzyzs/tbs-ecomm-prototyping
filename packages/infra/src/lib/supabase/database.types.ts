@@ -17,24 +17,27 @@ export type Database = {
       cart_items: {
         Row: {
           added_at: string | null
-          cart_id: number | null
+          cart_id: number
           id: number
-          product_id: number | null
-          quantity: number | null
+          product_id: number
+          quantity: number
+          sku: string
         }
         Insert: {
           added_at?: string | null
-          cart_id?: number | null
+          cart_id: number
           id?: never
-          product_id?: number | null
-          quantity?: number | null
+          product_id: number
+          quantity: number
+          sku: string
         }
         Update: {
           added_at?: string | null
-          cart_id?: number | null
+          cart_id?: number
           id?: never
-          product_id?: number | null
-          quantity?: number | null
+          product_id?: number
+          quantity?: number
+          sku?: string
         }
         Relationships: [
           {
@@ -334,6 +337,73 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          id: number
+          order_id: number
+          product_name: string
+          quantity: number
+          sku: string
+          unit_price_cents: number
+        }
+        Insert: {
+          id?: never
+          order_id: number
+          product_name: string
+          quantity: number
+          sku: string
+          unit_price_cents: number
+        }
+        Update: {
+          id?: never
+          order_id?: number
+          product_name?: string
+          quantity?: number
+          sku?: string
+          unit_price_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: number
+          prepared_at: string | null
+          ready_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          prepared_at?: string | null
+          ready_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          prepared_at?: string | null
+          ready_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           first_name: string | null
@@ -383,14 +453,21 @@ export type Database = {
       }
     }
     Functions: {
+      active_inventory_categories: { Args: never; Returns: string[] }
       add_cart_item: {
-        Args: { p_cart_id: number; p_product_id: number; p_quantity: number }
+        Args: {
+          p_cart_id: number
+          p_product_id: number
+          p_quantity: number
+          p_sku: string
+        }
         Returns: {
           added_at: string | null
-          cart_id: number | null
+          cart_id: number
           id: number
-          product_id: number | null
-          quantity: number | null
+          product_id: number
+          quantity: number
+          sku: string
         }
         SetofOptions: {
           from: "*"
@@ -419,7 +496,12 @@ export type Database = {
       ensure_cart: { Args: { user_id: string }; Returns: number }
       get_category_tree: { Args: never; Returns: Json }
       get_products: {
-        Args: { p_cursor?: number; p_limit?: number }
+        Args: {
+          p_category_set?: boolean
+          p_cursor?: number
+          p_limit?: number
+          p_published?: boolean
+        }
         Returns: Json
       }
       get_random_products: {
@@ -911,6 +993,7 @@ export type Database = {
           price: number
           productId: number
           quantity: number
+          sku: string
         }[]
       }
       retrieve_cart_items_to_front: {
@@ -943,22 +1026,6 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "inventory"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
-      sync_local_cart_to_db: {
-        Args: { p_cart_id: number; p_local_cart: string }
-        Returns: {
-          added_at: string | null
-          cart_id: number | null
-          id: number
-          product_id: number | null
-          quantity: number | null
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "cart_items"
           isOneToOne: false
           isSetofReturn: true
         }
