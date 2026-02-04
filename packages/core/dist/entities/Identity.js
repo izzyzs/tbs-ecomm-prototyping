@@ -6,6 +6,22 @@ export class UserId {
         return this.id;
     }
 }
+export class OrderId {
+    constructor(id) {
+        this.id = id;
+    }
+    get number() {
+        return this.id;
+    }
+}
+export class OrderItemId {
+    constructor(id) {
+        this.id = id;
+    }
+    get number() {
+        return this.id;
+    }
+}
 export class CartItemId {
     constructor(id) {
         this.id = id;

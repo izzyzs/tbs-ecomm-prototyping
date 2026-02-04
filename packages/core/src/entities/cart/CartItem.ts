@@ -20,8 +20,17 @@ class CartItemNotFoundError extends Error {
 
 export default CartItemNotFoundError
 
+export class SKU {
+    constructor(public readonly sku: string) {}
+
+    get value() {
+        return this.sku;
+    }
+}
+
 export type CartItemDraft = {
     productId: ProductId;
+    sku: SKU;
     name: string;
     brand: string;
     price: Money;
@@ -33,6 +42,7 @@ export class CartItem {
     constructor(
         public readonly id: CartItemId,
         public readonly productId: ProductId,
+        public readonly sku: SKU,
         public readonly name: string,
         public readonly brand: string,
         public readonly price: Money,

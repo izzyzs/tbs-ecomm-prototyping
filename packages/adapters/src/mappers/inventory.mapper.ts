@@ -1,5 +1,9 @@
-class InventoryMapper {
-    static toDomainFromDB() {}
-}
+import {Money} from "@tbs/core";
 
-export default InventoryMapper;
+export class InventoryMapper {
+    static toDomainFromDB() {}
+
+    static priceDBtoDomain(price: string): Money {
+        return new Money(+price.replace(/\$|\./g, ""))
+    }
+}

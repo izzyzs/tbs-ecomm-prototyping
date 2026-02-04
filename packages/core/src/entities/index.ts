@@ -4,6 +4,8 @@ export * from "./Identity.js";
 export * from "./Money.js";
 export * from "./Quantity.js";
 
+export * from "./order/Order.js";
+
 export * from "./cart/Cart.js";
 export * from "./cart/CartItem.js";
 export {default as CartItemNotFoundError} from "./cart/CartItem.js"

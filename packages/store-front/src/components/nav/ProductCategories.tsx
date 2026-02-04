@@ -2,6 +2,14 @@
 import React from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu"
 import { capitalize } from "@/utils/capitalize";
 import { CATEGORY_GROUP_RULES, groupCategories } from "@/utils/category-groups";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -36,11 +44,31 @@ export default function ProductCategories() {
     return (
         <div className="relative hidden sm:block">
             <div className="group inline-block">
-                {categories.map((category, idx) => (
-                    <Link key={idx} href={`/shop/${category.path}`} className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
-                        {category.name.replace(/-/g, " ")}
-                    </Link>
-                ))}
+                <NavigationMenu className={`relative`}>
+                    <NavigationMenuList className={`flex flex-wrap`}>
+                        {categories.map((category, idx) => (
+                            <NavigationMenuItem key={idx}>
+                                {/*className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2"*/}
+                                <NavigationMenuTrigger>
+                                    <Link href={`/shop/${category.path}`} >
+                                        {category.name.replace(/-/g, " ")}
+                                    </Link>
+                                </NavigationMenuTrigger>
+                                {category.children.length > 0 ?
+                                    <NavigationMenuContent>
+                                        <ul className={`w-96`}>
+                                            {category.children.map((child, idx) => (
+                                                <ListItem key={idx} href={`/shop/${child.slug}`}>{child.name}</ListItem>
+                                            ))}
+                                        </ul>
+                                    </NavigationMenuContent> : null
+                                }
+                            </NavigationMenuItem>
+                        ))}
+
+                    </NavigationMenuList>
+                </NavigationMenu>
+
                 {/* <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 hidden group-hover:block bg-white shadow-lg border rounded-md mt-0 p-4 min-w-[640px] max-w-[90vw]">
                     <div className="grid grid-cols-2 gap-6">
                         {CATEGORY_GROUP_RULES.map((rule) => {
@@ -66,4 +94,26 @@ export default function ProductCategories() {
             </div>
         </div>
     );
+}
+
+
+
+function ListItem({
+                      title,
+                      children,
+                      href,
+                      ...props
+                  }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+    return (
+        <li {...props}>
+            <NavigationMenuLink asChild>
+                <Link href={href}>
+                    <div className="flex flex-col gap-1 text-sm">
+                        <div className="leading-none font-medium">{title}</div>
+                        <div className="text-muted-foreground line-clamp-2">{children}</div>
+                    </div>
+                </Link>
+            </NavigationMenuLink>
+        </li>
+    )
 }

@@ -106,6 +106,11 @@ export default function EditInventoryPage({sku}: EditInventoryPageProps){
                     </div>
 
                     <div className="grid gap-3">
+                        <Label htmlFor={`brand`}>{`brand`}</Label>
+                        <Input id={`brand`} name={`brand`} defaultValue={sku.brand ?? ""}/>
+                    </div>
+
+                    <div className="grid gap-3">
                         <Label htmlFor={`price`}>{`price`}</Label>
                         <Input id={`price`} name={`price`} defaultValue={sku.price ?? ""}/>
                     </div>

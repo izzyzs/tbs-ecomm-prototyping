@@ -1,11 +1,12 @@
 import { CartItemState } from "../types/index.js";
-import { CartItem, CartItemId, ProductId, Money, Quantity } from "@tbs/core";
+import { CartItem, CartItemId, ProductId, Money, Quantity, SKU } from "@tbs/core";
 
 export class CartItemStateMapper {
     static toStateFromDomain(item: CartItem): CartItemState {
         const itemState: CartItemState = {
             id: item.id.number,
             productId: item.productId.number,
+            sku: item.sku.value,
             name: item.name,
             brand: item.brand,
             price: item.price.inDollars,
@@ -21,6 +22,7 @@ export class CartItemStateMapper {
         const item: CartItem = new CartItem(
             new CartItemId(itemState.id),
             new ProductId(itemState.productId),
+            new SKU(itemState.sku),
             itemState.name,
             itemState.brand,
             new Money(priceInPennies),

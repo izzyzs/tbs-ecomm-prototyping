@@ -3,6 +3,16 @@ export declare class UserId {
     constructor(id: string);
     get value(): string;
 }
+export declare class OrderId {
+    private readonly id;
+    constructor(id: number);
+    get number(): number;
+}
+export declare class OrderItemId {
+    private readonly id;
+    constructor(id: number);
+    get number(): number;
+}
 export declare class CartItemId {
     private readonly id;
     constructor(id: number);

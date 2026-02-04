@@ -18,7 +18,7 @@ export class SupabaseInventoryRepository implements InventoryRepository {
     // getProductsByBrand(brand: string): Promise<InventoryProduct[]> {}
 
     async getProductDetailsForCartItems(productId: ProductId): Promise<CartItemDetails | null> {
-        const { data, error } = await this.supabase.from("inventory").select("id, item, brand, price").eq("id", productId.number).limit(1).single();
+        const { data, error } = await this.supabase.from("inventory").select("id, upc, custom_sku, manufact_sku, item, brand, price").eq("id", productId.number).limit(1).single();
         // TODO: come back and uncomment if you need the tax boolean
         // const { data, error } = await this.supabase.from("inventory").select("id, item, brand, price, tax").eq("id", productId.number).limit(1).single();
         if (error) {
@@ -30,7 +30,9 @@ export class SupabaseInventoryRepository implements InventoryRepository {
             name: requiredField(data.item, CartItemCreationError, "data.item"),
             brand: requiredField(data.brand, CartItemCreationError, "data.brand"),
             price: requiredField(data.price, CartItemCreationError, "data.price"),
+            sku: (data.upc ?? data.manufact_sku ?? data.custom_sku)!
         };
+
 
         return details;
     }

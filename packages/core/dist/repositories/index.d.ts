@@ -3,4 +3,5 @@ export * from "./UserRepository.js";
 export * from "./cart/AuthenticatedCartRepository.js";
 export * from "./cart/LocalCartRepository.js";
 export * from "./InventoryRepository.js";
+export * from "./OrderRepository.js";
 //# sourceMappingURL=index.d.ts.map

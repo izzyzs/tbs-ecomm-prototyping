@@ -6,19 +6,37 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import createToast from "../cart/createToast";
+import {LoaderCircle} from "lucide-react";
 
 type AddToCartButtonProps = { productId: number } & React.ComponentProps<typeof Button>;
 
 const AddToCartButton = ({ productId, ...props }: AddToCartButtonProps) => {
     const { add } = useCart();
+    const [isAdding, setIsAdding] = React.useState(false);
 
-    const handleClick = () => createToast(add(productId));
+    const handleClick = async () => {
+        if (isAdding) return;
+        setIsAdding(true);
+        try {
+            await createToast(add(productId));
+        } finally {
+            setIsAdding(false);
+        }
+    }
 
     return (
-        <Button {...props} onClick={handleClick}>
-            Add to Cart
-        </Button>
-    );
+        !isAdding ?
+            (
+                <Button {...props} onClick={handleClick}>
+                    Add to Cart
+                </Button>
+            ) :
+            (
+                <Button {...props}>
+                    <LoaderCircle className={`animate-spin`}/>
+                </Button>
+            )
+        )
 };
 
 export default AddToCartButton;
