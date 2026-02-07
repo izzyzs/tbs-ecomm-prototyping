@@ -8,6 +8,16 @@ export class UserId {
     }
 }
 
+export class StripeCheckoutId {
+    constructor(
+        private readonly id: string
+    ) {}
+
+    get value() {
+        return this.id;
+    }
+}
+
 export class OrderId {
     constructor(
        private readonly id: number

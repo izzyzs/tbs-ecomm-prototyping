@@ -1,19 +1,19 @@
-import { createOptionalInstant, Money, Order, OrderId, OrderItem, OrderItemId, Quantity, SKU, UserId } from "@tbs/core";
+import { createOptionalInstant, Money, Order, OrderId, OrderItem, OrderItemId, Quantity, SKU, StripeCheckoutId, UserId } from "@tbs/core";
 import { Temporal } from "@js-temporal/polyfill";
 export class SupabaseOrderRepository {
     constructor(supabase) {
         this.supabase = supabase;
     }
-    async createOrder(prototype, userId) {
-        const { data: orderData, error: orderError } = await this.supabase.from('orders').insert({ user_id: userId.value }).select().single();
+    async createOrder(prototype) {
+        const { data: orderData, error: orderError } = await this.supabase.from('orders').insert({ user_id: prototype.userId.value, stripe_checkout_id: prototype.stripeId.value, stripe_paid_at: prototype.paidAt.toString() }).select().single();
         if (orderError)
             throw orderError;
         if (!orderData)
             throw new Error("SupbaseOrderRepository.createOrder(): orderData not found");
-        const itemRows = prototype.OrderItemPrototypeList.map((item) => ({
+        const itemRows = prototype.orderItemPrototypeList.map((item) => ({
             order_id: orderData.id,
             product_name: item.productName,
-            sku: item.sku,
+            sku: item.sku.value,
             unit_price_cents: item.unitPrice.valueInPennies,
             quantity: item.quantity.amount,
         }));
@@ -25,7 +25,7 @@ export class SupabaseOrderRepository {
         const orderItems = insertedOrderItems.map((item) => {
             return new OrderItem(new OrderItemId(item.id), item.product_name, new SKU(item.sku), new Money(item.unit_price_cents), new Quantity(item.quantity));
         });
-        return new Order(new OrderId(orderData.id), new UserId(orderData.user_id), Temporal.Instant.from(orderData.created_at), null, null, orderItems);
+        return new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), null, null, orderItems);
     }
     // the above method should create an 'orders' entry and
     // ant the coresponding 'order_items'
@@ -38,7 +38,7 @@ export class SupabaseOrderRepository {
         let orders = [];
         for (const orderData of allOrderData) {
             const orderItems = await this.retrieveOrderItems(new OrderId(orderData.id));
-            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), Temporal.Instant.from(orderData.created_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), orderItems));
+            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), orderItems));
         }
         return orders;
     }

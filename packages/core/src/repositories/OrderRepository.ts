@@ -2,7 +2,7 @@ import {UserId, OrderPrototype, Order, OrderId, OrderItem} from "../entities/ind
 import { Temporal } from "@js-temporal/polyfill";
 
 export interface OrderRepository {
-    createOrder(prototype: OrderPrototype, userId: UserId): Promise<Order>
+    createOrder(prototype: OrderPrototype): Promise<Order>
     // the above method should create an 'orders' entry and
     // ant the coresponding 'order_items'
     retrieveAllOrders(userId: UserId): Promise<Order[]>

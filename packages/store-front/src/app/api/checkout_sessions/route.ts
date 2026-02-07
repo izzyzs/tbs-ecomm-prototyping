@@ -44,11 +44,14 @@ export async function POST(request: NextRequest) {
         const lineItems: LineItem[] = cartItems.map(
             (cartItem: CartItemState) => cartItemStateToLineItemMapper(cartItem)
         )
-        console.log(lineItems);
+        console.log(lineItems.map(i => i.price_data.product_data.metadata));
 
         // Create Checkout Sessions from body params.
         const session = await stripe.checkout.sessions.create({
             line_items: lineItems,
+            metadata: {
+                customer_id: customer_id,
+            },
             mode: 'payment',
             success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
             // customer: customer_id,

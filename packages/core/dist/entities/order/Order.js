@@ -1,9 +1,11 @@
 import { Temporal } from "@js-temporal/polyfill";
 export class Order {
-    constructor(id, userId, createdAt, preparedAt, readyAt, orderItems) {
+    constructor(id, userId, stripeId, createdAt, paidAt, preparedAt, readyAt, orderItems) {
         this.id = id;
         this.userId = userId;
+        this.stripeId = stripeId;
         this.createdAt = createdAt;
+        this.paidAt = paidAt;
         this.preparedAt = preparedAt;
         this.readyAt = readyAt;
         this.orderItems = orderItems;

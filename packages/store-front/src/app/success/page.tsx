@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 
 import { stripe } from '@/lib/stripe'
 import {formatCurrency} from "@/utils/helper-functions";
+import {Button} from "@/components/my-button";
+import OrdersButton from "@/components/account/OrdersButton";
 
 export default async function Success({ searchParams }: { searchParams?: Promise<{ session_id?: string; [key: string]: string | string[] | undefined }>}) {
     const params = await searchParams
@@ -46,6 +48,7 @@ export default async function Success({ searchParams }: { searchParams?: Promise
                         </div>
                     ))}
                 </div>
+                <OrdersButton />
             </>
 
         )

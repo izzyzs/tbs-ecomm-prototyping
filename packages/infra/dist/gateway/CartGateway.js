@@ -28,14 +28,8 @@ export class DefaultCartGateway {
         return await this.localCartRepository.removeCartItem(productId);
     }
     async retrieveSingleCartItem(productId, owner) {
-        console.log("-------------------\ninside DefaultCartGateway.retrieveSingleCartItem()\n-------------------\n");
         if (owner.kind === "Authenticated") {
-            console.log("user is authenticated");
-            console.log("retreiving order with this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId)");
-            const item = await this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId);
-            console.log("item retrieved: ", item);
-            console.log("-------------------\nend of DefaultCartGateway.retrieveSingleCartItem, just returning item\n-------------------\n");
-            return item;
+            return await this.authenticatedCartRepository.retrieveSingleCartItem(owner.cartId, productId);
         }
         return await this.localCartRepository.retrieveSingleCartItem(productId);
     }

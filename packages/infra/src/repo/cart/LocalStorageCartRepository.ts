@@ -15,12 +15,8 @@ export class LocalStorageCartRepository implements LocalCartRepository {
 
     async retrieveSingleCartItem(productId: ProductId): Promise<CartItem> {
         const cartString = localStorage.getItem("cart");
-        console.log("LocalStorageCartRepository.retrieveSingleCartItem: cartString\n", cartString);
         const cartItemsDTO: LocalCartStorageDTO[] = cartString ? JSON.parse(requiredField(cartString, LocalStorageError, "cart")) : [];
-        console.log("LocalStorageCartRepository.retrieveSingleCartItems: cartItemsDto\n", cartItemsDTO);
-        // const cartItemId = cartItemsDTO.findIndex((i) => i.productId === productId.number);
         const cartItemDTO = cartItemsDTO.find((i) => i.productId === productId.number);
-        console.log("cartItemDTO", cartItemDTO);
         if (!cartItemDTO) throw new CartItemNotFoundError("cart item not in cart");
         const cartItem = CartItemMapper.toDomainFromLocalDTO(new CartItemId(productId.number), cartItemDTO);
         return cartItem;
@@ -28,7 +24,6 @@ export class LocalStorageCartRepository implements LocalCartRepository {
 
     async retrieveCartItems(): Promise<CartItem[]> {
         const cartString = localStorage.getItem("cart");
-        console.log("LocalStorageCartRepository.retrieveCartItems: cartString\n", cartString);
         const cartItemsDTO: LocalCartStorageDTO[] = cartString ? JSON.parse(requiredField(cartString, LocalStorageError, "cart")) : [];
         const cartItems = cartItemsDTO.map((item, idx) => {
             const id = new CartItemId(item.productId);

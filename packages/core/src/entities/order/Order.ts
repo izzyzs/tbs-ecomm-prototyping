@@ -1,4 +1,4 @@
-import {Money, Quantity, SKU, UserId} from "../../entities/index.js";
+import {Money, Quantity, SKU, StripeCheckoutId, UserId} from "../../entities/index.js";
 import { OrderId, OrderItemId } from "../../entities/Identity.js"
 import { Temporal } from "@js-temporal/polyfill";
 
@@ -6,7 +6,9 @@ export class Order {
     constructor (
         public id: OrderId,
         public userId: UserId,
+        public stripeId: StripeCheckoutId,
         public createdAt: Temporal.Instant,
+        public paidAt: Temporal.Instant,
         public preparedAt: Temporal.Instant | null,
         public readyAt: Temporal.Instant | null,
         public orderItems: OrderItem[]
@@ -22,11 +24,13 @@ export class OrderItem {
         public quantity: Quantity
     ) {}
 }
-export type OrderItemPrototype = { productName: string, sku: string, unitPrice: Money, quantity: Quantity };
+export type OrderItemPrototype = { productName: string, sku: SKU, unitPrice: Money, quantity: Quantity };
 
 export type OrderPrototype = {
     userId: UserId;
-    OrderItemPrototypeList: OrderItemPrototype[];
+    paidAt: Temporal.Instant;
+    stripeId: StripeCheckoutId;
+    orderItemPrototypeList: OrderItemPrototype[];
 }
 
 export function createOptionalInstant(val: string | null) : Temporal.Instant | null {

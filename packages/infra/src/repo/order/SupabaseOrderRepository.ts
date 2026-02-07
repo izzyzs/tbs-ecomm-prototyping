@@ -8,6 +8,7 @@ import {
     OrderItemPrototype,
     OrderPrototype,
     OrderRepository, Quantity, SKU,
+    StripeCheckoutId,
     UserId
 } from "@tbs/core";
 import {Temporal} from "@js-temporal/polyfill";
@@ -18,14 +19,14 @@ type OrderItemRow = Database["public"]["Tables"]["order_items"]["Row"]
 export class SupabaseOrderRepository implements OrderRepository {
     constructor(private supabase: client.BrowserSupabaseClient) {}
 
-    async createOrder(prototype: OrderPrototype, userId: UserId): Promise<Order> {
-        const { data: orderData, error: orderError } = await this.supabase.from('orders').insert({user_id: userId.value}).select().single();
+    async createOrder(prototype: OrderPrototype): Promise<Order> {
+        const { data: orderData, error: orderError } = await this.supabase.from('orders').insert({user_id: prototype.userId.value, stripe_checkout_id: prototype.stripeId.value, stripe_paid_at: prototype.paidAt.toString()}).select().single();
         if (orderError) throw orderError;
         if (!orderData) throw new Error("SupbaseOrderRepository.createOrder(): orderData not found");
-        const itemRows = prototype.OrderItemPrototypeList.map((item: OrderItemPrototype) => ({
+        const itemRows = prototype.orderItemPrototypeList.map((item: OrderItemPrototype) => ({
             order_id: orderData.id,
             product_name: item.productName,
-            sku: item.sku,
+            sku: item.sku.value,
             unit_price_cents: item.unitPrice.valueInPennies,
             quantity: item.quantity.amount,
         }))
@@ -46,7 +47,9 @@ export class SupabaseOrderRepository implements OrderRepository {
         return new Order(
             new OrderId(orderData.id),
             new UserId(orderData.user_id),
+            new StripeCheckoutId(orderData.stripe_checkout_id),
             Temporal.Instant.from(orderData.created_at),
+            Temporal.Instant.from(orderData.stripe_paid_at),
             null,
             null,
             orderItems,
@@ -64,7 +67,7 @@ export class SupabaseOrderRepository implements OrderRepository {
         for (const orderData of allOrderData) {
             const orderItems = await this.retrieveOrderItems(new OrderId(orderData.id))
 
-            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), Temporal.Instant.from(orderData.created_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), orderItems))
+            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), orderItems))
         }
         return orders;
     }
