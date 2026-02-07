@@ -359,6 +359,8 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
                 id: number;
                 prepared_at: string | null;
                 ready_at: string | null;
+                stripe_checkout_id: string;
+                stripe_paid_at: string;
                 user_id: string;
             };
             Insert: {
@@ -366,6 +368,8 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
                 id?: never;
                 prepared_at?: string | null;
                 ready_at?: string | null;
+                stripe_checkout_id: string;
+                stripe_paid_at: string;
                 user_id: string;
             };
             Update: {
@@ -373,6 +377,8 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
                 id?: never;
                 prepared_at?: string | null;
                 ready_at?: string | null;
+                stripe_checkout_id?: string;
+                stripe_paid_at?: string;
                 user_id?: string;
             };
             Relationships: [{

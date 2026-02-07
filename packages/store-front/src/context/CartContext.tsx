@@ -71,18 +71,15 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
     let num = 0;
     useEffect(() => {
-        console.log(`userId print ${++num}\t${userId}`);
         async function initCartAfterLogin() {
             if (user) {
                 if (previousUserRef.current === undefined) {
                     await syncLocalCartWithDB(UserStateMapper.toDomainFromState(user).id);
                     const items = await localStorageCartRepository.retrieveCartItems();
-                    console.log("old items", items);
                     previousUserRef.current = user;
                 }
                 const cartId = await supabaseCartRepository.ensureCart(UserStateMapper.toDomainFromState(user).id);
                 const dbCart = await supabaseCartRepository.retrieveCartItems(cartId);
-                console.log("new items", dbCart);
                 const dbState = dbCart.map((item) => CartItemStateMapper.toStateFromDomain(item));
                 setCartItems(dbState);
             } else {
@@ -116,12 +113,8 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         cartIdRef.current = cartId;
         return cartId;
     }
-    const [addTimes, setAddTimes] = useState(1);
+
     async function add(productIdNumber: number): Promise<SubmissionResponse> {
-        console.log(`********************\nadding product id ${productIdNumber}\n********************\n`);
-        console.log("-------------------\nSTART OF ADD\n-------------------\n");
-        console.log("add times", addTimes);
-        setAddTimes(prev => ++prev)
         // TODO: REMOVE DEBUGGING LOGS BELOW
         // TODO: transfer this into add item to cart use case
         const createCartItemDraft = new CreateCartItemDraft(supabaseInventoryRepository);
@@ -140,12 +133,9 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             owner = { kind: "Guest" };
         }
 
-        console.log("calling addOrIncrementItemToCart: AddOrIncrementCartItem's execute method")
+
         itemAdded = await addOrIncrementItemToCart.execute(productId, owner);
-        console.log('itemAdded = await addOrIncrementItemToCart.execute(productId, owner);');
-        console.log("itemAdded", itemAdded);
         const newCartItem = CartItemStateMapper.toStateFromDomain(itemAdded);
-        console.log("newCartItem", newCartItem);
         setCartItems((prev) => {
             let found = false;
 
@@ -161,8 +151,6 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             console.log("new items", newItems);
             return newItems;
         });
-        // console.log(`new cartItems`);
-        console.log("-------------------\nEND OF ADD\n-------------------\n");
         return { msg: `Item successfully added`, isError: false };
     }
 

@@ -6,6 +6,14 @@ export class UserId {
         return this.id;
     }
 }
+export class StripeCheckoutId {
+    constructor(id) {
+        this.id = id;
+    }
+    get value() {
+        return this.id;
+    }
+}
 export class OrderId {
     constructor(id) {
         this.id = id;

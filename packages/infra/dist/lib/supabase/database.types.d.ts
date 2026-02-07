@@ -371,6 +371,8 @@ export type Database = {
                     id: number;
                     prepared_at: string | null;
                     ready_at: string | null;
+                    stripe_checkout_id: string;
+                    stripe_paid_at: string;
                     user_id: string;
                 };
                 Insert: {
@@ -378,6 +380,8 @@ export type Database = {
                     id?: never;
                     prepared_at?: string | null;
                     ready_at?: string | null;
+                    stripe_checkout_id: string;
+                    stripe_paid_at: string;
                     user_id: string;
                 };
                 Update: {
@@ -385,6 +389,8 @@ export type Database = {
                     id?: never;
                     prepared_at?: string | null;
                     ready_at?: string | null;
+                    stripe_checkout_id?: string;
+                    stripe_paid_at?: string;
                     user_id?: string;
                 };
                 Relationships: [

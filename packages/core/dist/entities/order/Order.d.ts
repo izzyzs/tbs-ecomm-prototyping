@@ -1,14 +1,16 @@
-import { Money, Quantity, SKU, UserId } from "../../entities/index.js";
+import { Money, Quantity, SKU, StripeCheckoutId, UserId } from "../../entities/index.js";
 import { OrderId, OrderItemId } from "../../entities/Identity.js";
 import { Temporal } from "@js-temporal/polyfill";
 export declare class Order {
     id: OrderId;
     userId: UserId;
+    stripeId: StripeCheckoutId;
     createdAt: Temporal.Instant;
+    paidAt: Temporal.Instant;
     preparedAt: Temporal.Instant | null;
     readyAt: Temporal.Instant | null;
     orderItems: OrderItem[];
-    constructor(id: OrderId, userId: UserId, createdAt: Temporal.Instant, preparedAt: Temporal.Instant | null, readyAt: Temporal.Instant | null, orderItems: OrderItem[]);
+    constructor(id: OrderId, userId: UserId, stripeId: StripeCheckoutId, createdAt: Temporal.Instant, paidAt: Temporal.Instant, preparedAt: Temporal.Instant | null, readyAt: Temporal.Instant | null, orderItems: OrderItem[]);
 }
 export declare class OrderItem {
     id: OrderItemId;
@@ -20,13 +22,15 @@ export declare class OrderItem {
 }
 export type OrderItemPrototype = {
     productName: string;
-    sku: string;
+    sku: SKU;
     unitPrice: Money;
     quantity: Quantity;
 };
 export type OrderPrototype = {
     userId: UserId;
-    OrderItemPrototypeList: OrderItemPrototype[];
+    paidAt: Temporal.Instant;
+    stripeId: StripeCheckoutId;
+    orderItemPrototypeList: OrderItemPrototype[];
 };
 export declare function createOptionalInstant(val: string | null): Temporal.Instant | null;
 //# sourceMappingURL=Order.d.ts.map

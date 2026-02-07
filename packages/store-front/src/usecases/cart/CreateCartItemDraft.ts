@@ -10,7 +10,7 @@ export class CreateCartItemDraft {
         const cartItemDetails = await this.inventoryRepository.getProductDetailsForCartItems(productId);
         if (!cartItemDetails) return null;
 
-        const itemDraft: CartItemDraft = {
+        return {
             productId: new ProductId(cartItemDetails.id),
             name: cartItemDetails.name,
             brand: cartItemDetails.brand,
@@ -19,8 +19,5 @@ export class CreateCartItemDraft {
             quantity: new Quantity(0)
         };
 
-        console.log("********************\nCreateCartItemDraft.execute()\n********************\n");
-        console.log("itemDraft created inside ^^^^^^^",itemDraft);
-        return itemDraft;
     }
 }

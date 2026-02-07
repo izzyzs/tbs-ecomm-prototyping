@@ -3,6 +3,11 @@ export declare class UserId {
     constructor(id: string);
     get value(): string;
 }
+export declare class StripeCheckoutId {
+    private readonly id;
+    constructor(id: string);
+    get value(): string;
+}
 export declare class OrderId {
     private readonly id;
     constructor(id: number);

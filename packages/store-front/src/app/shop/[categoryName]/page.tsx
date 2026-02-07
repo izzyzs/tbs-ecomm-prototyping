@@ -14,7 +14,10 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
     const { categoryName } = await params;
     const decodedName = decodeURIComponent(categoryName);
 
-    const {data: {id: categoryId, path }, error: categoryIdError} = await supabase.from("categories").select("id, path").eq("slug", categoryName).single();
+    const {data , error: categoryIdError} = await supabase.from("categories").select("id, path").eq("slug", categoryName).single();
+    if (!data) throw new Error(`${categoryName} not found`);
+    if (categoryIdError) throw categoryIdError;
+    const { id: categoryId, path } = data as { id: number, path: string };
     const { data: products, error } = (await supabase.from("inventory").select("id, item, price").eq("category_id", categoryId).eq("publish_to_ecom", true)) as { data: ProductSubset[] | null; error: PostgrestError };
 
     if (!products || products.length < 1)
@@ -34,14 +37,16 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
     console.log("pathArray", pathArray);
     const nameAndSlug: [string, string][] = [];
     for (let i = 0; i < pathArray.length; i++) {
-        const { data: { name }, parentNameError } = await supabase.from('categories').select('name').eq('slug', pathArray[i]).single();
-        console.log("name", name);
-        nameAndSlug.push([name, pathArray[i]]);
+        const { data, error: parentNameError } = await supabase.from('categories').select('name').eq('slug', pathArray[i]).single();
+        if (!data) throw new Error("category is missing");
+        if (parentNameError) throw parentNameError;
+        console.log("name", data.name);
+        nameAndSlug.push([data.name, pathArray[i]]);
     }
-    console.log("path", path);
-    console.log("pathArray", pathArray);
+    // console.log("path", path);
+    // console.log("pathArray", pathArray);
     const parent = pathArray.length >= 2 ? pathArray[pathArray.length - 2] : undefined;
-    console.log("parent", parent);
+    // console.log("parent", parent);
 
     return (
         // <main className="flex flex-wrap">

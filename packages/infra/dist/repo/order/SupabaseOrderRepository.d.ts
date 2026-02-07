@@ -4,7 +4,7 @@ import { client } from "../../lib/index.js";
 export declare class SupabaseOrderRepository implements OrderRepository {
     private supabase;
     constructor(supabase: client.BrowserSupabaseClient);
-    createOrder(prototype: OrderPrototype, userId: UserId): Promise<Order>;
+    createOrder(prototype: OrderPrototype): Promise<Order>;
     retrieveAllOrders(userId: UserId): Promise<Order[]>;
     retrieveOrderItems(orderId: OrderId): Promise<OrderItem[]>;
     updateOrderPreparedAt(time: Temporal.Instant, oId: OrderId): Promise<void>;

@@ -30,7 +30,7 @@ export default function AccountPage() {
 
     if (!user) {
         return (
-            <>you must login or sign yp to see account details</>
+            <>you must login or sign up to see account details</>
         )
     }
 
@@ -38,15 +38,15 @@ export default function AccountPage() {
         <div>
             <h1 className={`text-4xl`}>Orders</h1>
             {orders.length > 0
-                ? orders.map(order => (
-                    <div>
+                ? orders.map((order, idx) => (
+                    <div key={idx}>
                         <p>{order.orderId}</p>
                         <p>{order.createdAt.toString()}</p>
                         {order.orderItems.map((item, index) => (
                                 <div key={index}>
                                     <p>{item.productName}</p>
                                     <p>Quantity: {item.quantity}</p>
-                                    <p>{formatCurrency(item.unitPrice)}</p>
+                                    <p>{formatCurrency(item.unitPrice*item.quantity)}</p>
                                 </div>
                             )
                         )}
