@@ -1,0 +1,2 @@
+export type Status = "Created" | "Prepared" | "Ready for pickup" | "Picked up";
+export type OrderDetails = {status: Status, userId: string, totalItems: number, orderTotal: number, customerName: string, email: string};

@@ -1,119 +1,64 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { createClient } from "@/lib/supabase/client";
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import { capitalize } from "@/utils/capitalize";
-import { CATEGORY_GROUP_RULES, groupCategories } from "@/utils/category-groups";
 import { PostgrestError } from "@supabase/supabase-js";
-import { createBrowserClient } from "@supabase/ssr";
-
-type CategoryRow = { id: number; name: string; parent_id: number; depth: number; slug: string; path: string; children: CategoryRow[] };
+import { CategoryRow } from "@/utils/types";
 
 export default function ProductCategories() {
-    // const [groups, setGroups] = React.useState<ReturnType<typeof groupCategories> | null>(null);
     const [categories, setCategories] = React.useState<CategoryRow[]>([]);
+
     React.useEffect(() => {
         async function fetchCategories() {
             const supabase = createClient();
-            // const { data, error } = (await supabase.rpc("distinct_categories")) as unknown as { data: { name: string; path: string }[]; error: PostgrestError };
             const { data, error } = (await supabase.rpc("get_category_tree")) as unknown as { data: CategoryRow[]; error: PostgrestError };
-
-            // const { data, error } = (await supabase.from("categories_with_grouped_subcategories_from_inventory2").select("category, subcategories")) as {
-            // data: CategoryRow[] | null;
-            // error: any;
-            // };
             if (error) console.error(error);
-            // const names = (data ?? []).map((r) => r.category).filter(Boolean);
-            // setGroups(groupCategories(names));
-            setCategories(data);
+            console.log(data);
+            setCategories(data ?? []);
         }
-        fetchCategories();
+
+        void fetchCategories();
     }, []);
 
-    if (!categories) return null;
-
-    // Render a single "Shop" trigger with a mega-menu showing grouped categories
     return (
         <div className="relative hidden sm:block">
-            <div className="group inline-block">
-                <NavigationMenu className={`relative`}>
-                    <NavigationMenuList className={`flex flex-wrap`}>
-                        {categories.map((category, idx) => (
-                            <NavigationMenuItem key={idx}>
-                                {/*className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2"*/}
-                                <NavigationMenuTrigger>
-                                    <Link href={`/shop/${category.path}`} >
-                                        {category.name.replace(/-/g, " ")}
-                                    </Link>
-                                </NavigationMenuTrigger>
-                                {category.children.length > 0 ?
-                                    <NavigationMenuContent>
-                                        <ul className={`w-96`}>
-                                            {category.children.map((child, idx) => (
-                                                <ListItem key={idx} href={`/shop/${child.slug}`}>{child.name}</ListItem>
-                                            ))}
-                                        </ul>
-                                    </NavigationMenuContent> : null
-                                }
-                            </NavigationMenuItem>
-                        ))}
+            <NavigationMenu viewport={false} className="relative z-20 overflow-visible">
+                <NavigationMenuList className="flex flex-wrap items-center gap-x-1 gap-y-2 overflow-visible">
+                    {categories.map((category) => (
+                        <NavigationMenuItem key={category.id} className="relative hover:z-50 focus-within:z-50">
+                            <NavigationMenuTrigger className="bg-transparent">
+                                <Link href={`/shop/${category.slug}`}>{category.name.replace(/-/g, " ")}</Link>
+                            </NavigationMenuTrigger>
 
-                    </NavigationMenuList>
-                </NavigationMenu>
-
-                {/* <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 hidden group-hover:block bg-white shadow-lg border rounded-md mt-0 p-4 min-w-[640px] max-w-[90vw]">
-                    <div className="grid grid-cols-2 gap-6">
-                        {CATEGORY_GROUP_RULES.map((rule) => {
-                            const items = groups[rule.key as keyof typeof groups];
-                            if (!items || items.length === 0) return null;
-                            return (
-                                <div key={rule.key}>
-                                    <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">{rule.label}</div>
-                                    <ul className="space-y-1">
-                                        {items.map((name) => (
-                                            <li key={name}>
-                                                <Link href={`/shop/${encodeURIComponent(name)}`} className="text-sm text-gray-700 hover:text-pink-600">
-                                                    {capitalize(name) as string}
-                                                </Link>
-                                            </li>
+                            {category.children.length > 0 ? (
+                                <NavigationMenuContent className="z-50 !mt-0 left-0 min-w-[240px] rounded-xl border border-slate-200 bg-white/95 p-2 shadow-xl backdrop-blur">
+                                    <ul className="grid gap-1">
+                                        {category.children.map((child) => (
+                                            <ListItem key={child.id} href={`/shop/${child.slug}`} title={child.name.replace(/-/g, " ")} />
                                         ))}
                                     </ul>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div> */}
-            </div>
+                                </NavigationMenuContent>
+                            ) : null}
+                        </NavigationMenuItem>
+                    ))}
+                </NavigationMenuList>
+            </NavigationMenu>
         </div>
     );
 }
 
-
-
-function ListItem({
-                      title,
-                      children,
-                      href,
-                      ...props
-                  }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+function ListItem({ title, children, href, ...props }: React.ComponentPropsWithoutRef<"li"> & { href: string; title: string }) {
     return (
         <li {...props}>
             <NavigationMenuLink asChild>
-                <Link href={href}>
-                    <div className="flex flex-col gap-1 text-sm">
-                        <div className="leading-none font-medium">{title}</div>
-                        <div className="text-muted-foreground line-clamp-2">{children}</div>
+                <Link href={href} className="block rounded-lg">
+                    <div className="flex flex-col gap-1 rounded-lg px-3 py-2 text-sm">
+                        <div className="leading-none font-medium text-slate-900">{title}</div>
+                        {children ? <div className="text-muted-foreground line-clamp-2">{children}</div> : null}
                     </div>
                 </Link>
             </NavigationMenuLink>
         </li>
-    )
+    );
 }

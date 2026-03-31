@@ -33,7 +33,7 @@ async function fulfillCheckout(sessionId: string, supabaseOrderRepository: Supab
             orderItemPrototypeList: items
         }
 
-        const order = await supabaseOrderRepository.createOrder(prototype);
+        const order = await supabaseOrderRepository.createOrder(prototype)
         return order;
     }
 
@@ -53,7 +53,6 @@ export async function POST(request: Request) {
     if (event.type === "checkout.session.completed") {
         console.log("\n\n\nevent:", event, "\n\n");
         const order = await fulfillCheckout(event.data.object.id, supabaseOrderRepository);
-        console.log(JSON.stringify(order));
         return new Response(JSON.stringify(order));
     }
 

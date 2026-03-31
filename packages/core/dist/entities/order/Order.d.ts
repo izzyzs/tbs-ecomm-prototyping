@@ -9,9 +9,11 @@ export declare class Order {
     paidAt: Temporal.Instant;
     preparedAt: Temporal.Instant | null;
     readyAt: Temporal.Instant | null;
+    pickedUpAt: Temporal.Instant | null;
     orderItems: OrderItem[];
-    constructor(id: OrderId, userId: UserId, stripeId: StripeCheckoutId, createdAt: Temporal.Instant, paidAt: Temporal.Instant, preparedAt: Temporal.Instant | null, readyAt: Temporal.Instant | null, orderItems: OrderItem[]);
+    constructor(id: OrderId, userId: UserId, stripeId: StripeCheckoutId, createdAt: Temporal.Instant, paidAt: Temporal.Instant, preparedAt: Temporal.Instant | null, readyAt: Temporal.Instant | null, pickedUpAt: Temporal.Instant | null, orderItems: OrderItem[]);
 }
+export type Status = "Created" | "Prepared" | "Ready for pickup" | "Picked up";
 export declare class OrderItem {
     id: OrderItemId;
     productName: string;
@@ -33,4 +35,5 @@ export type OrderPrototype = {
     orderItemPrototypeList: OrderItemPrototype[];
 };
 export declare function createOptionalInstant(val: string | null): Temporal.Instant | null;
+export declare function createOptionalInstantString(val: Temporal.Instant | null): string | null;
 //# sourceMappingURL=Order.d.ts.map

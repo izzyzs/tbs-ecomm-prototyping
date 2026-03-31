@@ -5,9 +5,10 @@ export interface OrderRepository {
     createOrder(prototype: OrderPrototype): Promise<Order>
     // the above method should create an 'orders' entry and
     // ant the coresponding 'order_items'
+    retrieveAllUserOrders(userId: UserId): Promise<Order[]>
     retrieveAllOrders(userId: UserId): Promise<Order[]>
     retrieveOrderItems(orderId: OrderId): Promise<OrderItem[]>
-    // retrieveSingleOrder(userId: UserId): Promise<Order>
-    updateOrderPreparedAt(time: Temporal.Instant, oId: OrderId): Promise<void>
-    updateOrderReadyAt(time: Temporal.Instant, oId: OrderId): Promise<void>
+    retrieveSingleOrder(orderId: OrderId): Promise<Order|null>
+    updateOrderPreparedAt(time: Temporal.Instant, oId: OrderId): Promise<Temporal.Instant>
+    updateOrderReadyAt(time: Temporal.Instant, oId: OrderId): Promise<Temporal.Instant>
 }

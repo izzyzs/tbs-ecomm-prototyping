@@ -1,14 +1,18 @@
 import {OrderState} from "../types/OrderState.type.js";
-import {Order, OrderId, UserId} from "@tbs/core";
+import {createOptionalInstant, createOptionalInstantString, Order, OrderId, StripeCheckoutId, UserId} from "@tbs/core";
 import {OrderItemStateMapper} from "./OrderItemState.mapper.js";
+import {Temporal} from "@js-temporal/polyfill";
 
 export class OrderStateMapper {
     static domainToState(order: Order): OrderState {
         return {
             orderId: order.id.number,
-            createdAt: order.createdAt,
-            preparedAt: order.preparedAt,
-            readyAt: order.readyAt,
+            stripeId: order.stripeId.value,
+            createdAt: order.createdAt.toString(),
+            paidAt: order.paidAt.toString(),
+            preparedAt: createOptionalInstantString(order.preparedAt),
+            readyAt: createOptionalInstantString(order.readyAt),
+            pickedUpAt: createOptionalInstantString(order.pickedUpAt),
             orderItems: order.orderItems.map(
                 (item)=>
                     OrderItemStateMapper.domainToState(item)
@@ -20,9 +24,12 @@ export class OrderStateMapper {
         return new Order(
             new OrderId(state.orderId),
             userId,
-            state.createdAt,
-            state.preparedAt,
-            state.readyAt,
+            new StripeCheckoutId(state.stripeId),
+            Temporal.Instant.from(state.createdAt),
+            Temporal.Instant.from(state.paidAt),
+            createOptionalInstant(state.preparedAt),
+            createOptionalInstant(state.readyAt),
+            createOptionalInstant(state.pickedUpAt),
             state.orderItems.map(
                 (state) =>
                     OrderItemStateMapper.stateToDomain(state)

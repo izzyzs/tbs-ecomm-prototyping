@@ -357,6 +357,7 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
             Row: {
                 created_at: string;
                 id: number;
+                picked_up_at: string | null;
                 prepared_at: string | null;
                 ready_at: string | null;
                 stripe_checkout_id: string;
@@ -366,6 +367,7 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
             Insert: {
                 created_at?: string;
                 id?: never;
+                picked_up_at?: string | null;
                 prepared_at?: string | null;
                 ready_at?: string | null;
                 stripe_checkout_id: string;
@@ -375,6 +377,7 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
             Update: {
                 created_at?: string;
                 id?: never;
+                picked_up_at?: string | null;
                 prepared_at?: string | null;
                 ready_at?: string | null;
                 stripe_checkout_id?: string;
@@ -391,18 +394,21 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
         };
         profiles: {
             Row: {
+                email: string | null;
                 first_name: string | null;
                 id: string;
                 is_professional: boolean | null;
                 last_name: string | null;
             };
             Insert: {
+                email?: string | null;
                 first_name?: string | null;
                 id: string;
                 is_professional?: boolean | null;
                 last_name?: string | null;
             };
             Update: {
+                email?: string | null;
                 first_name?: string | null;
                 id?: string;
                 is_professional?: boolean | null;

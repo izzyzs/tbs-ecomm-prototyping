@@ -1,6 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 export class Order {
-    constructor(id, userId, stripeId, createdAt, paidAt, preparedAt, readyAt, orderItems) {
+    constructor(id, userId, stripeId, createdAt, paidAt, preparedAt, readyAt, pickedUpAt, orderItems) {
         this.id = id;
         this.userId = userId;
         this.stripeId = stripeId;
@@ -8,6 +8,7 @@ export class Order {
         this.paidAt = paidAt;
         this.preparedAt = preparedAt;
         this.readyAt = readyAt;
+        this.pickedUpAt = pickedUpAt;
         this.orderItems = orderItems;
     }
 }
@@ -25,4 +26,10 @@ export function createOptionalInstant(val) {
         return null;
     }
     return Temporal.Instant.from(val);
+}
+export function createOptionalInstantString(val) {
+    if (!val) {
+        return null;
+    }
+    return val.toString();
 }

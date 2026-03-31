@@ -5,6 +5,7 @@ import ProductCategories from "@/components/nav/ProductCategories";
 import Link from "next/link";
 import CartButton from "@/components/nav/buttons/CartButton";
 import SearchButton from "@/components/nav/buttons/SearchButton";
+import AccountButton from "@/components/nav/buttons/AccountButton";
 
 // TODO: 🔒 AUTH REFACTOR — Move Supabase session retrieval here (SERVER SIDE)
 // ---------------------------------------------------------------------------
@@ -44,6 +45,7 @@ const NavBar = () => {
                     {/* Login button opens a modal using Shadcn's Dialog component */}
                     <SearchButton />
                     <CartButton />
+                    <AccountButton />
                     <UserStatusController />
                 </div>
             </nav>

@@ -11,9 +11,12 @@ export class Order {
         public paidAt: Temporal.Instant,
         public preparedAt: Temporal.Instant | null,
         public readyAt: Temporal.Instant | null,
+        public pickedUpAt: Temporal.Instant | null,
         public orderItems: OrderItem[]
     ) {}
 }
+
+export type Status = "Created" | "Prepared" | "Ready for pickup" | "Picked up";
 
 export class OrderItem {
     constructor (
@@ -39,3 +42,11 @@ export function createOptionalInstant(val: string | null) : Temporal.Instant | n
     }
     return Temporal.Instant.from(val);
 }
+
+export function createOptionalInstantString(val: Temporal.Instant | null) : string | null {
+    if (!val) {
+        return null;
+    }
+    return val.toString();
+}
+

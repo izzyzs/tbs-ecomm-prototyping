@@ -376,6 +376,7 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          picked_up_at: string | null
           prepared_at: string | null
           ready_at: string | null
           stripe_checkout_id: string
@@ -385,6 +386,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: never
+          picked_up_at?: string | null
           prepared_at?: string | null
           ready_at?: string | null
           stripe_checkout_id: string
@@ -394,6 +396,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: never
+          picked_up_at?: string | null
           prepared_at?: string | null
           ready_at?: string | null
           stripe_checkout_id?: string
@@ -412,18 +415,21 @@ export type Database = {
       }
       profiles: {
         Row: {
+          email: string | null
           first_name: string | null
           id: string
           is_professional: boolean | null
           last_name: string | null
         }
         Insert: {
+          email?: string | null
           first_name?: string | null
           id: string
           is_professional?: boolean | null
           last_name?: string | null
         }
         Update: {
+          email?: string | null
           first_name?: string | null
           id?: string
           is_professional?: boolean | null

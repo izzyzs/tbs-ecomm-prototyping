@@ -1,6 +1,6 @@
 // import { Database } from "@tbs/infra";
 
-import {Database} from "@tbs/infra";
+import { Database } from "@tbs/infra";
 
 export type Fulfillment = "NDD" | "SDD" | "PU";
 export type Status = "CANCELLED" | "PLACED" | "READY_FOR_PICKUP" | "ON_ROUTE" | "COMPLETE";
@@ -16,8 +16,9 @@ export type SubmissionResponse = {
     isError: boolean;
 };
 
-
 export type CategoryObject = { category: string };
+
+export type CategoryRow = { id: number; name: string; parent_id: number; depth: number; slug: string; path: string; children: CategoryRow[] };
 
 export interface Product {
     id: number;

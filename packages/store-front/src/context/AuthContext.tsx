@@ -3,11 +3,11 @@
 import React, { useCallback, useMemo, useState, useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
 // import { User } from "@supabase/supabase-js";
-import {AuthError, User} from "@tbs/core";
+import { AuthError, User } from "@tbs/core";
 import { Session } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Credentials, SubmissionResponse } from "@/utils/types";
-import { UserState } from "@tbs/view-models"
+import { UserState } from "@tbs/view-models";
 import { UserId } from "@tbs/core";
 import { SupabaseUserRepository } from "@tbs/infra";
 import { Email, Password } from "@tbs/core";
@@ -36,6 +36,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [session, setSession] = useState<Session | null>(null);
     const supabase = useMemo(() => createClient(), []);
     const router = useRouter();
+    // @ts-expect-error: annoying issue with supabase typing.
     const supabaseUserRepository = new SupabaseUserRepository(supabase);
 
     const validateEmail = (email: string) => {
@@ -112,7 +113,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             }
             return { msg: `Welcome back ${user.email}`, isError: false };
         },
-        [supabase]
+        [supabase],
     );
 
     // const oldSignup = useCallback(
@@ -152,7 +153,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
             return { msg: `Success!, ${user.id} with email ${user.email} is signed up!`, isError: false };
         },
-        [supabase, validateEmail]
+        [supabase, validateEmail],
     );
 
     const handleSignOut = useCallback(async () => {
@@ -194,7 +195,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             login,
             signup,
         }),
-        [session, user, loading, authError]
+        [session, user, loading, authError],
     );
 
     return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;

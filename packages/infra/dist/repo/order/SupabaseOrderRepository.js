@@ -25,11 +25,20 @@ export class SupabaseOrderRepository {
         const orderItems = insertedOrderItems.map((item) => {
             return new OrderItem(new OrderItemId(item.id), item.product_name, new SKU(item.sku), new Money(item.unit_price_cents), new Quantity(item.quantity));
         });
-        return new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), null, null, orderItems);
+        return new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), createOptionalInstant(orderData.picked_up_at), orderItems);
+    }
+    async retrieveSingleOrder(orderId) {
+        const { data: orderData, error } = await this.supabase.from("orders").select("*").eq("id", orderId.number).single();
+        if (error)
+            throw error;
+        if (!orderData)
+            return null;
+        const orderItems = await this.retrieveOrderItems(orderId);
+        return new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), createOptionalInstant(orderData.picked_up_at), orderItems);
     }
     // the above method should create an 'orders' entry and
     // ant the coresponding 'order_items'
-    async retrieveAllOrders(userId) {
+    async retrieveAllUserOrders(userId) {
         const { data: allOrderData, error: orderError } = await this.supabase.from('orders').select("*").eq("user_id", userId.value);
         if (orderError)
             throw orderError;
@@ -38,7 +47,20 @@ export class SupabaseOrderRepository {
         let orders = [];
         for (const orderData of allOrderData) {
             const orderItems = await this.retrieveOrderItems(new OrderId(orderData.id));
-            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), orderItems));
+            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), createOptionalInstant(orderData.picked_up_at), orderItems));
+        }
+        return orders;
+    }
+    async retrieveAllOrders() {
+        const { data: allOrderData, error: orderError } = await this.supabase.from('orders').select("*");
+        if (orderError)
+            throw orderError;
+        if (!allOrderData)
+            throw new Error("SupbaseOrderRepository.retrieveAllOrders(): allOrderData not found");
+        let orders = [];
+        for (const orderData of allOrderData) {
+            const orderItems = await this.retrieveOrderItems(new OrderId(orderData.id));
+            orders.push(new Order(new OrderId(orderData.id), new UserId(orderData.user_id), new StripeCheckoutId(orderData.stripe_checkout_id), Temporal.Instant.from(orderData.created_at), Temporal.Instant.from(orderData.stripe_paid_at), createOptionalInstant(orderData.prepared_at), createOptionalInstant(orderData.ready_at), createOptionalInstant(orderData.picked_up_at), orderItems));
         }
         return orders;
     }
@@ -56,14 +78,31 @@ export class SupabaseOrderRepository {
     // }
     async updateOrderPreparedAt(time, oId) {
         const timeString = time.toString();
-        const { data, error } = await this.supabase.from('orders').update({ prepared_at: timeString }).eq("order_id", oId.number).select().single();
-        if (error)
+        const { data, error } = await this.supabase.from('orders').update({ prepared_at: timeString }).eq("id", oId.number).select("prepared_at").single();
+        if (error) {
+            console.error(error);
             throw error;
+        }
+        if (!data.prepared_at)
+            throw new Error("Prepared time not added to DB");
+        return Temporal.Instant.from(data.prepared_at);
     }
     async updateOrderReadyAt(time, oId) {
         const timeString = time.toString();
-        const { data, error } = await this.supabase.from('orders').update({ ready_at: timeString }).eq("order_id", oId.number).select().single();
+        const { data, error } = await this.supabase.from('orders').update({ ready_at: timeString }).eq("id", oId.number).select("ready_at").single();
         if (error)
             throw error;
+        if (!data.ready_at)
+            throw new Error("Ready time not added to DB");
+        return Temporal.Instant.from(data.ready_at);
+    }
+    async updateOrderPickedUpAt(time, oId) {
+        const timeString = time.toString();
+        const { data, error } = await this.supabase.from('orders').update({ picked_up_at: timeString }).eq("id", oId.number).select("picked_up_at").single();
+        if (error)
+            throw error;
+        if (!data.picked_up_at)
+            throw new Error("Ready time not added to DB");
+        return Temporal.Instant.from(data.picked_up_at);
     }
 }
