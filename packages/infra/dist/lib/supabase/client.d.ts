@@ -497,6 +497,14 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
             Args: never;
             Returns: import("./database.types.js").Json;
         };
+        get_category_tree_ignore_published: {
+            Args: never;
+            Returns: import("./database.types.js").Json;
+        };
+        get_full_category_tree: {
+            Args: never;
+            Returns: import("./database.types.js").Json;
+        };
         get_products: {
             Args: {
                 p_category_set?: boolean;

@@ -25,10 +25,11 @@ export default function Page() {
             }
             if (oldError) console.error(oldError);
 
-            const { data, error } = (await supabase.rpc("get_category_tree_ignore_published")) as PostgrestSingleResponse<CategoryRow[]>;
+            const { data, error } = (await supabase.rpc("get_full_category_tree")) as PostgrestSingleResponse<CategoryRow[]>;
             if (data) {
                 // const dbCategories: CategoryObject[] = data
                 // .filter((i): i is CategoryObject => i.category !== null)
+                console.log(JSON.stringify(data, null, 2));
                 setCategories(data ?? []);
             }
             if (error) console.error(error);

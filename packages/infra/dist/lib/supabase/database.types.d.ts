@@ -511,6 +511,14 @@ export type Database = {
                 Args: never;
                 Returns: Json;
             };
+            get_category_tree_ignore_published: {
+                Args: never;
+                Returns: Json;
+            };
+            get_full_category_tree: {
+                Args: never;
+                Returns: Json;
+            };
             get_products: {
                 Args: {
                     p_category_set?: boolean;
