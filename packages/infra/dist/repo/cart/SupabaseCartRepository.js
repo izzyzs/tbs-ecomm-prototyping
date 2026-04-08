@@ -26,14 +26,14 @@ export class SupabaseCartRepository {
             throw cartItemError;
         const { data: skuData } = await this.supabase
             .from("inventory")
-            .select("price, upc, manufact_sku, custom_sku, item, brand")
+            .select("price_in_pennies, barcode, item, brand")
             .eq("id", requiredField(cartItemData.product_id, SupabaseError, "cartItemData.product_id"))
             .single();
-        if (!skuData || !skuData.price) {
+        if (!skuData || !skuData.price_in_pennies) {
             throw new CartItemNotFoundError("Item doesn't exist");
         }
-        return new CartItem(new CartItemId(cartItemData.id), new ProductId(requiredField(cartItemData.product_id, SupabaseError, "cartItemData.product_id")), new SKU((skuData.upc ?? skuData.manufact_sku ?? skuData.custom_sku)), // one of these three values will undoubtedly be set.
-        requiredField(skuData.item, SupabaseError, "skuData.item"), requiredField(skuData.brand, SupabaseError, "skuData.brand"), InventoryMapper.priceDBtoDomain(skuData.price), new Quantity(requiredField(cartItemData.quantity, SupabaseError, "cartItemData.quantity")));
+        return new CartItem(new CartItemId(cartItemData.id), new ProductId(requiredField(cartItemData.product_id, SupabaseError, "cartItemData.product_id")), new SKU(skuData.barcode), // one of these three values will undoubtedly be set.
+        requiredField(skuData.item, SupabaseError, "skuData.item"), requiredField(skuData.brand, SupabaseError, "skuData.brand"), InventoryMapper.priceDBtoDomain(skuData.price_in_pennies), new Quantity(requiredField(cartItemData.quantity, SupabaseError, "cartItemData.quantity")));
     }
     async retrieveCartItems(cartId) {
         const { data, error } = await this.supabase.rpc("retrieve_cart_items", { p_cart_id: cartId.number });

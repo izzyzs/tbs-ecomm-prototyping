@@ -48,7 +48,7 @@ export interface CartContextType {
     subtotal: () => number;
     qualifiesForFreeShipping: () => boolean;
     remainingForFreeShipping: () => number;
-    shipping: () => number;
+    // shipping: () => number;
     tax: () => number;
     orderTotal: () => number;
 }
@@ -61,8 +61,11 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     const { user, authLoading } = useAuth();
     const previousUserRef = useRef(user);
     const cartIdRef = useRef<CartId | null>(null);
-    const supabase = createClient();
+    const supabase = createClient()
+
+    // @ts-ignore
     const supabaseInventoryRepository = new SupabaseInventoryRepository(supabase);
+    // @ts-ignore
     const supabaseCartRepository = new SupabaseCartRepository(supabase);
     const localStorageCartRepository = new LocalStorageCartRepository();
     const cartGateway = new DefaultCartGateway(localStorageCartRepository, supabaseCartRepository);
@@ -116,10 +119,9 @@ export default function CartProvider({ children }: { children: React.ReactNode }
 
     async function add(productIdNumber: number): Promise<SubmissionResponse> {
         // TODO: REMOVE DEBUGGING LOGS BELOW
-        // TODO: transfer this into add item to cart use case
         const createCartItemDraft = new CreateCartItemDraft(supabaseInventoryRepository);
         const getCartItemDraft = new GetCartItemDraft(cartGateway, createCartItemDraft);
-        const addOrIncrementItemToCart = new AddOrIncrementCartItem(getCartItemDraft, cartGateway);
+        const addOrIncrementItemToCart = new AddOrIncrementCartItem(getCartItemDraft, supabaseInventoryRepository, cartGateway);
         const productId = ProductIdMapper.toDomainFromState(productIdNumber);
 
         let owner: CartOwner;
@@ -133,8 +135,18 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             owner = { kind: "Guest" };
         }
 
+        try {
+            itemAdded = await addOrIncrementItemToCart.execute(productId, owner);
+        } catch (e) {
+            if (e instanceof Error && e.name == 'MaxQuantityError') {
+                return { msg: e.message, isError: true };
+            } else {
+                console.log(e);
+                // @ts-ignore
+                return {msg: e, isError: true}
+            };
 
-        itemAdded = await addOrIncrementItemToCart.execute(productId, owner);
+        }
         const newCartItem = CartItemStateMapper.toStateFromDomain(itemAdded);
         setCartItems((prev) => {
             let found = false;
@@ -242,10 +254,12 @@ export default function CartProvider({ children }: { children: React.ReactNode }
     const qualifiesForFreeShipping = () => subtotal() >= freeShippingThreshold();
     const remainingForFreeShipping = () => Math.max(freeShippingThreshold() - subtotal(), 0);
     // TODO: implement shipping calculation
-    const shipping = () => (qualifiesForFreeShipping() ? 0 : 9.99);
+    // const shipping = () => (qualifiesForFreeShipping() ? 0 : 9.99);
 
     const tax = () => Math.round(subtotal() * 0.0825 * 100) / 100;
-    const orderTotal = () => Math.round((subtotal() + shipping() + tax()) * 100) / 100;
+
+    // when shipping reactivated: const orderTotal = () => Math.round((subtotal() + shipping() + tax()) * 100) / 100;
+    const orderTotal = () => Math.round((subtotal() + tax()) * 100) / 100;
 
     /*
     TODO: create retrieveCartItems, it's goal is to retrieve items already 
@@ -264,7 +278,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         subtotal,
         qualifiesForFreeShipping,
         remainingForFreeShipping,
-        shipping,
+        // shipping,
         tax,
         orderTotal,
     };

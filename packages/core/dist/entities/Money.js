@@ -12,7 +12,7 @@ export class Money {
         if (valueInPennies < 0)
             throw new MoneyError("the value is negative and negative money doesn't exist");
         if (!Number.isSafeInteger(valueInPennies))
-            throw new MoneyError("The value should be in pennies; this value has a fractional part.");
+            throw new MoneyError(`The value should be in pennies; this value ${JSON.stringify(valueInPennies)} has a fractional part.`);
         return valueInPennies;
     }
     get valueInPennies() {

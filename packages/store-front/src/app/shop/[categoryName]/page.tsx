@@ -106,7 +106,7 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                 <div className="px-4 py-5 sm:px-6 sm:py-7">
                     <main className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {products?.map((product: ProductSubset, idx: number) => (
-                            <ProductCard key={idx} id={product.id} item={product.item} price={product.price} />
+                            <ProductCard key={idx} id={product.id} item={product.item} price={`$${product.price!/100}`} />
                         ))}
                     </main>
                 </div>

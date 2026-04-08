@@ -12,7 +12,7 @@ export class SupabaseInventoryRepository {
     // }
     // getProductsByBrand(brand: string): Promise<InventoryProduct[]> {}
     async getProductDetailsForCartItems(productId) {
-        const { data, error } = await this.supabase.from("inventory").select("id, upc, custom_sku, manufact_sku, item, brand, price").eq("id", productId.number).limit(1).single();
+        const { data, error } = await this.supabase.from("inventory").select("id, barcode, item, brand, price_in_pennies").eq("id", productId.number).limit(1).single();
         // TODO: come back and uncomment if you need the tax boolean
         // const { data, error } = await this.supabase.from("inventory").select("id, item, brand, price, tax").eq("id", productId.number).limit(1).single();
         if (error) {
@@ -22,9 +22,17 @@ export class SupabaseInventoryRepository {
             id: data.id,
             name: requiredField(data.item, CartItemCreationError, "data.item"),
             brand: requiredField(data.brand, CartItemCreationError, "data.brand"),
-            price: requiredField(data.price, CartItemCreationError, "data.price"),
-            sku: (data.upc ?? data.manufact_sku ?? data.custom_sku)
+            priceInPennies: requiredField(data.price_in_pennies, CartItemCreationError, "data.price_in_pennies"),
+            sku: (data.barcode)
         };
         return details;
+    }
+    async getMaxPurchaseQuantity(productId) {
+        const { data, error } = await this.supabase.from('inventory').select('purchase_limit').eq('id', productId.number).single();
+        if (!data)
+            throw Error('Inventory not found.');
+        if (error)
+            throw Error(error);
+        return data.purchase_limit;
     }
 }

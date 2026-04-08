@@ -24,6 +24,7 @@ export default async function Success({ searchParams }: { searchParams?: Promise
 
     const {
         status,
+        // @ts-ignore
         customer_details: { email: customerEmail },
         line_items
     } = await stripe.checkout.sessions.retrieve(session_id, {

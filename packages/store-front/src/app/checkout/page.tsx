@@ -12,16 +12,16 @@ import { Button } from "@/components/my-button";
 import { useSearchParams } from "next/navigation";
 import { formatCurrency } from "@/utils/helper-functions";
 import { HandleCheckoutBodyType } from "@/lib/types";
-import { MapPin, ShoppingBag, Store, Truck } from "lucide-react";
+import { ArrowLeft, MapPin, ShoppingBag, Store, Truck } from "lucide-react";
 
 type Fulfillment = "pickup" | "delivery";
 export default function CheckoutPage() {
-    const searchParams = useSearchParams();
-    const canceled = searchParams.get("canceled");
-
-    if (canceled) {
-        console.log("Order canceled -- continue to shop around and checkout when you're ready.");
-    }
+    // const searchParams = useSearchParams();
+    // const canceled = searchParams.get("canceled");
+    //
+    // if (canceled) {
+    //     console.log("Order canceled -- continue to shop around and checkout when you're ready.");
+    // }
 
     const { cartItems, subtotal } = useCart();
     const { user } = useAuth();
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
         <main className="mx-auto w-full max-w-7xl px-4 pb-12 pt-4 sm:px-6 lg:px-8">
             <div className="overflow-hidden rounded-[2rem] border border-rose-200/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(255,245,247,0.92)_100%)] shadow-[0_24px_80px_-36px_rgba(190,24,93,0.4)]">
                 <div className="border-b border-rose-200/70 bg-[radial-gradient(circle_at_top_left,rgba(251,207,232,0.5),transparent_35%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(255,241,242,0.94))] px-5 py-6 sm:px-8 sm:py-8">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="max-w-3xl">
                             <p className="text-xs font-semibold tracking-[0.28em] text-rose-500 uppercase">Checkout</p>
                             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Review your order</h1>
@@ -69,8 +69,19 @@ export default function CheckoutPage() {
                             </p>
                         </div>
 
-                        <div className="inline-flex w-fit items-center rounded-full border border-rose-200 bg-white/85 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
-                            {unitCount} {unitCount === 1 ? "item" : "items"}
+                        <div className="flex flex-col gap-3 sm:items-end">
+                            <Button
+                                type="button"
+                                className="h-11 w-full rounded-2xl bg-slate-900 px-5 text-sm font-semibold text-white shadow-[0_18px_36px_-22px_rgba(15,23,42,0.9)] hover:bg-slate-800 sm:w-auto"
+                                onClick={() => router.push("/cart")}
+                            >
+                                <ArrowLeft className="size-4" />
+                                Back to cart
+                            </Button>
+
+                            <div className="inline-flex w-fit items-center rounded-full border border-rose-200 bg-white/85 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
+                                {unitCount} {unitCount === 1 ? "item" : "items"}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -94,11 +105,11 @@ export default function CheckoutPage() {
                                     className="rounded-[1.5rem] border border-slate-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] p-4 shadow-[0_16px_36px_-30px_rgba(15,23,42,0.55)]"
                                 >
                                     <Field className="items-stretch gap-4 sm:flex-row">
-                                        <div className="flex h-28 w-full items-center justify-center rounded-[1.25rem] border border-rose-200/70 bg-[radial-gradient(circle_at_top_left,rgba(251,207,232,0.55),transparent_40%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(255,241,242,0.92))] text-rose-500 sm:w-28">
+                                        <div className="flex h-28 w-full items-center justify-center rounded-[1.25rem] border border-rose-200/70 bg-[radial-gradient(circle_at_top_left,rgba(251,207,232,0.55),transparent_40%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(255,241,242,0.92))] text-rose-500 sm:max-w-[50%]">
                                             <ShoppingBag className="size-8" />
                                         </div>
 
-                                        <div className="flex flex-1 flex-col justify-between gap-4">
+                                        <div className="flex min-w-0 flex-1 flex-col justify-between gap-4">
                                             <div>
                                                 <p className="text-lg font-semibold tracking-tight text-slate-900">{item.name}</p>
                                                 <p className="mt-2 text-sm leading-6 text-slate-500">

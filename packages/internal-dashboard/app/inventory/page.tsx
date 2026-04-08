@@ -19,7 +19,7 @@ const parseBooleanSearchParam = (value: string | string[] | undefined) => {
     return normalizedValue === "true";
 };
 
-// TODO: search is currently implemented on the frontend, it needs to be incorporated into the rpc so a new search_and_filter_porducts/sku rpc is needed.
+// TODO: search is currently implemented on the frontend, it needs to be incorporated into the rpc so a new search_and_filter_products/sku rpc is needed.
 const matchesInventoryQuery = (sku: InventorySKU, query: string) => {
     const searchableFields = [sku.id, sku.item, sku.brand, sku.category, sku.custom_sku, sku.upc];
 
@@ -30,26 +30,30 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
     const params = await searchParams;
     const query = getSingleSearchParam(params.query)?.trim() ?? "";
     const normalizedQuery = query.toLowerCase();
-    const published = parseBooleanSearchParam(params.published);
-    const categorySet = parseBooleanSearchParam(params.categorySet);
-
+    console.log(`query: ${normalizedQuery}`);
     const supabase = await createClient();
-    const { data, error } = (await supabase.rpc("get_products", { p_published: published, p_category_set: categorySet })) as PostgrestSingleResponse<GetProductsData>;
-    if (error) throw error;
-    if (!data) throw new Error("Inventory Retrieval Error: items not found");
-    const skus = data.data.filter((item) => item !== undefined);
-    const filteredSkus = normalizedQuery ? skus.filter((sku) => matchesInventoryQuery(sku, normalizedQuery)) : skus;
+    let skus: InventorySKU[] | null;
+    const { data, error } = await supabase.rpc("search_products", { p_query: normalizedQuery });
+    skus = data?.filter((item) => item !== undefined) ?? [];
+
+    // const published = parseBooleanSearchParam(params.published);
+    // const categorySet = parseBooleanSearchParam(params.categorySet);
+
+    // const { data, error } = (await supabase.rpc("get_products", { p_published: published, p_category_set: categorySet })) as PostgrestSingleResponse<GetProductsData>;
+    // if (error) throw error;
+    // if (!data) throw new Error("Inventory Retrieval Error: items not found");
+    // const filteredSkus = normalizedQuery ? skus.filter((sku) => matchesInventoryQuery(sku, normalizedQuery)) : skus;
 
     return (
         <>
             <div className="flex flex-1 min-w-0 flex-col p-4">
                 <div className="min-w-0">
-                    <InventorySearchBar query={query} published={published} categorySet={categorySet} resultsCount={filteredSkus.length} />
-                    <div className="pb-4">
+                    <InventorySearchBar query={query} resultsCount={skus.length} />
+                    {/* <div className="pb-4">
                         <FilterInventoryForm />
-                    </div>
+                    </div> */}
                     <div className="overflow-x-auto rounded-md border">
-                        <InventoryTable data={filteredSkus} />
+                        <InventoryTable data={skus} />
                     </div>
                 </div>
             </div>

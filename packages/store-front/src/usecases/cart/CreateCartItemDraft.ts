@@ -14,7 +14,7 @@ export class CreateCartItemDraft {
             productId: new ProductId(cartItemDetails.id),
             name: cartItemDetails.name,
             brand: cartItemDetails.brand,
-            price: InventoryMapper.priceDBtoDomain(cartItemDetails.price),
+            price: InventoryMapper.priceDBtoDomain(cartItemDetails.priceInPennies),
             sku: new SKU(cartItemDetails.sku),
             quantity: new Quantity(0)
         };

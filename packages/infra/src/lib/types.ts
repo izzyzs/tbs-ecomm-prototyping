@@ -70,7 +70,7 @@ export interface SearchResponse extends SubmissionResponse {
 //     supercategory: string;
 // }
 
-export type ProductSubset = Pick<InventorySKU, "id" | "item" | "price">;
+export type ProductSubset = Pick<InventorySKU, "id" | "item" | "price_in_pennies">;
 
 export interface Order {
     id: number;

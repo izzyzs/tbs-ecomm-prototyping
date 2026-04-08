@@ -1,18 +1,20 @@
-import { Product } from "@/utils/types";
 import { Star, Sparkles, Package, ScanBarcode } from "lucide-react";
 import AddToCartButton from "@/components/product/AddToCartButton";
+import { Database } from "@tbs/infra";
 
+type Product = Database["public"]["Tables"]["inventory"]["Row"];
 type ProductViewProps = { product: Product };
 
 export default function ProductView({ product }: ProductViewProps) {
     const productName = formatDisplayValue(product.item);
     const categoryName = formatDisplayValue(product.category);
     const brandName = formatDisplayValue(product.brand);
-    const description = product.description?.trim()
-        ? product.description
-        : "A reliable salon-ready essential selected for consistent performance and easy day-to-day use.";
-    const priceLabel = formatPrice(product.price);
-    const stockLabel = product.inventory > 0 ? `${product.inventory} in stock` : "Currently unavailable";
+    // const description = product.description?.trim()
+    //     ? product.description
+    //     : "A reliable salon-ready essential selected for consistent performance and easy day-to-day use.";
+    // const priceLabel = formatPrice(product.price);
+    const priceLabel = product.price_in_pennies;
+    const stockLabel = product.qty! > 0 ? `${product.qty} in stock` : "Currently unavailable";
     const barcodeLabel = product.barcode?.trim() ? product.barcode : "Not listed";
     const initials = productName
         .split(" ")
@@ -30,9 +32,7 @@ export default function ProductView({ product }: ProductViewProps) {
                             <span className="inline-flex items-center rounded-full border border-rose-200 bg-white/85 px-3 py-1 text-xs font-semibold tracking-[0.24em] text-rose-500 uppercase">
                                 Product page
                             </span>
-                            <span className="inline-flex items-center rounded-full bg-white/75 px-3 py-1 text-xs font-medium text-slate-600">
-                                {categoryName}
-                            </span>
+                            <span className="inline-flex items-center rounded-full bg-white/75 px-3 py-1 text-xs font-medium text-slate-600">{categoryName}</span>
                         </div>
 
                         <div className="relative mt-6 flex min-h-[360px] items-center justify-center overflow-hidden rounded-[2rem] border border-rose-200/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(255,241,242,0.88)_100%)] p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] sm:min-h-[430px]">
@@ -52,9 +52,9 @@ export default function ProductView({ product }: ProductViewProps) {
                                 </div>
 
                                 <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">{productName}</h2>
-                                <p className="mt-3 max-w-sm text-sm leading-6 text-slate-600 sm:text-base">
-                                    A polished storefront presentation for one of your catalog essentials.
-                                </p>
+                                {/*<p className="mt-3 max-w-sm text-sm leading-6 text-slate-600 sm:text-base">*/}
+                                {/*    A polished storefront presentation for one of your catalog essentials.*/}
+                                {/*</p>*/}
                             </div>
                         </div>
                     </div>
@@ -62,35 +62,31 @@ export default function ProductView({ product }: ProductViewProps) {
                     <div className="p-6 sm:p-8">
                         <div className="flex h-full flex-col">
                             <div className="flex flex-wrap gap-2">
-                                <span className="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">
-                                    {brandName}
-                                </span>
-                                <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                                    #{product.id}
-                                </span>
+                                {product.brand && <span className="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">{brandName}</span>}
+                                <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">#{product.id}</span>
                             </div>
 
                             <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{productName}</h1>
 
                             <div className="mt-4 flex flex-wrap items-center gap-3">
-                                <div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700">
-                                    <Sparkles className="size-4 text-rose-500" />
-                                    Salon staple
-                                </div>
+                                {/*<div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700">*/}
+                                {/*    <Sparkles className="size-4 text-rose-500" />*/}
+                                {/*    Salon staple*/}
+                                {/*</div>*/}
                                 <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600">
                                     <Package className="size-4 text-slate-400" />
                                     {stockLabel}
                                 </div>
                             </div>
 
-                            <p className="mt-6 text-sm leading-7 text-slate-600 sm:text-base">{description}</p>
+                            {/*<p className="mt-6 text-sm leading-7 text-slate-600 sm:text-base">{description}</p>*/}
 
                             <div className="mt-8 rounded-[1.5rem] border border-rose-200/70 bg-white/85 p-5 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.45)]">
                                 <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                                     <div>
                                         <p className="text-xs font-semibold tracking-[0.24em] text-rose-500 uppercase">Price</p>
-                                        <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{priceLabel}</p>
-                                        <p className="mt-2 text-sm text-slate-500">Available now for quick storefront purchase.</p>
+                                        <p className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">{formatPrice(priceLabel)}</p>
+                                        {/* <p className="mt-2 text-sm text-slate-500">Available now for quick storefront purchase.</p> */}
                                     </div>
 
                                     <AddToCartButton productId={product.id} size="lg" className="min-w-[180px] rounded-full bg-rose-500 px-6 text-white hover:bg-rose-600" />
@@ -119,18 +115,17 @@ export default function ProductView({ product }: ProductViewProps) {
     );
 }
 
-function formatPrice(price: number) {
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-    }).format(price);
+function formatPrice(price: number | null) {
+    if (price)
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+        }).format(price / 100);
+    else return "N/A";
 }
 
 function formatDisplayValue(value?: string | null) {
     if (!value?.trim()) return "Unspecified";
 
-    return value
-        .replace(/[-_]+/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
+    return value.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
 }

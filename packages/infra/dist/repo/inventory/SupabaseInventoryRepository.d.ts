@@ -5,5 +5,6 @@ export declare class SupabaseInventoryRepository implements InventoryRepository 
     private supabase;
     constructor(supabase: client.BrowserSupabaseClient);
     getProductDetailsForCartItems(productId: ProductId): Promise<CartItemDetails | null>;
+    getMaxPurchaseQuantity(productId: ProductId): Promise<number>;
 }
 //# sourceMappingURL=SupabaseInventoryRepository.d.ts.map

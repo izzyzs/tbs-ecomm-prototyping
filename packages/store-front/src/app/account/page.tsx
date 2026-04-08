@@ -43,12 +43,12 @@ const statusStyles: Record<Status["currentStatus"], string> = {
 
 function getOrderStatus(order: OrderState): Status {
     return order.pickedUpAt
-        ? {time: order.pickedUpAt, currentStatus: "Picked up"}
+        ? {time: Temporal.Instant.from(order.pickedUpAt), currentStatus: "Picked up"}
         : order.readyAt
-            ? {time: order.readyAt, currentStatus: "Ready for pickup"}
+            ? {time: Temporal.Instant.from(order.readyAt), currentStatus: "Ready for pickup"}
             : order.preparedAt
-                ? {time: order.preparedAt, currentStatus: "Prepared"}
-                : {time: order.createdAt, currentStatus: "Created"};
+                ? {time: Temporal.Instant.from(order.preparedAt), currentStatus: "Prepared"}
+                : {time: Temporal.Instant.from(order.createdAt), currentStatus: "Created"};
 }
 
 function formatInstant(instant: Temporal.Instant) {
@@ -207,7 +207,7 @@ export default function AccountPage() {
                                                     Order #{order.orderId}
                                                 </CardTitle>
                                                 <CardDescription className="text-sm text-slate-600">
-                                                    Placed {formatInstant(order.createdAt)}
+                                                    Placed {formatInstant(Temporal.Instant.from(order.createdAt))}
                                                 </CardDescription>
                                             </div>
 

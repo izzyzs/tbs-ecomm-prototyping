@@ -39,17 +39,17 @@ export default function CartPage() {
 
                     <div className="space-y-6">
                         <OrderOverview />
-                        <div className="rounded-xl border border-rose-100 bg-gradient-to-r from-pink-50 via-rose-50 to-orange-50 p-6 shadow-sm">
-                            <div className="flex items-start gap-3">
-                                <ShieldCheck className="h-10 w-10 text-pink-500" />
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Salon Partner Perks</h3>
-                                    <p className="mt-1 text-sm text-gray-600">
-                                        Enjoy pro-only pricing, curated assortments, and priority fulfillment on every order. Questions? Our team responds within 24 hours.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        {/*<div className="rounded-xl border border-rose-100 bg-gradient-to-r from-pink-50 via-rose-50 to-orange-50 p-6 shadow-sm">*/}
+                        {/*    <div className="flex items-start gap-3">*/}
+                        {/*        <ShieldCheck className="h-10 w-10 text-pink-500" />*/}
+                        {/*        <div>*/}
+                        {/*            <h3 className="text-lg font-semibold text-gray-900">Salon Partner Perks</h3>*/}
+                        {/*            <p className="mt-1 text-sm text-gray-600">*/}
+                        {/*                Enjoy pro-only pricing, curated assortments, and priority fulfillment on every order. Questions? Our team responds within 24 hours.*/}
+                        {/*            </p>*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
             </section>

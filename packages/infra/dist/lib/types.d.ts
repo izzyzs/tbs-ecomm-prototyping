@@ -31,7 +31,7 @@ export type InventorySKU = Database["public"]["Tables"]["inventory"]["Row"];
 export interface SearchResponse extends SubmissionResponse {
     inventory: InventorySKU[];
 }
-export type ProductSubset = Pick<InventorySKU, "id" | "item" | "price">;
+export type ProductSubset = Pick<InventorySKU, "id" | "item" | "price_in_pennies">;
 export interface Order {
     id: number;
     user_id: number;

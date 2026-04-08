@@ -26,12 +26,12 @@ export interface Product {
     category: string;
     category_id: string;
     item: string;
-    description: string;
+    // description: string;
     barcode: string;
     price: number;
-    inventory: number;
-    created_at: string; // ISO string from TIMESTAMPTZ
-    updated_at: string;
+    qty: number;
+    // created_at: string; // ISO string from TIMESTAMPTZ
+    // updated_at: string;
 }
 
 // type InventorySKU = Database["public"]["Tables"]["inventory"]["Row"]

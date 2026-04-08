@@ -27,8 +27,7 @@ const CartSummary = () => {
                     <h2 className="text-xl font-semibold text-gray-900">Cart Summary</h2>
                     <p className="text-sm text-gray-500">Curated for pro-level results in every service.</p>
                 </div>
-                <Button variant="outline"></Button>
-                <span className="text-sm text-gray-500">{cartItems.length} items</span>
+                <span className="text-sm text-gray-500">{cartItems.length} {cartItems.length == 1 ? `item` : `items`}</span>
             </div>
 
             <div className="space-y-6 px-6 py-6">

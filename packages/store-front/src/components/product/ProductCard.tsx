@@ -1,11 +1,9 @@
 import React from "react";
-import { Button } from "@/components/my-button";
 import Link from "next/link";
-// import { Product, ProductSubset } from "@/utils/types";
 import AddToCartButton from "@/components/product/AddToCartButton";
 import SeeMoreButton from "@/components/product/SeeMoreButton";
 
-type ProductSubset = { id: number, item: string, price: number };
+type ProductSubset = { id: number, item: string | null, price: string | null };
 
 export default function ProductCard({ id, item: name, price }: ProductSubset) {
     return (

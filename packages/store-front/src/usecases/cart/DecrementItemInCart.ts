@@ -13,7 +13,7 @@ export class DecrementItemInCart {
 
         if (cartItem.quantityAmount == 1) {
             await this.cartGateway.removeCartItem(cartItem.productId, owner);
-            return new CartItem(cartItem.id, cartItem.productId, cartItem.name, cartItem.brand, cartItem.price, new Quantity(0));
+            return new CartItem(cartItem.id, cartItem.productId, cartItem.sku, cartItem.name, cartItem.brand, cartItem.price, new Quantity(0));
         }
 
         const oldItem = CartItemMapper.toDraftFromDomain(cartItem)

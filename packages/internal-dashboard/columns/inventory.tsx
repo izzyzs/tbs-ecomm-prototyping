@@ -1,18 +1,13 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import {Database, InventorySKU} from "@tbs/infra";
-import {TableCell} from "@/components/ui/table";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {Button} from "@/components/ui/button";
+import { Database, InventorySKU } from "@tbs/infra";
+import { TableCell } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 type InventoryRow = Database["public"]["Tables"]["inventory"]["Row"];
-
 
 export const columns: ColumnDef<InventoryRow>[] = [
     // {
@@ -23,31 +18,27 @@ export const columns: ColumnDef<InventoryRow>[] = [
 
     {
         accessorKey: "id",
-        header: "Id"
+        header: "Id",
     },
     {
         accessorKey: "item",
         header: "Name",
-        cell: ({row}) => {
-            return row.original.item?.length
-                ? <>
+        cell: ({ row }) => {
+            return row.original.item?.length ? (
+                <>
                     <Link href={`inventory/${row.original.id}`}>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <p>
-                                    {((row.original.item?.length < 20) ?
-                                        row.original.item :
-                                        row.original.item?.substring(0, 20) + "...")
-                                    }
-                                </p>
+                                <p>{row.original.item?.length < 20 ? row.original.item : row.original.item?.substring(0, 20) + "..."}</p>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>{row.original.item}</p>
                             </TooltipContent>
                         </Tooltip>
                     </Link>
-                </>: null;
-        }
+                </>
+            ) : null;
+        },
     },
     {
         accessorKey: "brand",
@@ -55,27 +46,28 @@ export const columns: ColumnDef<InventoryRow>[] = [
     },
     {
         accessorKey: "category",
-        header: "Category"
+        header: "Category",
     },
     // {
     //     accessorKey: "category_id",
     //     header: "Category Id"
     // },
+    // {
+    //     accessorKey: "custom_sku",
+    //     header: "Custom SKU",
+    // },
     {
-        accessorKey: "custom_sku",
-        header: "Custom SKU",
-    },
-    {
-        accessorKey: "upc",
-        header: "UPC",
+        accessorKey: "barcode",
+        header: "Barcode",
     },
     // {
     //     accessorKey: "ean",
     //     header: "Ean",
     // },
     {
-        accessorKey: "price",
+        accessorKey: "price_in_pennies",
         header: "Price",
+        cell: ({ row }) => `${row.original.price_in_pennies ? row.original.price_in_pennies / 100 : "N/A"}`,
     },
     {
         accessorKey: "publish_to_ecom",

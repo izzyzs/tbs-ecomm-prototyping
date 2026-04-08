@@ -163,65 +163,59 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
         };
         inventory: {
             Row: {
+                barcode: string | null;
                 brand: string | null;
                 category: string | null;
                 category_id: number | null;
-                custom_sku: string | null;
                 default_cost: string | null;
-                ean: string | null;
                 id: number;
                 item: string | null;
-                manufact_sku: string | null;
-                price: string | null;
+                price_in_pennies: number | null;
                 publish_to_ecom: boolean | null;
+                purchase_limit: number;
                 qty: number | null;
                 season: string | null;
                 system_id: string | null;
                 tax: boolean | null;
                 tax_class: string | null;
-                upc: string | null;
                 vendor: string | null;
                 vendor_id: string | null;
             };
             Insert: {
+                barcode?: string | null;
                 brand?: string | null;
                 category?: string | null;
                 category_id?: number | null;
-                custom_sku?: string | null;
                 default_cost?: string | null;
-                ean?: string | null;
                 id?: never;
                 item?: string | null;
-                manufact_sku?: string | null;
-                price?: string | null;
+                price_in_pennies?: number | null;
                 publish_to_ecom?: boolean | null;
+                purchase_limit?: number;
                 qty?: number | null;
                 season?: string | null;
                 system_id?: string | null;
                 tax?: boolean | null;
                 tax_class?: string | null;
-                upc?: string | null;
                 vendor?: string | null;
                 vendor_id?: string | null;
             };
             Update: {
+                barcode?: string | null;
                 brand?: string | null;
                 category?: string | null;
                 category_id?: number | null;
-                custom_sku?: string | null;
                 default_cost?: string | null;
-                ean?: string | null;
                 id?: never;
                 item?: string | null;
-                manufact_sku?: string | null;
-                price?: string | null;
+                price_in_pennies?: number | null;
                 publish_to_ecom?: boolean | null;
+                purchase_limit?: number;
                 qty?: number | null;
                 season?: string | null;
                 system_id?: string | null;
                 tax?: boolean | null;
                 tax_class?: string | null;
-                upc?: string | null;
                 vendor?: string | null;
                 vendor_id?: string | null;
             };
@@ -470,6 +464,10 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
                 isSetofReturn: false;
             };
         };
+        build_category_tree: {
+            Args: never;
+            Returns: import("./database.types.js").Json;
+        };
         distinct_categories: {
             Args: never;
             Returns: {
@@ -492,6 +490,40 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
                 user_id: string;
             };
             Returns: number;
+        };
+        get_active_products: {
+            Args: never;
+            Returns: {
+                barcode: string | null;
+                brand: string | null;
+                category: string | null;
+                category_id: number | null;
+                default_cost: string | null;
+                id: number;
+                item: string | null;
+                price_in_pennies: number | null;
+                publish_to_ecom: boolean | null;
+                purchase_limit: number;
+                qty: number | null;
+                season: string | null;
+                system_id: string | null;
+                tax: boolean | null;
+                tax_class: string | null;
+                vendor: string | null;
+                vendor_id: string | null;
+            }[];
+            SetofOptions: {
+                from: "*";
+                to: "inventory";
+                isOneToOne: false;
+                isSetofReturn: true;
+            };
+        };
+        get_breadcrumb_array: {
+            Args: {
+                p_id: number;
+            };
+            Returns: import("./database.types.js").Json;
         };
         get_category_tree: {
             Args: never;
@@ -519,23 +551,21 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
                 p_limit_count: number;
             };
             Returns: {
+                barcode: string | null;
                 brand: string | null;
                 category: string | null;
                 category_id: number | null;
-                custom_sku: string | null;
                 default_cost: string | null;
-                ean: string | null;
                 id: number;
                 item: string | null;
-                manufact_sku: string | null;
-                price: string | null;
+                price_in_pennies: number | null;
                 publish_to_ecom: boolean | null;
+                purchase_limit: number;
                 qty: number | null;
                 season: string | null;
                 system_id: string | null;
                 tax: boolean | null;
                 tax_class: string | null;
-                upc: string | null;
                 vendor: string | null;
                 vendor_id: string | null;
             }[];
@@ -1184,26 +1214,24 @@ export declare const createClient: () => import("@supabase/supabase-js/dist/inde
         };
         search_products: {
             Args: {
-                query: string;
+                p_query: string;
             };
             Returns: {
+                barcode: string | null;
                 brand: string | null;
                 category: string | null;
                 category_id: number | null;
-                custom_sku: string | null;
                 default_cost: string | null;
-                ean: string | null;
                 id: number;
                 item: string | null;
-                manufact_sku: string | null;
-                price: string | null;
+                price_in_pennies: number | null;
                 publish_to_ecom: boolean | null;
+                purchase_limit: number;
                 qty: number | null;
                 season: string | null;
                 system_id: string | null;
                 tax: boolean | null;
                 tax_class: string | null;
-                upc: string | null;
                 vendor: string | null;
                 vendor_id: string | null;
             }[];

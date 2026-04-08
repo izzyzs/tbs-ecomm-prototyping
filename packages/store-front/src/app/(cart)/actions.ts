@@ -10,7 +10,7 @@ export const searchProducts = async (query: string | null): Promise<SearchRespon
         return { inventory: [], msg: "Oops! You're Search Is Empty, Try Again!", isError: true };
     }
 
-    const { data, error } = await supabase.rpc("search_products", { query });
+    const { data, error } = await supabase.rpc("search_products", { p_query: query });
 
     if (error) {
         return { inventory: [], msg: "Error: " + error.message, isError: true };

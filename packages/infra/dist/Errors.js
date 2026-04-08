@@ -10,3 +10,9 @@ export class LocalStorageError extends Error {
         this.name = "LocalStorageError";
     }
 }
+export class MaxQuantityError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "MaxQuantityError";
+    }
+}

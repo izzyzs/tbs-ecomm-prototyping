@@ -34,7 +34,8 @@ const NavBar = () => {
                 <Link href="/" className="text-xl font-bold">
                     Beauty Supply
                 </Link>
-                <ProductCategories />
+                {/*<ProductCategories />*/}
+                {/* ^^^^^^^^^^^^^^^^ is not currently necessary; we're streamlining and sliming down*/}
                 <div className="flex items-center space-x-4">
                     {/* <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-gray-900">
                         Shop
@@ -43,7 +44,7 @@ const NavBar = () => {
                         About
                     </a> */}
                     {/* Login button opens a modal using Shadcn's Dialog component */}
-                    <SearchButton />
+                    {/* <SearchButton /> */}
                     <CartButton />
                     <AccountButton />
                     <UserStatusController />
