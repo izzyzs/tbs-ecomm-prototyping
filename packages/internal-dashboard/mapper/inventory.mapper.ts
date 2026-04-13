@@ -1,5 +1,5 @@
-import { Database } from "@/lib/supabase/database.types";
-type InventoryEntry = Database["public"]["Tables"]["inventory"]["Row"];
+import { Database } from "@tbs/infra";
+export type InventoryEntry = Database["public"]["Tables"]["inventory"]["Row"];
 /*
 brand: string | null
 category: string | null

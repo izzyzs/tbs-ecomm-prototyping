@@ -1,170 +1,105 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Database, InventorySKU } from "@tbs/infra";
-import { TableCell } from "@/components/ui/table";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ColumnDef } from "@tanstack/react-table";
+
+import { Database } from "@tbs/infra";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 type InventoryRow = Database["public"]["Tables"]["inventory"]["Row"];
 
-export const columns: ColumnDef<InventoryRow>[] = [
-    // {
-    //     accessorKey: "edit",
-    //     header: () => null,
-    //     cell: ({row}) => <Button onClick={() => row.toggleSelected(true)}/>
-    // },
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+});
 
+export const columns: ColumnDef<InventoryRow>[] = [
     {
         accessorKey: "id",
-        header: "Id",
+        header: "ID",
+        cell: ({ row }) => <span className="font-mono text-xs font-medium text-muted-foreground">#{row.original.id}</span>,
     },
     {
         accessorKey: "item",
-        header: "Name",
+        header: "Product",
         cell: ({ row }) => {
-            return row.original.item?.length ? (
-                <>
-                    <Link href={`inventory/${row.original.id}`}>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <p>{row.original.item?.length < 20 ? row.original.item : row.original.item?.substring(0, 20) + "..."}</p>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>{row.original.item}</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </Link>
-                </>
-            ) : null;
+            const name = row.original.item?.trim() || "Untitled product";
+
+            return (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Link href={`/inventory/${row.original.id}`} className="group/link block min-w-[240px] rounded-2xl p-1 transition">
+                            <p className="truncate text-sm font-semibold text-foreground transition group-hover/link:text-primary">{name}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                {row.original.brand?.trim() || "Brand not set"}
+                                {row.original.category?.trim() ? ` · ${row.original.category}` : ""}
+                            </p>
+                        </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{name}</p>
+                    </TooltipContent>
+                </Tooltip>
+            );
         },
     },
     {
         accessorKey: "brand",
         header: "Brand",
+        cell: ({ row }) => <span className={cn(!row.original.brand && "text-muted-foreground")}>{row.original.brand || "Unassigned"}</span>,
     },
     {
         accessorKey: "category",
         header: "Category",
+        cell: ({ row }) => <span className={cn(!row.original.category && "text-muted-foreground")}>{row.original.category || "Unassigned"}</span>,
     },
-    // {
-    //     accessorKey: "category_id",
-    //     header: "Category Id"
-    // },
-    // {
-    //     accessorKey: "custom_sku",
-    //     header: "Custom SKU",
-    // },
     {
         accessorKey: "barcode",
         header: "Barcode",
+        cell: ({ row }) => <span className="font-mono text-xs tracking-[0.18em] text-muted-foreground">{row.original.barcode || "N/A"}</span>,
     },
-    // {
-    //     accessorKey: "ean",
-    //     header: "Ean",
-    // },
     {
         accessorKey: "price_in_pennies",
         header: "Price",
-        cell: ({ row }) => `${row.original.price_in_pennies ? row.original.price_in_pennies / 100 : "N/A"}`,
+        cell: ({ row }) => (
+            <span className="font-medium text-foreground">{row.original.price_in_pennies ? currencyFormatter.format(row.original.price_in_pennies / 100) : "N/A"}</span>
+        ),
     },
     {
         accessorKey: "publish_to_ecom",
-        header: "Publish to Ecommerce",
+        header: "Ecommerce",
+        cell: ({ row }) => (
+            <span
+                className={cn(
+                    "inline-flex rounded-full border px-3 py-1 text-xs font-semibold",
+                    row.original.publish_to_ecom ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-100 text-slate-600",
+                )}
+            >
+                {row.original.publish_to_ecom ? "Live" : "Draft"}
+            </span>
+        ),
     },
     {
         accessorKey: "qty",
-        header: "qty",
-    },
-    // {
-    //     accessorKey: "system_id",
-    //     header: "system_id",
-    // },
-    // {
-    //     accessorKey: "tax",
-    //     header: "tax",
-    // },
-];
+        header: "Stock",
+        cell: ({ row }) => {
+            const quantity = row.original.qty;
 
-/*
-* export const columns: ColumnDef<InventoryRow>[] = [
-    {
-        accessorKey: "brand",
-        header: () => <TableCell>Brand</TableCell>,
-    },
-    {
-        accessorKey: "category",
-        header: () => <TableCell>Category</TableCell>,
-    },
-    {
-        accessorKey: "category_id",
-        header: () => <TableCell>Category Id</TableCell>,
-    },
-    {
-        accessorKey: "custom_sku",
-        header: () =>  <TableCell>Custom SKU</TableCell>,
-    },
-    {
-        accessorKey: "default_cost",
-        header: () => <TableCell>Default Cost</TableCell>,
-    },
-    {
-        accessorKey: "ean",
-        header: () => <TableCell>Ean</TableCell>,
-    },
-    {
-        accessorKey: "id",
-        header: () => <TableCell>Id</TableCell>,
-    },
-    {
-        accessorKey: "item",
-        header: () => <TableCell>Name</TableCell>,
-    },
-    {
-        accessorKey: "manufact_sku",
-        header: () => <TableCell>Manufact SKU</TableCell>,
-    },
-    {
-        accessorKey: "price",
-        header: () =>  <TableCell>Price</TableCell>,
-    },
-    {
-        accessorKey: "publish_to_ecom",
-        header: () => <TableCell>Publish to E com</TableCell>,
-    },
-    {
-        accessorKey: "qty",
-        header: () => <TableCell>Quantity</TableCell>,
-    },
-    {
-        accessorKey: "season",
-        header: () => <TableCell>Season</TableCell>,
-    },
-    {
-        accessorKey: "system_id",
-        header: () => <TableCell>System Id</TableCell>,
-    },
-    {
-        accessorKey: "tax",
-        header: () => <TableCell>Tax</TableCell>,
-    },
-    {
-        accessorKey: "tax_class",
-        header: () => <TableCell>Tax Class</TableCell>,
-    },
-    {
-        accessorKey: "upc",
-        header: () => <TableCell>UPC</TableCell>,
-    },
-    {
-        accessorKey: "vendor",
-        header: () => <TableCell>vendor</TableCell>,
-    },
-    {
-        accessorKey: "vendor_id",
-        header: () => <TableCell>VendorId</TableCell>,
+            return (
+                <span
+                    className={cn(
+                        "inline-flex min-w-14 justify-center rounded-full border px-3 py-1 text-xs font-semibold",
+                        quantity === null || quantity === undefined
+                            ? "border-slate-200 bg-slate-100 text-slate-600"
+                            : quantity <= 3
+                              ? "border-amber-200 bg-amber-50 text-amber-700"
+                              : "border-sky-200 bg-sky-50 text-sky-700",
+                    )}
+                >
+                    {quantity ?? "N/A"}
+                </span>
+            );
+        },
     },
 ];
-
-* */

@@ -3,48 +3,47 @@ import React from "react";
 import { useCart } from "@/context/CartContext";
 import { formatCurrency } from "@/utils/helper-functions";
 import { Button } from "@/components/my-button";
-import { Truck } from "lucide-react";
-import {useRouter} from "next/navigation";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const OrderOverview = () => {
-    const { qualifiesForFreeShipping, remainingForFreeShipping, tax, orderTotal, subtotal } = useCart();
+    const { subtotal, count } = useCart();
     const router = useRouter();
+    const hasItemsInCart = count() > 0;
 
     return (
-        <div className="rounded-xl border border-rose-100 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900">Order Overview</h2>
-            <div className="mt-5 space-y-4 text-sm text-gray-600">
-                {/*<div className="flex items-center justify-between">*/}
-                {/*    <span>Subtotal</span>*/}
-                {/*    <span>{formatCurrency(subtotal())}</span>*/}
-                {/*</div>*/}
-                {/*<div className="flex items-center justify-between">*/}
-                {/*    <span>Estimated tax</span>*/}
-                {/*    <span>{formatCurrency(tax())}</span>*/}
-                {/*</div>*/}
-                {/*<div className="flex items-center justify-between">*/}
-                {/*    <span>Shipping</span>*/}
-                {/*    <span>{qualifiesForFreeShipping() ? "Free" : formatCurrency(shipping())}</span>*/}
-                {/*</div>*/}
-                <div className="h-px bg-rose-100" />
-                <div className="flex items-center justify-between text-base font-semibold text-gray-900">
-                    {/*<span>Total due</span>*/}
-                    {/*<span>{formatCurrency(orderTotal())}</span>*/}
+        <div className="tbs-panel p-6">
+            <p className="tbs-kicker">Order Overview</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--tbs-plum)]">Your total before checkout.</h2>
+
+            <div className="mt-5 space-y-4">
+                <div className="flex items-center justify-between text-sm text-[rgba(63,22,60,0.72)]">
                     <span>Subtotal</span>
-                    <span>{formatCurrency(subtotal())}</span>
+                    <span className="text-base font-semibold text-[var(--tbs-plum)]">{formatCurrency(subtotal())}</span>
+                </div>
+
+                <div className="tbs-divider" />
+
+                <div className="tbs-highlight-panel p-4">
+                    <div className="flex items-start gap-3">
+                        <div className="tbs-icon-badge size-10 shrink-0 rounded-2xl">
+                            <Sparkles className="size-4" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-semibold text-[var(--tbs-plum)]">Almost there</h3>
+                            <p className="mt-1 text-sm leading-6 text-[rgba(63,22,60,0.68)]">Continue to checkout to confirm your pickup details and complete your order.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <Button className="mt-6 w-full" onClick={() => router.push("/checkout")}>Proceed to Checkout</Button>
-            {/*<Button variant="ghost" className="mt-2 w-full text-gray-600" onClick={() => router.push('/shop')}>*/}
-            <Button variant="ghost" className="mt-2 w-full text-gray-600" onClick={() => router.push('/')}>
+
+            <Button className="mt-6 w-full" onClick={() => router.push("/checkout")} disabled={!hasItemsInCart}>
+                Proceed to Checkout
+                <ArrowRight className="size-4" />
+            </Button>
+            <Button variant="ghost" className="mt-2 w-full text-[rgba(63,22,60,0.72)]" onClick={() => router.push("/")}>
                 Continue Shopping
             </Button>
-            {/*<div className="mt-4 flex items-start gap-3 rounded-lg bg-pink-50 px-4 py-3 text-sm text-gray-600">*/}
-            {/*    <Truck className="mt-0.5 h-4 w-4 text-pink-500" />*/}
-            {/*    {qualifiesForFreeShipping()*/}
-            {/*        ? "You qualify for complimentary shipping on this order."*/}
-            {/*        : `Add ${formatCurrency(remainingForFreeShipping())} more in product value to unlock complimentary shipping.`}*/}
-            {/*</div>*/}
         </div>
     );
 };

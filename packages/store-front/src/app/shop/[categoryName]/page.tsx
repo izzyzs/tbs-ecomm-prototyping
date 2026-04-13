@@ -21,16 +21,13 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
     if (!products || products.length < 1)
         return (
             <section className="mx-auto flex min-h-[60vh] w-full max-w-4xl items-center px-4 py-10 sm:px-6 lg:px-8">
-                <div className="w-full rounded-[2rem] border border-rose-200/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(255,245,247,0.92)_100%)] px-8 py-12 text-center shadow-[0_24px_80px_-40px_rgba(190,24,93,0.45)]">
-                    <p className="text-xs font-semibold tracking-[0.28em] text-rose-500 uppercase">Category unavailable</p>
-                    <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Category &quot;{`${categoryName}`}&quot; not found</h1>
-                    <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                <div className="tbs-shell w-full px-8 py-12 text-center">
+                    <p className="tbs-kicker">Category unavailable</p>
+                    <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--tbs-plum)] sm:text-4xl">Category &quot;{`${categoryName}`}&quot; not found</h1>
+                    <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[rgba(63,22,60,0.72)] sm:text-base">
                         The category you&#39;re looking for doesn&#39;t exist, has no visible products yet, or may have been removed from the storefront.
                     </p>
-                    <Link
-                        href="/shop"
-                        className="mt-8 inline-flex rounded-full bg-rose-500 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-rose-600"
-                    >
+                    <Link href="/shop" className="mt-8 inline-flex rounded-full bg-[linear-gradient(135deg,var(--tbs-pink)_0%,var(--tbs-pink-deep)_72%,var(--tbs-plum)_100%)] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-24px_rgba(91,11,87,0.48)] transition-transform hover:-translate-y-0.5">
                         Continue shopping
                     </Link>
                 </div>
@@ -58,22 +55,22 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
 
     return (
         <section className="mx-auto w-full max-w-7xl px-4 pb-12 pt-4 sm:px-6 lg:px-8">
-            <div className="overflow-hidden rounded-[2rem] border border-rose-200/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(255,245,247,0.92)_100%)] shadow-[0_24px_80px_-36px_rgba(190,24,93,0.4)]">
-                <div className="border-b border-rose-200/70 bg-[radial-gradient(circle_at_top_left,rgba(251,207,232,0.5),transparent_35%),linear-gradient(135deg,rgba(255,255,255,0.98),rgba(255,241,242,0.94))] px-5 py-6 sm:px-8 sm:py-8">
+            <div className="tbs-shell">
+                <div className="tbs-hero px-5 py-6 sm:px-8 sm:py-8">
                     {parent ? (
-                        <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-y-2 text-sm text-slate-500">
+                        <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-y-2 text-sm text-[rgba(63,22,60,0.64)]">
                             {nameAndSlug.map((value, idx) => {
                                 if (idx === 0)
                                     return (
-                                        <Link key={idx} className="rounded-full bg-white/80 px-3 py-1.5 font-medium text-slate-600 transition-colors hover:text-rose-600" href={`/shop/${value[1]}`}>
+                                        <Link key={idx} className="rounded-full bg-white/80 px-3 py-1.5 font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]" href={`/shop/${value[1]}`}>
                                             {value[0]}
                                         </Link>
                                     );
                                 else
                                     return (
                                         <Fragment key={idx}>
-                                            <span className="px-1 text-rose-300">{`>`}</span>
-                                            <Link className="rounded-full bg-white/70 px-3 py-1.5 font-medium text-slate-600 transition-colors hover:text-rose-600" href={`/shop/${value[1]}`}>
+                                            <span className="px-1 text-[rgba(246,31,141,0.42)]">{`>`}</span>
+                                            <Link className="rounded-full bg-white/70 px-3 py-1.5 font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]" href={`/shop/${value[1]}`}>
                                                 {`${value[0]}`}
                                             </Link>
                                         </Fragment>
@@ -82,7 +79,7 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                         </nav>
                     ) : (
                         <div className="mb-4">
-                            <Link href="/shop" className="inline-flex rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-rose-600">
+                            <Link href="/shop" className="inline-flex rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]">
                                 All categories
                             </Link>
                         </div>
@@ -90,14 +87,14 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
 
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                         <div className="max-w-3xl">
-                            <p className="text-xs font-semibold tracking-[0.28em] text-rose-500 uppercase">Category page</p>
-                            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{currentCategory}</h1>
-                            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+                            <p className="tbs-kicker">Category page</p>
+                            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--tbs-plum)] sm:text-4xl">{currentCategory}</h1>
+                            <p className="mt-3 max-w-2xl text-sm leading-6 text-[rgba(63,22,60,0.72)] sm:text-base">
                                 Browse everything currently listed under this category and jump into any product card for more detail.
                             </p>
                         </div>
 
-                        <div className="inline-flex w-fit items-center rounded-full border border-rose-200 bg-white/85 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
+                        <div className="tbs-chip">
                             {productCountLabel}
                         </div>
                     </div>

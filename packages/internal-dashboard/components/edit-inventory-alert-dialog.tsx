@@ -1,30 +1,36 @@
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
-    AlertDialog, AlertDialogAction, AlertDialogCancel,
-    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export default function EditInventoryAlertDialog({formId}: {formId: string}) {
+export default function EditInventoryAlertDialog({ formId }: { formId: string }) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button className={`mt-3`} type={`button`}>Save changes</Button>
+                <Button className="mt-4 h-11 w-full rounded-2xl" type="button">
+                    Save changes
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        You are editing this product.
-                    </AlertDialogDescription>
+                    <AlertDialogTitle>Apply product changes?</AlertDialogTitle>
+                    <AlertDialogDescription>These updates will be saved directly to the inventory record and shown the next time this product is loaded.</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction form={formId} type={`submit`}>Continue</AlertDialogAction>
+                    <AlertDialogAction form={formId} type="submit">
+                        Confirm save
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
+    );
 }

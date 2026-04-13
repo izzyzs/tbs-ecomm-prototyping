@@ -1,17 +1,25 @@
 "use client";
-import { createClient } from "@/lib/supabase/client";
-import { Database } from "@/lib/supabase/database.types";
+import { Database } from "@tbs/infra";
 
+export type InventoryInsert = Database["public"]["Tables"]["inventory"]["Insert"];
+export type InventoryRow = Database["public"]["Tables"]["inventory"]["Row"];
 
-const createInventoryUnit = (data: ) => {
-    type insert = Database["public"]["Tables"]["inventory"]["Insert"]
+export async function createInventoryUnit(data: InventoryInsert) {
+    void data;
+    throw new Error("Not implemented");
+}
 
-    const supabase = createClient();
-    supabase.from("inventory").insert()
-};
+export async function readInventoryUnits(): Promise<InventoryRow[]> {
+    throw new Error("Not implemented");
+}
 
-const readInventoryUnits = () => {};
+export async function updateInventoryUnit(id: number, data: Partial<InventoryInsert>) {
+    void id;
+    void data;
+    throw new Error("Not implemented");
+}
 
-const updateInventoryUnit = () => {};
-
-const deleteInventoryUnit = () => {};
+export async function deleteInventoryUnit(id: number) {
+    void id;
+    throw new Error("Not implemented");
+}

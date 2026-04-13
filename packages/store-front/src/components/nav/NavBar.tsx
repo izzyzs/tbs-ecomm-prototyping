@@ -1,11 +1,10 @@
 import React from "react";
 
 import UserStatusController from "@/components/nav/UserStatusController";
-import ProductCategories from "@/components/nav/ProductCategories";
 import Link from "next/link";
 import CartButton from "@/components/nav/buttons/CartButton";
-import SearchButton from "@/components/nav/buttons/SearchButton";
 import AccountButton from "@/components/nav/buttons/AccountButton";
+import ProductCategories from "./ProductCategories";
 
 // TODO: 🔒 AUTH REFACTOR — Move Supabase session retrieval here (SERVER SIDE)
 // ---------------------------------------------------------------------------
@@ -30,25 +29,24 @@ const NavBar = () => {
     return (
         <>
             {/* Navigation bar with logo, links, and login button */}
-            <nav className="z-50 w-full flex items-center justify-between px-4 py-4 bg-white shadow-md fixed bottom-0 sm:bottom-auto sm:sticky sm:top-0 sm:z-50">
-                <Link href="/" className="text-xl font-bold">
-                    Beauty Supply
-                </Link>
-                {/*<ProductCategories />*/}
-                {/* ^^^^^^^^^^^^^^^^ is not currently necessary; we're streamlining and sliming down*/}
-                <div className="flex items-center space-x-4">
-                    {/* <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                        Shop
-                    </Link> */}
-                    {/* <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-                        About
-                    </a> */}
-                    {/* Login button opens a modal using Shadcn's Dialog component */}
-                    {/* <SearchButton /> */}
-                    <CartButton />
-                    <AccountButton />
-                    <UserStatusController />
+            <nav className="fixed bottom-0 z-50 w-full border-t border-[var(--tbs-border-strong)] bg-[rgba(255,249,242,0.92)] px-4 py-3 shadow-[0_-18px_40px_-26px_rgba(91,11,87,0.28)] backdrop-blur-xl sm:sticky sm:top-0 sm:border-b sm:border-t-0 sm:px-6 sm:py-4 sm:shadow-[0_18px_40px_-28px_rgba(91,11,87,0.24)]">
+                <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
+                    <Link href="/" className="group min-w-0">
+                        <span className="block text-[0.68rem] font-semibold tracking-[0.34em] text-[var(--tbs-pink-deep)] uppercase">Today&apos;s</span>
+                        <span className="bg-[linear-gradient(135deg,var(--tbs-pink)_0%,var(--tbs-pink-deep)_56%,var(--tbs-plum)_100%)] bg-clip-text text-lg font-black tracking-tight text-transparent sm:text-xl">
+                            Beauty Supply
+                        </span>
+                    </Link>
+                    {/*<ProductCategories />*/}
+                    {/* ^^^^^^^^^^^^^^^^ is not currently necessary; we're streamlining and sliming down*/}
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        {/* <SearchButton /> */}
+                        <CartButton />
+                        <AccountButton />
+                        <UserStatusController />
+                    </div>
                 </div>
+                {/* <ProductCategories /> */}
             </nav>
         </>
     );

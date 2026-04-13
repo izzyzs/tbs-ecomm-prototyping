@@ -1,1 +1,1 @@
-import InventoryProduct from "@tbs/core";
+export type InventoryProduct = never;

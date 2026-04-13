@@ -1,62 +1,64 @@
 import InventoryTable from "@/components/inventory-table";
-import FilterInventoryForm from "@/components/filter-inventory-form";
 import InventorySearchBar from "@/components/inventory/inventory-search-bar";
 import { createClient } from "@/lib/supabase/server";
-import { PostgrestSingleResponse } from "@supabase/supabase-js";
-import { InventorySKU } from "@tbs/infra";
-
-type GetProductsData = { data: InventorySKU[]; cursor: number; has_more: boolean };
 
 const getSingleSearchParam = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
-
-const parseBooleanSearchParam = (value: string | string[] | undefined) => {
-    const normalizedValue = getSingleSearchParam(value)?.trim().toLowerCase();
-
-    if (!normalizedValue || normalizedValue === "undefined") {
-        return undefined;
-    }
-
-    return normalizedValue === "true";
-};
-
-// TODO: search is currently implemented on the frontend, it needs to be incorporated into the rpc so a new search_and_filter_products/sku rpc is needed.
-const matchesInventoryQuery = (sku: InventorySKU, query: string) => {
-    const searchableFields = [sku.id, sku.item, sku.brand, sku.category, sku.custom_sku, sku.upc];
-
-    return searchableFields.some((field) => field?.toString().toLowerCase().includes(query));
-};
 
 export default async function InventoryPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const params = await searchParams;
     const query = getSingleSearchParam(params.query)?.trim() ?? "";
     const normalizedQuery = query.toLowerCase();
-    console.log(`query: ${normalizedQuery}`);
     const supabase = await createClient();
-    let skus: InventorySKU[] | null;
     const { data, error } = await supabase.rpc("search_products", { p_query: normalizedQuery });
-    skus = data?.filter((item) => item !== undefined) ?? [];
 
-    // const published = parseBooleanSearchParam(params.published);
-    // const categorySet = parseBooleanSearchParam(params.categorySet);
+    if (error) throw error;
 
-    // const { data, error } = (await supabase.rpc("get_products", { p_published: published, p_category_set: categorySet })) as PostgrestSingleResponse<GetProductsData>;
-    // if (error) throw error;
-    // if (!data) throw new Error("Inventory Retrieval Error: items not found");
-    // const filteredSkus = normalizedQuery ? skus.filter((sku) => matchesInventoryQuery(sku, normalizedQuery)) : skus;
+    const skus = data?.filter((item) => item !== undefined) ?? [];
+    const publishedCount = skus.filter((sku) => sku.publish_to_ecom).length;
+    const lowStockCount = skus.filter((sku) => (sku.qty ?? 0) <= 3).length;
+    const uncategorizedCount = skus.filter((sku) => !sku.category?.trim()).length;
 
     return (
-        <>
-            <div className="flex flex-1 min-w-0 flex-col p-4">
-                <div className="min-w-0">
-                    <InventorySearchBar query={query} resultsCount={skus.length} />
-                    {/* <div className="pb-4">
-                        <FilterInventoryForm />
-                    </div> */}
-                    <div className="overflow-x-auto rounded-md border">
-                        <InventoryTable data={skus} />
+        <div className="mx-auto max-w-7xl space-y-6">
+            <section className="rounded-[32px] border border-white/70 bg-white/80 p-6 shadow-[0_24px_60px_-36px_rgba(15,23,42,0.4)] backdrop-blur-xl sm:p-8">
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                    <div className="space-y-3">
+                        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">Catalog operations</p>
+                        <div className="space-y-2">
+                            <h1 className="text-4xl font-semibold tracking-tight text-foreground">Inventory</h1>
+                            <p className="max-w-3xl text-sm leading-7 text-muted-foreground sm:text-base">
+                                Search the catalog, identify low-stock products, and jump straight into editing product details without wading through raw data.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="rounded-[28px] border border-primary/10 bg-primary/10 px-4 py-3 text-sm text-primary shadow-sm">
+                        Click a product name to open its full editor.
                     </div>
                 </div>
-            </div>
-        </>
+
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                    <div className="rounded-[24px] border border-slate-200/70 bg-slate-50/80 p-4">
+                        <p className="text-sm text-muted-foreground">Visible results</p>
+                        <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{skus.length}</p>
+                    </div>
+                    <div className="rounded-[24px] border border-slate-200/70 bg-slate-50/80 p-4">
+                        <p className="text-sm text-muted-foreground">Published to ecommerce</p>
+                        <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{publishedCount}</p>
+                    </div>
+                    <div className="rounded-[24px] border border-slate-200/70 bg-slate-50/80 p-4">
+                        <p className="text-sm text-muted-foreground">Needs attention</p>
+                        <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{lowStockCount + uncategorizedCount}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section className="rounded-[32px] border border-white/70 bg-white/80 p-4 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-5">
+                <InventorySearchBar query={query} resultsCount={skus.length} />
+                <div className="mt-5 overflow-hidden rounded-[28px] border border-slate-200/80 bg-background/80">
+                    <InventoryTable data={skus} />
+                </div>
+            </section>
+        </div>
     );
 }

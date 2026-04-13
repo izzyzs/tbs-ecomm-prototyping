@@ -1,5 +1,5 @@
 "use client";
-import React, { useActionState, useState } from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/my-button";
@@ -13,14 +13,16 @@ import { SearchResponse } from "@tbs/infra";
 export default function ProductSearch({ search, setSearch }: { search?: boolean; setSearch?: React.Dispatch<React.SetStateAction<boolean>> }) {
     if (!setSearch) {
         return (
-            <div className="flex w-full py-6 px-5 sm:max-w-md items-center gap-2 sticky top-0 bg-white sm:mx-auto">
-                <Form action="" className="flex gap-2 w-full">
-                    <Input type="text" placeholder="Search for products..." name="query" disabled />
-                    {/* TODO: press enter key to search functionality*/}
-                    <Button type="submit" className="bg-pink-500 hover:bg-pink-900" onClick={() => setShowResults(true)}>
-                        <Search />
-                    </Button>
-                </Form>
+            <div className="sticky top-[72px] z-30 px-4 pt-4 sm:top-[88px] sm:px-6 lg:px-8">
+                <div className="tbs-panel mx-auto flex w-full max-w-4xl items-center gap-2 p-3">
+                    <Form action="" className="flex w-full gap-2">
+                        <Input type="text" placeholder="Search for products..." name="query" disabled className="h-11 rounded-full bg-white/90" />
+                        {/* TODO: press enter key to search functionality*/}
+                        <Button type="submit" className="h-11 w-11 px-0" disabled>
+                            <Search />
+                        </Button>
+                    </Form>
+                </div>
             </div>
         );
     }
@@ -48,39 +50,33 @@ export default function ProductSearch({ search, setSearch }: { search?: boolean;
 
     const [showResults, setShowResults] = React.useState<boolean>(true);
 
-    const returnIsError = (msg: string) => {
-        setSearch(false);
-        return <p className="text-red-600">{msg}</p>;
-    };
-
     return (
-        //  justify-between px-4 py-4 bg-white shadow-md fixed bottom-0 sm:bottom-auto sm:sticky sm:top-0 sm:z-50
         <>
-            <div className="flex w-full py-6 px-5 sm:max-w-md items-center gap-2 sticky top-0 bg-white sm:mx-auto">
-                <Form action="" className="flex gap-2 w-full">
-                    <Input type="text" placeholder="Search for products..." name="query" defaultValue={query ?? ""} />
-                    {/* TODO: press enter key to search functionality*/}
-                    <Button type="submit" className="bg-pink-500 hover:bg-pink-900" onClick={() => setShowResults(true)}>
-                        <Search />
-                    </Button>
-                </Form>
-                {state ? (
-                    <Button
-                        className="border-pink-500 text-pink-500 hover:text-pink-800 hover:bg-pink-50"
-                        variant="outline"
-                        onClick={() => {
-                            setShowResults((prev) => !prev);
-                            setSearch((prev) => !prev);
-                        }}
-                    >
-                        {search ? "Show Categories" : query === "" || state.inventory.length == 0 ? "" : "Show Results"}
-                    </Button>
-                ) : (
-                    <></>
-                )}
-                {state ? <p className="text-nowrap">{state.inventory.length.toString() + " " + (state.inventory.length != 1 ? `Results` : `Result`)}</p> : <></>}
+            <div className="sticky top-[72px] z-30 px-4 pt-4 sm:top-[88px] sm:px-6 lg:px-8">
+                <div className="tbs-panel mx-auto flex w-full max-w-5xl flex-col gap-3 p-3 sm:flex-row sm:items-center">
+                    <Form action="" className="flex w-full gap-2">
+                        <Input type="text" placeholder="Search for products..." name="query" defaultValue={query ?? ""} className="h-11 rounded-full bg-white/90" />
+                        {/* TODO: press enter key to search functionality*/}
+                        <Button type="submit" className="h-11 w-11 px-0" onClick={() => setShowResults(true)}>
+                            <Search />
+                        </Button>
+                    </Form>
+                    {state && (search || (query ?? "").trim() !== "" && state.inventory.length > 0) ? (
+                        <Button
+                            className="w-full sm:w-auto"
+                            variant="outline"
+                            onClick={() => {
+                                setShowResults((prev) => !prev);
+                                setSearch((prev) => !prev);
+                            }}
+                        >
+                            {search ? "Show Categories" : "Show Results"}
+                        </Button>
+                    ) : null}
+                    {state ? <p className="whitespace-nowrap text-sm font-medium text-[rgba(63,22,60,0.68)]">{state.inventory.length.toString() + " " + (state.inventory.length != 1 ? `Results` : `Result`)}</p> : null}
+                </div>
             </div>
-            <div className="flex flex-col p-8 sm:px-24">
+            <div className="mx-auto flex w-full max-w-5xl flex-col px-4 pb-10 pt-6 sm:px-6 lg:px-8">
                 {state
                     ? state.isError
                         ? // ? returnIsError(state.msg)
@@ -91,10 +87,12 @@ export default function ProductSearch({ search, setSearch }: { search?: boolean;
                         : showResults &&
                           state.inventory.map((sku, idx) => {
                               return (
-                                  <div key={idx} className="mx-auto w-[100%] border-b-2 border-pink-300 flex">
-                                      {/* <div className="bg-amber-200 w-[20px] h-[20px]"> </div> */}
-                                      <Link href={`/product/${sku.id}`} className="my-2 py-4 w-[100%] hover:text-pink-300">
-                                          {sku.brand ? <p>brand{`${sku.brand} ${sku.item}`}</p> : <p>{sku.item}</p>}
+                                  <div
+                                      key={idx}
+                                      className="border-b border-[var(--tbs-border-strong)] py-4 text-[var(--tbs-plum)] transition-colors last:border-b-0 hover:text-[var(--tbs-pink-deep)]"
+                                  >
+                                      <Link href={`/product/${sku.id}`} className="block">
+                                          {sku.brand ? <p>{`${sku.brand} ${sku.item}`}</p> : <p>{sku.item}</p>}
                                       </Link>
                                   </div>
                               );
