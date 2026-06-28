@@ -9,29 +9,7 @@ both it's built-in functionality as well as it's high level of extensibility.
 It was also my first attempt at building production software
 and I gained alot from it.
 
-### Did I Use AI?
-
-I did use the assistance of AI, specifically LLMs, for
-debugging and ideation. There was a point
-where I did consider and actually incorporated the use of
-a code-specialized LLM, (i.e., Codex).
-
-I decided on not moving along with it after the first pull
-request due to me wanting to build actual experience and
-understanding. This would be tremendously harder to do
-with code generation, as the code produced is well beyond
-the scope of which I've written before (or even read and
-understood). I also found it a bit too convenient for my
-liking.
-I'm not a "vibe coder" and I didn't decide to choose
-Computer Science as one of my passions to "vibe" my way
-though software engineering. Thus I decided to struggle
-and build the code myself. So I committed to using AI as a
-debugging assistant, verifier/corrector of my intuition,
-and a tutor/reference when working with a technology
-new to me or one with poor documentation.
-
-### Tech Stack
+## Tech Stack
 
 1. Database: Supabase
 2. Frontend: React.js/Next.js
@@ -61,3 +39,48 @@ throughout the entire project because I truly dislike
 debugging UI and why reinvent the wheel? I also had Codex generate
 most of the UI and styling, as my main goal is experience building
 backend systems, and being more of a generalist, full-stack engineer.
+
+## Repository Structure
+
+I decided on a monorepo, with the application split into 6 seperate packages,
+all found at the `package/` directory
+generally corresponding with the layers of Clean Architecture,
+as described by Uncle Bob in his book with the same name.
+
+### **Enterprise Business Rules (Entities & Repositories)**
+
+These are found in `@tbs/core` package, located at the `core/` directory.
+Here you can find business entities and rules, alongside the necessary interfaces
+required for data access in the repositories.
+
+### **Application Business Rules (Use Cases)**
+
+You can find use cases in the client facing packages,
+`internal-dashboard` and `store-front` (each located in the directory sharing the same name.)
+Currently, only use cases of the store-front have been implemented.
+
+### **Interface Adapters (Gateways, Controllers, and Presenters)**
+
+The interface adapters are found in the `@tbs/adapters` package, located at the `adapters/` directories.
+
+### **Frameworks and Drivers**
+
+The frameworks and drivers of the project are found in a few different places. The UI is found in `internal-dashboard` and `store-front`.
+Mappers and types used for UI state are found in `@tbs/view-models`, the `view-models/` directory.
+
+### Note:
+
+(As of 6/27/2026) Not the entirety of this project was implemented following Clean Architecture. I had decided a few months in that it would make sense
+to start to refactor the code into such an architecture to have a clean seperation of concerns before the complexity layered on, the goal
+is to implement clean architecture entirely.
+
+## Did I Use AI?
+
+When I started the project, I kept my use of AI to a minimum.
+I used it mainly for debugging and ideation. There was a point where I used Codex early on, but I realized that it would've handicapped my learning as an inexperienced developer, and the code produced was well beyond
+the scope of which I've written before, so I decided to not move on with it after the first pull request.
+
+From that point forward I had commited to writing code myself, only relying on AI as a debugging assistant, an intuition aid, and a tutor/reference when working with new technology or tech with terrible documentation.
+
+I did end up using it heavily for frontend design. I don't care much to specialize in it, and simply understanding the basics and different components utilized in frontend is enough for me.
+I didn't want to spend 30 minutes perfecting a gradient or color palettes.
