@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/product/ProductCard";
 import Link from "next/link";
 import { PostgrestError } from "@supabase/supabase-js";
+import { Money } from "@tbs/core";
 
-type ProductSubset = { id: number; item: string; price: number };
+type ProductSubset = { id: number; item: string; price_in_pennies: number };
 
 export default async function Page({ params }: { params: Promise<{ categoryName: string }> }) {
     const supabase = await createClient();
@@ -121,9 +122,10 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
 
                 <div className="px-4 py-5 sm:px-6 sm:py-7">
                     <main className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                        {products?.map((product: ProductSubset, idx: number) => (
-                            <ProductCard key={idx} id={product.id} item={product.item} price={`$${product.price! / 100}`} />
-                        ))}
+                        {products?.map((product: ProductSubset, idx: number) => {
+                            const price = new Money(product.price_in_pennies);
+                            return <ProductCard key={idx} id={product.id} item={product.item} price={`$${price.inDollars}`} />;
+                        })}
                     </main>
                 </div>
             </div>

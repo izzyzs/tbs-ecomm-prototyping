@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import AddToCartButton from "@/components/product/AddToCartButton";
 import SeeMoreButton from "@/components/product/SeeMoreButton";
+import { Money } from "@tbs/core";
 
-type ProductSubset = { id: number, item: string | null, price: string | null };
+type ProductSubset = { id: number; item: string | null; price: string | null };
 
 export default function ProductCard({ id, item: name, price }: ProductSubset) {
     const productName = formatDisplayValue(name);

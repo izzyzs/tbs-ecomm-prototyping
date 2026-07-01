@@ -1,15 +1,21 @@
 # E-Commerce Website
 
-This repository is a prototype of an e-commerce application.
-It was built as a validation test regarding whether or not
-an in-house e-commerce solution for Today Beauty Supply would best meet
-business requirements, or if outsourcing would be required.
-We eventually arrived at outsourcing, deciding on Shopify given
-both it's built-in functionality as well as it's high level of extensibility.
-It was also my first attempt at building production software
-and I gained alot from it.
+A full-stack e-commerce prototype built for Today Beauty Supply to evaluate whether a custom in-house storefront could support the business’s transition into online retail.
 
-[Demo Link](https://tbs-ecomm-prototyping-store-front.vercel.app/)
+The application implements a database-backed product catalog, product detail pages, cart management, inventory visibility, SKU/barcode metadata, and a Stripe Checkout flow. It was built with Next.js, TypeScript, Supabase/PostgreSQL, Stripe, Tailwind CSS, and deployed on Vercel.
+
+The prototype was ultimately used as a business and technical validation exercise. After comparing the custom build against Shopify, the business chose Shopify for production because of its built-in payment handling, admin tooling, operational maturity, extensibility, and faster time-to-market for a nontechnical retail team.
+
+Live Demo: [https://tbs-ecomm-prototyping-store-front.vercel.app/](https://tbs-ecomm-prototyping-store-front.vercel.app/)
+
+### Features
+
+- product catalog
+- product detail pages
+- cart flow
+- inventory/stock visibility
+- SKU/barcode metadata
+- Vercel deployment
 
 ## Tech Stack
 
@@ -18,7 +24,7 @@ and I gained alot from it.
 3. Languages: Typescript and PostgreSQL
 4. UI/UX: shadcn components
 5. Styling: Tailwind
-6. Payment API: Stripe (planned; hasn't been implemented)
+6. Payment API: Stripe
 
 I decided to keep the stack as barebones as possible.
 Supabase does a tremendous job at being a complete
