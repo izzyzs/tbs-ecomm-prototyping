@@ -13,10 +13,17 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
 
     const { data, error: categoryIdError } = await supabase.from("categories").select("id, path").eq("slug", categoryName).single();
     if (!data) throw new Error(`${categoryName} not found`);
+    console.log(data);
     if (categoryIdError) throw categoryIdError;
     const { id: categoryId, path } = data as { id: number; path: string };
     // const { data: products, error } = (await supabase.from("inventory").select("id, item, price").eq("category_id", categoryId).eq("publish_to_ecom", true)) as { data: ProductSubset[] | null; error: PostgrestError };
-    const { data: products, error } = (await supabase.from("inventory").select("id, item, price").eq("category_id", categoryId)) as { data: ProductSubset[] | null; error: PostgrestError };
+    const { data: products, error: productError } = (await supabase.from("inventory").select("id, item, price_in_pennies").eq("category_id", categoryId)) as {
+        data: ProductSubset[] | null;
+        error: PostgrestError;
+    };
+    const { data: subCategories, subCategoryError } = await supabase.from("categories").select("*");
+
+    console.log(error);
 
     if (!products || products.length < 1)
         return (
@@ -27,7 +34,10 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                     <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[rgba(63,22,60,0.72)] sm:text-base">
                         The category you&#39;re looking for doesn&#39;t exist, has no visible products yet, or may have been removed from the storefront.
                     </p>
-                    <Link href="/shop" className="mt-8 inline-flex rounded-full bg-[linear-gradient(135deg,var(--tbs-pink)_0%,var(--tbs-pink-deep)_72%,var(--tbs-plum)_100%)] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-24px_rgba(91,11,87,0.48)] transition-transform hover:-translate-y-0.5">
+                    <Link
+                        href="/shop"
+                        className="mt-8 inline-flex rounded-full bg-[linear-gradient(135deg,var(--tbs-pink)_0%,var(--tbs-pink-deep)_72%,var(--tbs-plum)_100%)] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-24px_rgba(91,11,87,0.48)] transition-transform hover:-translate-y-0.5"
+                    >
                         Continue shopping
                     </Link>
                 </div>
@@ -62,7 +72,11 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                             {nameAndSlug.map((value, idx) => {
                                 if (idx === 0)
                                     return (
-                                        <Link key={idx} className="rounded-full bg-white/80 px-3 py-1.5 font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]" href={`/shop/${value[1]}`}>
+                                        <Link
+                                            key={idx}
+                                            className="rounded-full bg-white/80 px-3 py-1.5 font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]"
+                                            href={`/shop/${value[1]}`}
+                                        >
                                             {value[0]}
                                         </Link>
                                     );
@@ -70,7 +84,10 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                                     return (
                                         <Fragment key={idx}>
                                             <span className="px-1 text-[rgba(246,31,141,0.42)]">{`>`}</span>
-                                            <Link className="rounded-full bg-white/70 px-3 py-1.5 font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]" href={`/shop/${value[1]}`}>
+                                            <Link
+                                                className="rounded-full bg-white/70 px-3 py-1.5 font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]"
+                                                href={`/shop/${value[1]}`}
+                                            >
                                                 {`${value[0]}`}
                                             </Link>
                                         </Fragment>
@@ -79,7 +96,10 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                         </nav>
                     ) : (
                         <div className="mb-4">
-                            <Link href="/shop" className="inline-flex rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]">
+                            <Link
+                                href="/shop"
+                                className="inline-flex rounded-full bg-white/80 px-3 py-1.5 text-sm font-medium text-[rgba(63,22,60,0.7)] transition-colors hover:text-[var(--tbs-pink-deep)]"
+                            >
                                 All categories
                             </Link>
                         </div>
@@ -94,16 +114,14 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                             </p>
                         </div>
 
-                        <div className="tbs-chip">
-                            {productCountLabel}
-                        </div>
+                        <div className="tbs-chip">{productCountLabel}</div>
                     </div>
                 </div>
 
                 <div className="px-4 py-5 sm:px-6 sm:py-7">
                     <main className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                         {products?.map((product: ProductSubset, idx: number) => (
-                            <ProductCard key={idx} id={product.id} item={product.item} price={`$${product.price!/100}`} />
+                            <ProductCard key={idx} id={product.id} item={product.item} price={`$${product.price! / 100}`} />
                         ))}
                     </main>
                 </div>
