@@ -17,6 +17,46 @@ Live Demo: [https://tbs-ecomm-prototyping-store-front.vercel.app/](https://tbs-e
 - SKU/barcode metadata
 - Vercel deployment
 
+## Images
+
+### Storefront Landing Page
+
+A pickup-oriented storefront experience for browsing beauty supply essentials.
+
+![Landing Page](demo_pics/storefront-landing-page.png)
+
+### Authentication Flow
+
+User login and signup modals for account-based shopping.
+
+![Auth Modal](demo_pics/authentication-flow.png)
+
+### Category Browsing
+
+Hierarchical category navigation for organizing beauty supply inventory.
+
+![Category Navigation](demo_pics/category-navigation.png)
+
+### Product Detail Page
+
+Product detail view [^1] with pricing, stock count, category, and barcode metadata.
+
+![Product Detail Page](demo_pics/product-detail-page.png)
+
+[^1]: Product images are represented with generated placeholders in the prototype while the business prepares a separate production catalog and photography workflow.
+
+### Cart Management
+
+Cart summary with quantity updates, item removal, subtotal calculation, and checkout entry point.
+
+![Cart Management](demo_pics/cart.png)
+
+### Stripe Checkout
+
+Stripe Checkout integration in sandbox mode for validating the payment flow.
+
+![Stripe Checkout](demo_pics/stripe_checkout.png)
+
 ## Tech Stack
 
 1. Database: Supabase

@@ -39,12 +39,3 @@ export interface CategoryRepository {
     // delete
     deleteCategory(id: CategoryId): Promise<Category>;
 }
-
-/*
- name: string
- depth: number     | integer |           | not null | 
- slug: string      | text    |           |          | 
- path: string      | ltree   |           |          | 
- id: int        | bigint  |           | not null | generated always as identity
- parent_id
- */
