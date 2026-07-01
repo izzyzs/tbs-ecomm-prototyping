@@ -1,4 +1,4 @@
-# E-Commerce Website
+# Today Beauty Supply E-Commerce Prototype
 
 A full-stack e-commerce prototype built for Today Beauty Supply to evaluate whether a custom in-house storefront could support the business’s transition into online retail.
 
@@ -10,11 +10,13 @@ Live Demo: [https://tbs-ecomm-prototyping-store-front.vercel.app/](https://tbs-e
 
 ### Features
 
-- product catalog
-- product detail pages
-- cart flow
-- inventory/stock visibility
-- SKU/barcode metadata
+- Database-backed product catalog using Supabase/PostgreSQL
+- Product detail pages with pricing, stock count, category, and barcode metadata
+- Hierarchical category browsing
+- Cart management with quantity updates, item removal, subtotal calculation, and checkout entry point
+- Stripe Checkout integration in sandbox mode
+- Order confirmation page with item, tax, total, and confirmation email details
+- Authentication flow for login and signup
 - Vercel deployment
 
 ## Images
@@ -59,39 +61,23 @@ Stripe Checkout integration in sandbox mode for validating the payment flow.
 
 ## Tech Stack
 
-1. Database: Supabase
-2. Frontend: React.js/Next.js
-3. Languages: Typescript and PostgreSQL
-4. UI/UX: shadcn components
-5. Styling: Tailwind
-6. Payment API: Stripe
+- **Frontend:** Next.js, React, TypeScript
+- **Database / Backend Services:** Supabase, PostgreSQL
+- **Payments:** Stripe Checkout
+- **UI Components:** shadcn/ui
+- **Styling:** Tailwind CSS
+- **Deployment:** Vercel
 
-I decided to keep the stack as barebones as possible.
-Supabase does a tremendous job at being a complete
-backend. After doing an intensive, 2 week long deep dive
-into the PSQL Database Management System and PostgreSQL,
-I was able to leverage Postgres' flexibility
-to a much higher degree after studying those basics,
-rather then having to rely on the useful,
-but often non sufficient supabase queries.
-I was able to create views, indexes, and use psql
-to interact with the database directly instead of
-relying on supabase's GUI and AI assistant. I wrote my own
-database procedures and used them though supabase's
-rpc implementation.
+I kept the stack intentionally lean. Supabase provided the core backend services, while PostgreSQL gave the project a flexible relational data model for products, categories, inventory metadata, and checkout-related workflows.
 
-For the frontend, I chose Next.js due to
-my experience with React and the added benefit of SSR of
-products for SEO reasons. I used shadcn/ui components
-throughout the entire project because I truly dislike
-debugging UI and why reinvent the wheel? I also had Codex generate
-most of the UI and styling, as my main goal is experience building
-backend systems, and being more of a generalist, full-stack engineer.
+Before building the database layer, I completed a focused two-week study of PostgreSQL fundamentals. That helped me move beyond basic Supabase queries and use PostgreSQL more directly through views, indexes, SQL scripts, and database procedures exposed through Supabase RPC.
+
+For the frontend, I chose Next.js because of my existing React experience and because server-side rendering can support SEO for product pages.
+I used shadcn/ui components to move quickly with accessible, reusable UI primitives while focusing most of my engineering effort on the data model, backend integration, checkout flow, and application architecture.
 
 ## Repository Structure
 
-I decided on a monorepo, with the application split into 6 seperate packages,
-all found at the `package/` directory
+The project is organized as a pnpm monorepo with application and library code split across packages in the `packages/` directory,
 generally corresponding with the layers of Clean Architecture,
 as described by Uncle Bob in his book with the same name.
 
@@ -116,19 +102,14 @@ The interface adapters are found in the `@tbs/adapters` package, located at the 
 The frameworks and drivers of the project are found in a few different places. The UI is found in `internal-dashboard` and `store-front`.
 Mappers and types used for UI state are found in `@tbs/view-models`, the `view-models/` directory.
 
-### Note:
+### Architecture Note
 
-(As of 6/27/2026) Not the entirety of this project was implemented following Clean Architecture. I had decided a few months in that it would make sense
-to start to refactor the code into such an architecture to have a clean seperation of concerns before the complexity layered on, the goal
-is to implement clean architecture entirely.
+The project was incrementally refactored toward a Clean Architecture-inspired structure as the application grew in complexity.
+Some parts of the codebase follow the layered package structure more closely than others, but the main goal was to separate domain logic, data access,
+view models, and application-facing UI code so the project could remain maintainable as features were added.
 
-## Did I Use AI?
+## AI Usage
 
-When I started the project, I kept my use of AI to a minimum.
-I used it mainly for debugging and ideation. There was a point where I used Codex early on, but I realized that it would've handicapped my learning as an inexperienced developer, and the code produced was well beyond
-the scope of which I've written before, so I decided to not move on with it after the first pull request.
+I used AI tools selectively throughout the project for debugging support, technical reference, and frontend styling acceleration.
 
-From that point forward I had commited to writing code myself, only relying on AI as a debugging assistant, an intuition aid, and a tutor/reference when working with new technology or tech with terrible documentation.
-
-I did end up using it heavily for frontend design. I don't care much to specialize in it, and simply understanding the basics and different components utilized in frontend is enough for me.
-I didn't want to spend 30 minutes perfecting a gradient or color palettes.
+The core architecture, database modeling, application structure, Supabase/PostgreSQL work, Stripe integration flow, and business tradeoff analysis were implemented and reviewed directly by me. For frontend design, I used AI assistance to speed up visual iteration while focusing my primary learning effort on backend systems, data modeling, application architecture, and full-stack integration.
