@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
                 </div>
             </section>
         );
-    if (error) throw error;
+    if (productError) throw productError;
     if (categoryIdError) throw categoryIdError;
 
     const pathArray: string[] = path.split(".");
