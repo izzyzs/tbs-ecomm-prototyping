@@ -21,9 +21,10 @@ export default async function Page({ params }: { params: Promise<{ categoryName:
         data: ProductSubset[] | null;
         error: PostgrestError;
     };
-    const { data: subCategories, subCategoryError } = await supabase.from("categories").select("*");
+    console.log(productError);
+    // const { data: subCategories, error: subCategoryError } = await supabase.from("categories").select("*");
 
-    console.log(error);
+    // console.log(subCategoryError);
 
     if (!products || products.length < 1)
         return (
